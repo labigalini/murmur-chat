@@ -2,7 +2,7 @@ import { toast } from "@/components/ui/use-toast";
 import { ConvexError } from "convex/values";
 
 export function handleFailure<T extends any[]>(
-  callback: (...args: T) => Promise<void>
+  callback: (...args: T) => Promise<any>,
 ) {
   return (...args: T) => {
     void (async () => {

@@ -13,7 +13,7 @@ import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Murmur Chat",
+  title: "murmur-chat",
   description:
     "Murmur is a private chat app where conversations are short-lived and secure.",
   // icon
@@ -40,19 +40,10 @@ export default function RootLayout({
           <div className="flex h-[calc(100dvh)] flex-col items-center justify-center p-4 md:px-24 py-32 gap-4">
             <div className="flex justify-between max-w-5xl w-full items-center">
               <Link href="#" className="text-4xl font-bold text-gradient">
-                shadcn-chat
+                murmur-chat
               </Link>
-              <div>
+              <div className="flex justify-end gap-2">
                 <Notifications />
-                <Link
-                  href="https://github.com/labigalini/murmur-chat"
-                  className={cn(
-                    buttonVariants({ variant: "ghost", size: "icon" }),
-                    "h-10 w-10",
-                  )}
-                >
-                  <GitHubLogoIcon className="w-7 h-7 text-muted-foreground" />
-                </Link>
                 <ProfileButton />
               </div>
             </div>

@@ -75,6 +75,13 @@
   }
 }
 
+@layer utilities {
+  .animate-wave {
+    @apply bg-gradient-wave;
+    background-size: 200% 100%; /* Ensure the background wave effect covers the element */
+  }
+}
+
 .text-gradient {
   background: linear-gradient(90deg, #6366f1, rgba(168, 85, 247, 0.8));
   -webkit-background-clip: text;

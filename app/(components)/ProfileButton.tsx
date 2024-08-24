@@ -2,6 +2,7 @@
 
 import { ErrorBoundary } from "@/app/(helpers)/ErrorBoundary";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { SignInButton, SignUpButton, UserButton } from "@clerk/clerk-react";
 import { ClerkLoading, SignedIn, SignedOut } from "@clerk/nextjs";
 
@@ -9,7 +10,7 @@ export function ProfileButton() {
   return (
     <ErrorBoundary>
       <ClerkLoading>
-        <div className="w-40 h-9" />
+        <Skeleton className="rounded-full w-8 h-8" />
       </ClerkLoading>
       <SignedIn>
         <div className="w-8 h-8">

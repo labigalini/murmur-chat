@@ -62,10 +62,24 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        wave: {
+          "0%": { backgroundPosition: "200% 0" },
+          "100%": { backgroundPosition: "-200% 0" }, // custom animation
+        },
+        pulse: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.4" }, // Lower the opacity more for a stronger effect
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        wave: "wave 1.5s linear infinite", // custom animation
+        pulse: "pulse 0.8s cubic-bezier(0.4, 0, 0.6, 1) infinite", // Adjust the timing and curve
+      },
+      backgroundImage: {
+        "gradient-wave":
+          "linear-gradient(90deg, rgba(255, 255, 255, 0) 25%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 75%)", // custom animation
       },
     },
   },

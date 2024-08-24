@@ -13,11 +13,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { BellIcon } from "@radix-ui/react-icons";
 import { useMutation, useQuery } from "convex/react";
-import { useRouter } from "next/navigation";
 import { Fragment } from "react";
 
 export function Notifications() {
-  const router = useRouter();
   const invites = useQuery(api.invites.list);
   const acceptInvite = useMutation(api.invites.accept);
   const noInvites = (invites ?? []).length === 0;
@@ -53,7 +51,7 @@ export function Notifications() {
             </DropdownMenuItem>
             {i < invites.length - 1 ? <DropdownMenuSeparator /> : null}
           </Fragment>
-        )) ?? <Skeleton className="w-full h-10" />}
+        )) ?? <Skeleton className="w-8 h-8" />}
       </DropdownMenuContent>
     </DropdownMenu>
   );
