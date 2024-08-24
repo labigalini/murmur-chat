@@ -1,5 +1,5 @@
-import { internalMutation } from ".././functions";
-import { getPermission } from ".././permissions";
+import { internalMutation } from "./functions";
+import { getPermission } from "./permissions";
 
 export const init = internalMutation({
   args: {},
@@ -10,8 +10,8 @@ export const init = internalMutation({
     await ctx
       .table("permissions")
       .insertMany([
-        { name: "Manage Team" },
-        { name: "Delete Team" },
+        { name: "Manage Chat" },
+        { name: "Delete Chat" },
         { name: "Manage Members" },
         { name: "Read Members" },
         { name: "Contribute" },
@@ -21,8 +21,8 @@ export const init = internalMutation({
       name: "Admin",
       isDefault: false,
       permissions: [
-        await getPermission(ctx, "Manage Team"),
-        await getPermission(ctx, "Delete Team"),
+        await getPermission(ctx, "Manage Chat"),
+        await getPermission(ctx, "Delete Chat"),
         await getPermission(ctx, "Manage Members"),
         await getPermission(ctx, "Read Members"),
         await getPermission(ctx, "Contribute"),

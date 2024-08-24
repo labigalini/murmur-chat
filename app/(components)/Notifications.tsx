@@ -1,6 +1,6 @@
 "use client";
 
-import { handleFailure } from "@/app/handleFailure";
+import { handleFailure } from "@/app/(helpers)/handleFailure";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,8 +18,8 @@ import { Fragment } from "react";
 
 export function Notifications() {
   const router = useRouter();
-  const invites = useQuery(api.auth.invites.list);
-  const acceptInvite = useMutation(api.auth.invites.accept);
+  const invites = useQuery(api.invites.list);
+  const acceptInvite = useMutation(api.invites.accept);
   const noInvites = (invites ?? []).length === 0;
   return (
     <DropdownMenu>
@@ -40,15 +40,14 @@ export function Notifications() {
         {invites?.map((invite, i) => (
           <Fragment key={invite._id}>
             <DropdownMenuItem
-              onSelect={handleFailure(async () => {
-                const teamSlug = await acceptInvite({ inviteId: invite._id });
-                router.push(`/t/${teamSlug}`);
-              })}
+              onSelect={handleFailure(() =>
+                acceptInvite({ inviteId: invite._id }),
+              )}
             >
               <div>
                 <span className="font-medium">{invite.inviterEmail}</span> has
                 invited you to join{" "}
-                <span className="font-medium">{invite.team}</span>. Click to
+                <span className="font-medium">{invite.chat}</span>. Click to
                 accept.
               </div>
             </DropdownMenuItem>

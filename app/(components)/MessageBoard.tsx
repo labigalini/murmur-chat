@@ -1,26 +1,23 @@
-import { useCurrentTeam } from "@/app/t/[teamSlug]/hooks";
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import { useMutation, usePaginatedQuery } from "convex/react";
 import { useCallback, useRef, useState } from "react";
 
-export function MessageBoard() {
-  const team = useCurrentTeam();
+export function MessageBoard({ chatId }: { chatId: Id<"chats"> }) {
   const {
     results: messages,
     loadMore,
     status,
-  } = usePaginatedQuery(
-    api.team.messages.list,
-    team == null ? "skip" : { teamId: team._id },
-    { initialNumItems: 10 },
-  );
+  } = usePaginatedQuery(api.messages.list, { chatId }, { initialNumItems: 10 });
   const [message, setMessage] = useState("");
-  const sendMessage = useMutation(api.team.messages.create);
+  const sendMessage = useMutation(api.messages.create);
   const listRef = useRef<HTMLElement>(null);
   const handleScroll = useCallback(() => {
     if (listRef.current === null) {
@@ -41,7 +38,7 @@ export function MessageBoard() {
         className="flex gap-2"
         onSubmit={(event) => {
           event.preventDefault();
-          void sendMessage({ text: message, teamId: team!._id }).then(() => {
+          void sendMessage({ text: message, chatId }).then(() => {
             setMessage("");
           });
         }}

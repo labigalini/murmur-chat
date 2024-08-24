@@ -1,17 +1,17 @@
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
-import { mutation, query } from "../functions";
-import { viewerHasPermission, viewerWithPermissionX } from "../permissions";
+import { mutation, query } from "./functions";
+import { viewerHasPermission, viewerWithPermissionX } from "./permissions";
 
 export const list = query({
   args: {
-    teamId: v.id("teams"),
+    chatId: v.id("chats"),
     paginationOpts: paginationOptsValidator,
   },
-  handler: async (ctx, { teamId, paginationOpts }) => {
+  handler: async (ctx, { chatId, paginationOpts }) => {
     if (
       ctx.viewer === null ||
-      !(await viewerHasPermission(ctx, teamId, "Contribute"))
+      !(await viewerHasPermission(ctx, chatId, "Contribute"))
     ) {
       return {
         page: [],
@@ -20,8 +20,8 @@ export const list = query({
       };
     }
     return await ctx
-      .table("teams")
-      .getX(teamId)
+      .table("chats")
+      .getX(chatId)
       .edge("messages")
       .order("desc")
       .paginate(paginationOpts)
@@ -42,17 +42,17 @@ export const list = query({
 
 export const create = mutation({
   args: {
-    teamId: v.id("teams"),
+    chatId: v.id("chats"),
     text: v.string(),
   },
-  handler: async (ctx, { teamId, text }) => {
-    const member = await viewerWithPermissionX(ctx, teamId, "Contribute");
+  handler: async (ctx, { chatId, text }) => {
+    const member = await viewerWithPermissionX(ctx, chatId, "Contribute");
     if (text.trim().length === 0) {
       throw new Error("Message must not be empty");
     }
     await ctx.table("messages").insert({
       text,
-      teamId: teamId,
+      chatId: chatId,
       memberId: member._id,
     });
   },

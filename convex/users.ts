@@ -1,7 +1,4 @@
-import { internalMutation, mutation } from "../functions";
-import { getRole } from "../permissions";
-import { createMember } from "./members";
-import { defaultToAccessTeamSlug, getUniqueSlug } from "./teams";
+import { internalMutation, mutation } from "./functions";
 
 export const store = mutation({
   args: {},
@@ -11,16 +8,19 @@ export const store = mutation({
       throw new Error("Called api.auth.users.store without valid auth token");
     }
 
-    const existingUser = await ctx
+    let user = await ctx
       .table("users")
       .get("tokenIdentifier", identity.tokenIdentifier);
-    if (existingUser !== null) {
-      return defaultToAccessTeamSlug(existingUser);
+
+    if (user !== null) {
+      return user;
     }
+
     if (identity.email === undefined) {
       throw new Error("User does not have an email address");
     }
-    let user = await ctx.table("users").get("email", identity.email);
+
+    user = await ctx.table("users").get("email", identity.email);
     const nameFallback = emailUserName(identity.email);
     const userFields = {
       fullName: identity.name ?? nameFallback,
@@ -30,22 +30,14 @@ export const store = mutation({
       firstName: identity.givenName,
       lastName: identity.familyName,
     };
+
     if (user !== null) {
       await user.patch({ ...userFields, deletionTime: undefined });
     } else {
       user = await ctx.table("users").insert(userFields).get();
     }
-    const name = `${user.firstName ?? nameFallback}'s Team`;
-    const slug = await getUniqueSlug(ctx, identity.nickname ?? name);
-    const teamId = await ctx
-      .table("teams")
-      .insert({ name, slug, isPersonal: true });
-    await createMember(ctx, {
-      teamId,
-      user,
-      roleId: (await getRole(ctx, "Admin"))._id,
-    });
-    return slug;
+
+    return user;
   },
 });
 

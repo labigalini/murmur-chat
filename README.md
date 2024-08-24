@@ -1,16 +1,14 @@
-# SaaS Starter
+# Murmur Chat
 
-SaaS Starter template.
+Murmur is a private chat app where conversations are short-lived and secure.
 
 # Features
 
 Features provided out of the box:
 
 - Realtime database
-  - Team/organization management
-  - Configurable roles and permissions
-- Member invite emails
 - User sign-in and sign-up
+- ... ?
 
 # Stack
 

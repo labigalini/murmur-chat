@@ -1,26 +1,26 @@
+import { paginationOptsValidator } from "convex/server";
 import { ConvexError, v } from "convex/values";
-import { mutation, query } from "../functions";
+import { Id } from "./_generated/dataModel";
+import { mutation, query } from "./functions";
 import {
   getRole,
   viewerHasPermission,
   viewerHasPermissionX,
-} from "../permissions";
-import { Ent, MutationCtx, QueryCtx } from "../types";
-import { paginationOptsValidator } from "convex/server";
-import { emptyPage, normalizeStringForSearch } from "../utils";
-import { Id } from "../_generated/dataModel";
+} from "./permissions";
+import { Ent, MutationCtx, QueryCtx } from "./types";
+import { emptyPage, normalizeStringForSearch } from "./utils";
 
 export const viewerPermissions = query({
   args: {
-    teamId: v.optional(v.id("teams")),
+    chatId: v.optional(v.id("chats")),
   },
-  async handler(ctx, { teamId }) {
-    if (teamId === undefined || ctx.viewer === null) {
+  async handler(ctx, { chatId }) {
+    if (chatId === undefined || ctx.viewer === null) {
       return null;
     }
     return await ctx
-      .table("members", "teamUser", (q) =>
-        q.eq("teamId", teamId).eq("userId", ctx.viewerX()._id),
+      .table("members", "chatUser", (q) =>
+        q.eq("chatId", chatId).eq("userId", ctx.viewerX()._id),
       )
       .uniqueX()
       .edge("role")
@@ -31,26 +31,26 @@ export const viewerPermissions = query({
 
 export const list = query({
   args: {
-    teamId: v.id("teams"),
+    chatId: v.id("chats"),
     search: v.string(),
     paginationOpts: paginationOptsValidator,
   },
-  async handler(ctx, { teamId, search, paginationOpts }) {
+  async handler(ctx, { chatId, search, paginationOpts }) {
     if (
       ctx.viewer === null ||
-      !(await viewerHasPermission(ctx, teamId, "Read Members"))
+      !(await viewerHasPermission(ctx, chatId, "Read Members"))
     ) {
       return emptyPage();
     }
     const query =
       search === ""
-        ? ctx.table("teams").getX(teamId).edge("members")
+        ? ctx.table("chats").getX(chatId).edge("members")
         : ctx
             .table("members")
             .search("searchable", (q) =>
               q
                 .search("searchable", normalizeStringForSearch(search))
-                .eq("teamId", teamId),
+                .eq("chatId", chatId),
             );
     return await query
       .filter((q) => q.eq(q.field("deletionTime"), undefined))
@@ -79,7 +79,7 @@ export const update = mutation({
   },
   async handler(ctx, { memberId, roleId }) {
     const member = await ctx.table("members").getX(memberId);
-    await viewerHasPermissionX(ctx, member.teamId, "Manage Members");
+    await viewerHasPermissionX(ctx, member.chatId, "Manage Members");
     await checkAnotherAdminExists(ctx, member);
     await member.patch({ roleId });
   },
@@ -91,7 +91,7 @@ export const deleteMember = mutation({
   },
   async handler(ctx, { memberId }) {
     const member = await ctx.table("members").getX(memberId);
-    await viewerHasPermissionX(ctx, member.teamId, "Manage Members");
+    await viewerHasPermissionX(ctx, member.chatId, "Manage Members");
     await checkAnotherAdminExists(ctx, member);
     await ctx.table("members").getX(memberId).delete();
   },
@@ -100,8 +100,8 @@ export const deleteMember = mutation({
 async function checkAnotherAdminExists(ctx: QueryCtx, member: Ent<"members">) {
   const adminRole = await getRole(ctx, "Admin");
   const otherAdmin = await ctx
-    .table("teams")
-    .getX(member.teamId)
+    .table("chats")
+    .getX(member.chatId)
     .edge("members")
     .filter((q) =>
       q.and(
@@ -112,20 +112,20 @@ async function checkAnotherAdminExists(ctx: QueryCtx, member: Ent<"members">) {
     )
     .first();
   if (otherAdmin === null) {
-    throw new ConvexError("There must be at least one admin left on the team");
+    throw new ConvexError("There must be at least one admin left on the chat");
   }
 }
 
 export async function createMember(
   ctx: MutationCtx,
   {
-    teamId,
+    chatId,
     roleId,
     user,
-  }: { teamId: Id<"teams">; roleId: Id<"roles">; user: Ent<"users"> },
+  }: { chatId: Id<"chats">; roleId: Id<"roles">; user: Ent<"users"> },
 ) {
   return await ctx.table("members").insert({
-    teamId,
+    chatId,
     userId: user._id,
     roleId,
     searchable: normalizeStringForSearch(`${user.fullName} ${user.email}`),

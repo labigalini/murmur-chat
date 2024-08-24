@@ -1,13 +1,13 @@
 import { Infer, v } from "convex/values";
-import { MutationCtx, QueryCtx } from "./types";
 import { Id } from "./_generated/dataModel";
+import { MutationCtx, QueryCtx } from "./types";
 
 export const vPermission = v.union(
-  v.literal("Manage Team"),
-  v.literal("Delete Team"),
+  v.literal("Manage Chat"),
+  v.literal("Delete Chat"),
   v.literal("Read Members"),
   v.literal("Manage Members"),
-  v.literal("Contribute")
+  v.literal("Contribute"),
 );
 export type Permission = Infer<typeof vPermission>;
 
@@ -24,12 +24,12 @@ export async function getRole(ctx: QueryCtx, name: Role) {
 
 export async function viewerWithPermission(
   ctx: QueryCtx,
-  teamId: Id<"teams">,
-  name: Permission
+  chatId: Id<"chats">,
+  name: Permission,
 ) {
   const member = await ctx
-    .table("members", "teamUser", (q) =>
-      q.eq("teamId", teamId).eq("userId", ctx.viewerX()._id)
+    .table("members", "chatUser", (q) =>
+      q.eq("chatId", chatId).eq("userId", ctx.viewerX()._id),
     )
     .unique();
   if (
@@ -47,19 +47,19 @@ export async function viewerWithPermission(
 
 export async function viewerHasPermission(
   ctx: QueryCtx,
-  teamId: Id<"teams">,
-  name: Permission
+  chatId: Id<"chats">,
+  name: Permission,
 ) {
-  const member = await viewerWithPermission(ctx, teamId, name);
+  const member = await viewerWithPermission(ctx, chatId, name);
   return member !== null;
 }
 
 export async function viewerWithPermissionX(
   ctx: MutationCtx,
-  teamId: Id<"teams">,
-  name: Permission
+  chatId: Id<"chats">,
+  name: Permission,
 ) {
-  const member = await viewerWithPermission(ctx, teamId, name);
+  const member = await viewerWithPermission(ctx, chatId, name);
   if (member === null) {
     throw new Error(`Viewer does not have the permission "${name}"`);
   }
@@ -68,9 +68,9 @@ export async function viewerWithPermissionX(
 
 export async function viewerHasPermissionX(
   ctx: MutationCtx,
-  teamId: Id<"teams">,
-  name: Permission
+  chatId: Id<"chats">,
+  name: Permission,
 ) {
-  await viewerWithPermissionX(ctx, teamId, name);
+  await viewerWithPermissionX(ctx, chatId, name);
   return true;
 }

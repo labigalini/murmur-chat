@@ -2,20 +2,18 @@ import { defineEnt, defineEntSchema, getEntDefinitions } from "convex-ents";
 import { v } from "convex/values";
 import { vPermission, vRole } from "./permissions";
 
-// Example: 7 day soft deletion period for teams
-const TEAM_DELETION_DELAY_MS = 7 * 24 * 60 * 60 * 1000;
+// Example: 7 day soft deletion period for chats
+const CHAT_DELETION_DELAY_MS = 7 * 24 * 60 * 60 * 1000;
 
 const schema = defineEntSchema(
   {
-    teams: defineEnt({
+    chats: defineEnt({
       name: v.string(),
-      isPersonal: v.boolean(),
     })
-      .field("slug", v.string(), { unique: true })
       .edges("messages", { ref: true })
       .edges("members", { ref: true })
       .edges("invites", { ref: true })
-      .deletion("scheduled", { delayMs: TEAM_DELETION_DELAY_MS }),
+      .deletion("scheduled", { delayMs: CHAT_DELETION_DELAY_MS }),
 
     users: defineEnt({
       firstName: v.optional(v.string()),
@@ -31,13 +29,13 @@ const schema = defineEntSchema(
     members: defineEnt({
       searchable: v.string(),
     })
-      .edge("team")
+      .edge("chat")
       .edge("user")
       .edge("role")
-      .index("teamUser", ["teamId", "userId"])
+      .index("chatUser", ["chatId", "userId"])
       .searchIndex("searchable", {
         searchField: "searchable",
-        filterFields: ["teamId"],
+        filterFields: ["chatId"],
       })
       .edges("messages", { ref: true })
       .deletion("soft"),
@@ -46,7 +44,7 @@ const schema = defineEntSchema(
       inviterEmail: v.string(),
     })
       .field("email", v.string(), { unique: true })
-      .edge("team")
+      .edge("chat")
       .edge("role"),
 
     roles: defineEnt({
@@ -64,8 +62,9 @@ const schema = defineEntSchema(
     messages: defineEnt({
       text: v.string(),
     })
-      .edge("team")
+      .edge("chat")
       .edge("member"),
+
     as: defineEnt({ ["b"]: v.any() }).index("b", ["b"]),
   },
   { schemaValidation: false },

@@ -1,6 +1,6 @@
 import { v } from "convex/values";
-import { mutation, query } from "../functions";
-import { Ent, QueryCtx } from "../types";
+import { mutation, query } from "./functions";
+import { Ent, QueryCtx } from "./types";
 import { createMember } from "./members";
 
 export const list = query({
@@ -15,7 +15,7 @@ export const list = query({
         _id: invite._id,
         email: invite.email,
         inviterEmail: invite.inviterEmail,
-        team: (await invite.edge("team")).name,
+        chat: (await invite.edge("chat")).name,
         role: (await invite.edge("role")).name,
       }));
   },
@@ -35,7 +35,7 @@ export const get = query({
       _id: invite._id,
       email: invite.email,
       inviterEmail: invite.inviterEmail,
-      team: (await invite.edge("team")).name,
+      chat: (await invite.edge("chat")).name,
       role: (await invite.edge("role")).name,
     };
   },
@@ -49,8 +49,8 @@ export const accept = mutation({
     const invite = await ctx.table("invites").getX(inviteId);
     checkViewerWasInvited(ctx, invite);
     const existingMember = await ctx
-      .table("members", "teamUser", (q) =>
-        q.eq("teamId", invite.teamId).eq("userId", ctx.viewerX()._id),
+      .table("members", "chatUser", (q) =>
+        q.eq("chatId", invite.chatId).eq("userId", ctx.viewerX()._id),
       )
       .unique();
     if (existingMember !== null) {
@@ -60,13 +60,13 @@ export const accept = mutation({
       });
     } else {
       await createMember(ctx, {
-        teamId: invite.teamId,
+        chatId: invite.chatId,
         roleId: invite.roleId,
         user: ctx.viewerX(),
       });
     }
     await invite.delete();
-    return (await invite.edge("team")).slug;
+    return (await invite.edge("chat")).slug;
   },
 });
 

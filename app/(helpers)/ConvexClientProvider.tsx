@@ -31,7 +31,7 @@ export function ConvexClientProvider({ children }: { children: ReactNode }) {
 
 function StoreUserInDatabase() {
   const { user } = useUser();
-  const storeUser = useMutation(api.auth.users.store);
+  const storeUser = useMutation(api.users.store);
   useEffect(() => {
     void storeUser();
   }, [storeUser, user?.id]);
