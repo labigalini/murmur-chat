@@ -1,12 +1,13 @@
-"use client";
-
-import ChatBoard from "./(components)/ChatBoard";
+import { ChatLayout } from "@/components/chat/chat-layout";
+import { cookies } from "next/headers";
 
 export default function Home() {
+  const layout = cookies().get("react-resizable-panels:layout");
+  const defaultLayout = layout ? JSON.parse(layout.value) : undefined;
+
   return (
-    <main className="container">
-      <h1 className="text-4xl font-extrabold my-8">My Murmur Chats</h1>
-      <ChatBoard />
+    <main className="w-full h-full">
+      <ChatLayout defaultLayout={defaultLayout} />
     </main>
   );
 }

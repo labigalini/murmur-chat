@@ -1,10 +1,9 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-  ],
+import type { Config } from "tailwindcss";
+
+const config = {
+  darkMode: ["class"],
+  content: ["./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}"],
+  prefix: "",
   theme: {
     container: {
       center: true,
@@ -56,20 +55,12 @@ module.exports = {
       },
       keyframes: {
         "accordion-down": {
-          from: { height: 0 },
+          from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: 0 },
-        },
-        "fade-in": {
-          "0%": {
-            opacity: 0.3,
-          },
-          "100%": {
-            opacity: 1,
-          },
+          to: { height: "0" },
         },
       },
       animation: {
@@ -79,4 +70,6 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-};
+} satisfies Config;
+
+export default config;

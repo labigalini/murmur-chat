@@ -1,12 +1,14 @@
-import { Notifications } from "@/app/(components)/Notifications";
-import { ProfileButton } from "@/app/(components)/ProfileButton";
 import { ConvexClientProvider } from "@/app/(helpers)/ConvexClientProvider";
-import { StickyHeader } from "@/components/layout/sticky-header";
-import { Toaster } from "@/components/ui/toaster";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Suspense } from "react";
+import Link from "next/link";
 import "./globals.css";
+import { Notifications } from "./(components)/Notifications";
+import { ProfileButton } from "./(components)/ProfileButton";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,29 +21,57 @@ export const metadata: Metadata = {
   // keywords
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: 1,
+};
+
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Suspense>
-          <ConvexClientProvider>
-            <StickyHeader className="px-4 py-2 flex flex-col gap-2">
-              <div className="flex justify-between items-center">
-                <div>Murmur Chat</div>
-                <div className="flex items-center gap-4">
-                  <Notifications />
-                  <ProfileButton />
-                </div>
+        <ConvexClientProvider>
+          <div className="flex h-[calc(100dvh)] flex-col items-center justify-center p-4 md:px-24 py-32 gap-4">
+            <div className="flex justify-between max-w-5xl w-full items-center">
+              <Link href="#" className="text-4xl font-bold text-gradient">
+                shadcn-chat
+              </Link>
+              <div>
+                <Notifications />
+                <Link
+                  href="https://github.com/labigalini/murmur-chat"
+                  className={cn(
+                    buttonVariants({ variant: "ghost", size: "icon" }),
+                    "h-10 w-10",
+                  )}
+                >
+                  <GitHubLogoIcon className="w-7 h-7 text-muted-foreground" />
+                </Link>
+                <ProfileButton />
               </div>
-            </StickyHeader>
-            {children}
-            <Toaster />
-          </ConvexClientProvider>
-        </Suspense>
+            </div>
+
+            <div className="z-10 border rounded-lg max-w-5xl w-full h-full text-sm lg:flex">
+              {children}
+            </div>
+
+            <div className="flex justify-end max-w-5xl w-full items-start text-xs md:text-sm text-muted-foreground ">
+              <p className="max-w-[150px] sm:max-w-lg">
+                by{" "}
+                <a className="font-semibold" href="https://spiteful.io/">
+                  spiteful.io
+                </a>
+              </p>
+            </div>
+          </div>
+          <Toaster />
+        </ConvexClientProvider>
       </body>
     </html>
   );
