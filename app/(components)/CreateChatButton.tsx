@@ -24,6 +24,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { useState } from "react";
 
 const FormSchema = z.object({
   name: z.string().min(4, "Team name must be at least 4 characters long."),
@@ -32,7 +33,10 @@ const FormSchema = z.object({
 });
 
 export function CreateChatButton() {
+  const [open, setOpen] = useState(false);
+
   const createChat = useMutation(api.chats.create);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -40,21 +44,21 @@ export function CreateChatButton() {
     },
   });
 
+  const handleSubmit = handleFailure(
+    form.handleSubmit(async ({ name }) => {
+      await createChat({ name });
+      setOpen(false);
+    }),
+  );
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">Create New Chat</Button>
       </DialogTrigger>
       <DialogContent>
         <Form {...form}>
-          <form
-            className="flex flex-col gap-4"
-            onSubmit={handleFailure(
-              form.handleSubmit(async ({ name }) => {
-                await createChat({ name });
-              }),
-            )}
-          >
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <DialogHeader>
               <DialogTitle>Create chat</DialogTitle>
               <DialogDescription>Create a new chat.</DialogDescription>

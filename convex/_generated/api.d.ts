@@ -21,6 +21,7 @@ import type * as members from "../members.js";
 import type * as messages from "../messages.js";
 import type * as migration from "../migration.js";
 import type * as permissions from "../permissions.js";
+import type * as suspense from "../suspense.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
 import type * as utils from "../utils.js";
@@ -41,6 +42,7 @@ declare const fullApi: ApiFromModules<{
   messages: typeof messages;
   migration: typeof migration;
   permissions: typeof permissions;
+  suspense: typeof suspense;
   types: typeof types;
   users: typeof users;
   utils: typeof utils;

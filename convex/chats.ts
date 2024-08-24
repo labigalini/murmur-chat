@@ -9,13 +9,16 @@ export const list = query({
     if (ctx.viewer === null) {
       return null;
     }
-    return await ctx.viewer.edge("members").map(async (member) => {
-      const chat = await member.edge("chat");
-      return {
-        _id: chat._id,
-        name: chat.name,
-      };
-    });
+    return await ctx.viewer
+      .edge("members")
+      .order("desc")
+      .map(async (member) => {
+        const chat = await member.edge("chat");
+        return {
+          _id: chat._id,
+          name: chat.name,
+        };
+      });
   },
 });
 

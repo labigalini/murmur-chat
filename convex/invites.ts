@@ -66,7 +66,7 @@ export const accept = mutation({
       });
     }
     await invite.delete();
-    return (await invite.edge("chat")).slug;
+    return (await invite.edge("chat"))._id;
   },
 });
 
