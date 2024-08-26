@@ -55,8 +55,9 @@ export function SignInForm() {
               });
             }}
           >
-            <label htmlFor="code">Code</label>
-            <CodeInput />
+            <div className="my-4">
+              <CodeInput />
+            </div>
             <input name="email" value={step.email} type="hidden" />
             <Button type="submit" disabled={submitting}>
               Continue

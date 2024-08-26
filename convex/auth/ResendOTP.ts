@@ -12,7 +12,7 @@ export const ResendOTP = Email({
   async sendVerificationRequest({ identifier: email, provider, token }) {
     const resend = new ResendAPI(provider.apiKey);
     const { error } = await resend.emails.send({
-      from: "My App <onboarding@spiteful.io>",
+      from: process.env.AUTH_EMAIL ?? "My App <onboarding@resend.dev>",
       to: [email],
       subject: `Sign in to My App`,
       text: "Your code is " + token,

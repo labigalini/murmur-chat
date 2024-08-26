@@ -3,12 +3,7 @@
 import { SignInForm } from "@/components/auth/SignInForm";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { api } from "@/convex/_generated/api";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { Authenticated, Unauthenticated, useQuery } from "convex/react";
@@ -35,6 +30,7 @@ export function ProfileButton() {
       </Unauthenticated>
 
       <DialogContent>
+        <DialogTitle />
         <SignInForm />
       </DialogContent>
     </Dialog>
