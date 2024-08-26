@@ -18,7 +18,7 @@ export const ResendOTP = Email({
       text: "Your code is " + token,
     });
     if (error) {
-      throw new Error("Could not send");
+      throw new Error("Failed to send OTP email.");
     }
   },
 });
