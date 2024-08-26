@@ -7,6 +7,7 @@ import { Notifications } from "./(components)/Notifications";
 import { ProfileButton } from "./(components)/ProfileButton";
 
 import "./globals.css";
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,33 +35,35 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ConvexClientProvider>
-          <div className="flex h-[calc(100dvh)] flex-col items-center justify-center p-4 md:px-24 py-32 gap-4">
-            <div className="flex justify-between max-w-5xl w-full items-center">
-              <Link href="#" className="text-4xl font-bold text-gradient">
-                murmur-chat
-              </Link>
-              <div className="flex justify-end gap-4">
-                <Notifications />
-                <ProfileButton />
+        <ThemeProvider attribute="class">
+          <ConvexClientProvider>
+            <div className="flex h-[calc(100dvh)] flex-col items-center justify-center p-4 md:px-24 py-32 gap-4">
+              <div className="flex justify-between max-w-5xl w-full items-center">
+                <Link href="#" className="text-4xl font-bold text-gradient">
+                  murmur-chat
+                </Link>
+                <div className="flex justify-end gap-4">
+                  <Notifications />
+                  <ProfileButton />
+                </div>
+              </div>
+
+              <div className="z-10 border rounded-lg max-w-5xl w-full h-full text-sm lg:flex">
+                {children}
+              </div>
+
+              <div className="flex justify-end max-w-5xl w-full items-start text-xs md:text-sm text-muted-foreground ">
+                <p className="max-w-[150px] sm:max-w-lg">
+                  by{" "}
+                  <a className="font-semibold" href="https://spiteful.io/">
+                    spiteful.io
+                  </a>
+                </p>
               </div>
             </div>
-
-            <div className="z-10 border rounded-lg max-w-5xl w-full h-full text-sm lg:flex">
-              {children}
-            </div>
-
-            <div className="flex justify-end max-w-5xl w-full items-start text-xs md:text-sm text-muted-foreground ">
-              <p className="max-w-[150px] sm:max-w-lg">
-                by{" "}
-                <a className="font-semibold" href="https://spiteful.io/">
-                  spiteful.io
-                </a>
-              </p>
-            </div>
-          </div>
-          <Toaster />
-        </ConvexClientProvider>
+            <Toaster />
+          </ConvexClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
