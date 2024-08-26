@@ -12,9 +12,8 @@ Features provided out of the box:
 
 # Stack
 
-- 🧩 **Convex**: A complete, reactive, typesafe backend with database and file storage.
+- 🧩 **Convex**: Reactive typesafe backend with auth, database and file storage.
 - 🛍️ **Stripe**: Subscription Plans, Customer Portal, and more.
-- 🔑 **Clerk**: Email and Social Logins.
 - 🎨 **TailwindCSS**: Utility-First CSS Framework.
 - 📐 **ShadCN**: Composable React components.
 - 🌙 **Easy Theming**: Switch between Light and Dark modes with ease.
@@ -44,16 +43,6 @@ npm run dev
 ```
 
 # Environment
-
-## Clerk
-
-1. You will be asked to set up `CLERK_JWT_ISSUER_DOMAIN`, Follow steps **1** to **3** in
-   the
-   [Convex Clerk onboarding guide](https://docs.convex.dev/auth/clerk#get-started)
-2. Then Follow step **3** from the
-   [Clerk Next.js quickstart](https://clerk.com/docs/quickstarts/nextjs#set-environment-keys),
-   setting up both `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` in
-   your `.env.local` file
 
 ## Email
 

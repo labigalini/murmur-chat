@@ -26,7 +26,7 @@ export function Notifications() {
           disabled={noInvites}
           variant="secondary"
           size="icon"
-          className="rounded-full relative w-8 h-8"
+          className="rounded-full relative w-9 h-9"
         >
           <BellIcon className="w-4 h-4" />
           {(invites ?? []).length > 0 ? (
@@ -51,7 +51,7 @@ export function Notifications() {
             </DropdownMenuItem>
             {i < invites.length - 1 ? <DropdownMenuSeparator /> : null}
           </Fragment>
-        )) ?? <Skeleton className="w-8 h-8" />}
+        )) ?? <Skeleton className="w-9 h-9" />}
       </DropdownMenuContent>
     </DropdownMenu>
   );

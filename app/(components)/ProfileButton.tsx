@@ -1,32 +1,42 @@
 "use client";
 
-import { ErrorBoundary } from "@/app/(helpers)/ErrorBoundary";
+import { SignInForm } from "@/components/auth/SignInForm";
+import { UserMenu } from "@/components/auth/UserMenu";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { SignInButton, SignUpButton, UserButton } from "@clerk/clerk-react";
-import { ClerkLoading, SignedIn, SignedOut } from "@clerk/nextjs";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { api } from "@/convex/_generated/api";
+import { DialogTitle } from "@radix-ui/react-dialog";
+import { Authenticated, Unauthenticated, useQuery } from "convex/react";
+import { useState } from "react";
 
 export function ProfileButton() {
+  const user = useQuery(api.users.viewer);
+  const [open, setOpen] = useState(false);
+
+  // const handleSubmit = () => setOpen(false);
+
   return (
-    <ErrorBoundary>
-      <ClerkLoading>
-        <Skeleton className="rounded-full w-8 h-8" />
-      </ClerkLoading>
-      <SignedIn>
-        <div className="w-8 h-8">
-          <UserButton afterSignOutUrl="/" />
-        </div>
-      </SignedIn>
-      <SignedOut>
-        <div className="flex gap-4 animate-[fade-in_0.2s]">
-          <SignInButton mode="modal">
-            <Button variant="ghost">Sign in</Button>
-          </SignInButton>
-          <SignUpButton mode="modal">
-            <Button>Sign up</Button>
-          </SignUpButton>
-        </div>
-      </SignedOut>
-    </ErrorBoundary>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <Authenticated>
+        <UserMenu
+          name={user?.name ?? user?.email ?? user?.phone ?? "Anonymous"}
+          avatar={undefined}
+        />
+      </Authenticated>
+      <Unauthenticated>
+        <DialogTrigger asChild>
+          <Button>Sign In</Button>
+        </DialogTrigger>
+      </Unauthenticated>
+
+      <DialogContent>
+        <SignInForm />
+      </DialogContent>
+    </Dialog>
   );
 }

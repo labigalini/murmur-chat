@@ -1,4 +1,11 @@
-import { defineEnt, defineEntSchema, getEntDefinitions } from "convex-ents";
+import { authTables } from "@convex-dev/auth/server";
+import {
+  defineEnt,
+  defineEntFromTable,
+  defineEntSchema,
+  defineEntsFromTables,
+  getEntDefinitions,
+} from "convex-ents";
 import { v } from "convex/values";
 import { vPermission, vRole } from "./permissions";
 
@@ -7,6 +14,14 @@ const CHAT_DELETION_DELAY_MS = 7 * 24 * 60 * 60 * 1000;
 
 const schema = defineEntSchema(
   {
+    ...defineEntsFromTables(authTables),
+
+    users: defineEntFromTable(authTables.users) // override to add edges
+      .edges("members", {
+        ref: true,
+        deletion: "soft",
+      }),
+
     chats: defineEnt({
       name: v.string(),
     })
@@ -14,17 +29,6 @@ const schema = defineEntSchema(
       .edges("members", { ref: true })
       .edges("invites", { ref: true })
       .deletion("scheduled", { delayMs: CHAT_DELETION_DELAY_MS }),
-
-    users: defineEnt({
-      firstName: v.optional(v.string()),
-      lastName: v.optional(v.string()),
-      fullName: v.string(),
-      pictureUrl: v.optional(v.string()),
-    })
-      .field("email", v.string(), { unique: true })
-      .field("tokenIdentifier", v.string(), { unique: true })
-      .edges("members", { ref: true, deletion: "soft" })
-      .deletion("soft"),
 
     members: defineEnt({
       searchable: v.string(),
@@ -64,8 +68,6 @@ const schema = defineEntSchema(
     })
       .edge("chat")
       .edge("member"),
-
-    as: defineEnt({ ["b"]: v.any() }).index("b", ["b"]),
   },
   { schemaValidation: false },
 );

@@ -59,13 +59,10 @@ export const list = query({
         const user = await member.edge("user");
         return {
           _id: member._id,
-          fullName: user.fullName,
+          name: user.name,
           email: user.email,
-          pictureUrl: user.pictureUrl,
-          initials:
-            user.firstName === undefined || user.lastName === undefined
-              ? user.fullName[0]
-              : user.firstName[0] + user.lastName[0],
+          image: user.image,
+          initials: user.name?.[0],
           roleId: member.roleId,
         };
       });
@@ -128,6 +125,6 @@ export async function createMember(
     chatId,
     userId: user._id,
     roleId,
-    searchable: normalizeStringForSearch(`${user.fullName} ${user.email}`),
+    searchable: normalizeStringForSearch(`${user.name} ${user.email}`),
   });
 }

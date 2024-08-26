@@ -9,8 +9,12 @@ export const list = query({
     if (ctx.viewer === null) {
       return null;
     }
+    const email = ctx.viewerX().email;
+    if (email == null) {
+      return null;
+    }
     return await ctx
-      .table("invites", "email", (q) => q.eq("email", ctx.viewerX().email))
+      .table("invites", "email", (q) => q.eq("email", email))
       .map(async (invite) => ({
         _id: invite._id,
         email: invite.email,

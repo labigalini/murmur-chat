@@ -32,8 +32,8 @@ export const list = query({
           _id: message._id,
           _creationTime: message._creationTime,
           text: message.text,
-          author: user.firstName ?? user.fullName,
-          authorPictureUrl: user.pictureUrl,
+          author: user.name,
+          authorImage: user.image,
           isAuthorDeleted: member.deletionTime !== undefined,
         };
       });

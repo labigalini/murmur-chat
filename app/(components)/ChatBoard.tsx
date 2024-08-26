@@ -93,7 +93,7 @@ function MessageBoard() {
               <div className="flex">
                 {/*eslint-disable-next-line @next/next/no-img-element*/}
                 <img
-                  src={message.authorPictureUrl}
+                  src={message.authorImage}
                   alt="avatar"
                   className={cn(
                     "rounded-full inline-block mr-2 mt-[0.1875rem] w-8 h-8",

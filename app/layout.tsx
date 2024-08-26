@@ -1,14 +1,12 @@
 import { ConvexClientProvider } from "@/app/(helpers)/ConvexClientProvider";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
-import "./globals.css";
 import { Notifications } from "./(components)/Notifications";
 import { ProfileButton } from "./(components)/ProfileButton";
-import { Toaster } from "@/components/ui/toaster";
+
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -42,7 +40,7 @@ export default function RootLayout({
               <Link href="#" className="text-4xl font-bold text-gradient">
                 murmur-chat
               </Link>
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-4">
                 <Notifications />
                 <ProfileButton />
               </div>
