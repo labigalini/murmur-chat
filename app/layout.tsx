@@ -1,4 +1,4 @@
-import { ConvexClientProvider } from "@/app/(helpers)/ConvexClientProvider";
+import { ConvexClientProvider } from "@/app/(context)/ConvexClientProvider";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Notifications } from "./(components)/Notifications";
 import { ProfileButton } from "./(components)/ProfileButton";
 
-import "./globals.css";
+import "@/styles/globals.css";
 import { ThemeProvider } from "next-themes";
 
 const inter = Inter({ subsets: ["latin"] });

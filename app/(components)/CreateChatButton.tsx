@@ -1,13 +1,14 @@
 "use client";
 
-import { handleFailure } from "@/app/(helpers)/handleFailure";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -18,13 +19,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
+import { handleFailure } from "@/lib/handleFailure";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "convex/react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { useState } from "react";
 
 const FormSchema = z.object({
   name: z.string().min(4, "Team name must be at least 4 characters long."),

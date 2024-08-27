@@ -1,4 +1,4 @@
-import { AppleLogo } from "@/components/images/AppleLogo";
+import { AppleLogo } from "@/components/logos/AppleLogo";
 import { Button } from "@/components/ui/button";
 import { useAuthActions } from "@convex-dev/auth/react";
 
