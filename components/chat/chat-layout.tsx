@@ -6,24 +6,31 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { cn } from "@/lib/utils";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Chat } from "./chat";
-import { userData } from "./chat-data";
+import { ChatData } from "./chat-data";
 import { Sidebar } from "./chat-sidebar";
 
 interface ChatLayoutProps {
+  chatData: ChatData[];
+  selectedChat?: ChatData;
   defaultLayout?: number[];
   defaultCollapsed?: boolean;
   navCollapsedSize?: number;
+  handlers: {
+    onCreateChat: () => void;
+  };
 }
 
 export function ChatLayout({
+  chatData = [],
+  selectedChat,
   defaultLayout = [320, 480],
   defaultCollapsed = false,
   navCollapsedSize = 8,
+  handlers,
 }: ChatLayoutProps) {
-  const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
-  const [selectedUser, _setSelectedUser] = React.useState(userData[0]);
+  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -78,22 +85,23 @@ export function ChatLayout({
       >
         <Sidebar
           isCollapsed={isCollapsed || isMobile}
-          links={userData.map((user) => ({
-            name: user.name,
-            messages: user.messages ?? [],
-            avatar: user.avatar,
-            variant: selectedUser.name === user.name ? "grey" : "ghost",
+          links={chatData.map((chat) => ({
+            name: chat.name,
+            messages: chat.messages ?? [],
+            avatar: chat.avatar,
+            variant: selectedChat?.id === chat.id ? "grey" : "ghost",
           }))}
           isMobile={isMobile}
+          onCreateChat={handlers.onCreateChat}
         />
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
-        <Chat
-          messages={selectedUser.messages}
-          selectedUser={selectedUser}
-          isMobile={isMobile}
-        />
+        {selectedChat ? (
+          <Chat data={selectedChat} isMobile={isMobile} />
+        ) : (
+          <>No Chat Selected</>
+        )}
       </ResizablePanel>
     </ResizablePanelGroup>
   );

@@ -1,6 +1,6 @@
-export const userData = [
+export const fakeChatData: ChatData[] = [
   {
-    id: 1,
+    id: "1",
     messages: [
       {
         id: 1,
@@ -61,23 +61,29 @@ export const userData = [
     name: "Jane Doe",
   },
   {
-    id: 2,
+    id: "2",
     avatar: "/User2.png",
     name: "John Doe",
   },
   {
-    id: 3,
+    id: "3",
     avatar: "/User3.png",
     name: "Elizabeth Smith",
   },
   {
-    id: 4,
+    id: "4",
     avatar: "/User4.png",
     name: "John Smith",
   },
 ];
 
-export type UserData = (typeof userData)[number];
+export type ChatData = {
+  id: string;
+  name: string;
+  avatar?: string;
+  lastMessageTime?: Date;
+  messages?: Message[];
+};
 
 export const loggedInUserData = {
   id: 5,

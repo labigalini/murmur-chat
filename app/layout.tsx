@@ -28,9 +28,11 @@ export const viewport = {
 };
 
 export default function RootLayout({
-  children,
+  // children,
+  chat,
 }: Readonly<{
-  children: React.ReactNode;
+  // children: React.ReactNode;
+  chat: React.ReactNode;
 }>) {
   return (
     <html lang="en">
@@ -49,7 +51,12 @@ export default function RootLayout({
               </div>
 
               <div className="z-10 border rounded-lg max-w-5xl w-full h-full text-sm lg:flex">
-                {children}
+                <main className="w-full h-full">
+                  {chat}
+                  {
+                    //children
+                  }
+                </main>
               </div>
 
               <div className="flex justify-end max-w-5xl w-full items-start text-xs md:text-sm text-muted-foreground ">

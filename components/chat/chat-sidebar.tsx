@@ -21,11 +21,11 @@ interface SidebarProps {
     avatar?: string;
     variant: "grey" | "ghost";
   }[];
-  onClick?: () => void;
   isMobile: boolean;
+  onCreateChat: () => void;
 }
 
-export function Sidebar({ links, isCollapsed }: SidebarProps) {
+export function Sidebar({ isCollapsed, links, onCreateChat }: SidebarProps) {
   return (
     <div
       data-collapsed={isCollapsed}
@@ -51,6 +51,7 @@ export function Sidebar({ links, isCollapsed }: SidebarProps) {
 
             <Link
               href="#"
+              onClick={onCreateChat}
               className={cn(
                 buttonVariants({ variant: "ghost", size: "icon" }),
                 "h-9 w-9",

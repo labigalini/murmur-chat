@@ -8,7 +8,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -21,20 +20,23 @@ import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
 import { handleFailure } from "@/lib/handleFailure";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DialogProps } from "@radix-ui/react-dialog";
 import { useMutation } from "convex/react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 const FormSchema = z.object({
   name: z.string().min(4, "Team name must be at least 4 characters long."),
-  // TODO if you want plans:
-  // plan: z.enum(["free", "pro"]),
 });
 
-export function CreateChatButton() {
-  const [open, setOpen] = useState(false);
+type CreateChatDialogProps = Required<
+  Pick<DialogProps, "open" | "onOpenChange">
+>;
 
+export function CreateChatDialog({
+  open,
+  onOpenChange,
+}: CreateChatDialogProps) {
   const createChat = useMutation(api.chats.create);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -47,15 +49,12 @@ export function CreateChatButton() {
   const handleSubmit = handleFailure(
     form.handleSubmit(async ({ name }) => {
       await createChat({ name });
-      setOpen(false);
+      onOpenChange(false);
     }),
   );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Create New Chat</Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <Form {...form}>
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>

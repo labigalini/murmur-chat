@@ -9,7 +9,6 @@ import { useSuspenseQuery } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { useMutation, usePaginatedQuery } from "convex/react";
 import { Suspense, useCallback, useMemo, useRef, useState } from "react";
-import { CreateChatButton } from "./CreateChatButton";
 
 const FULL_DATE_TIME_FORMAT = new Intl.DateTimeFormat(undefined, {
   timeStyle: "short",
@@ -71,7 +70,7 @@ function MessageBoard() {
         className="flex gap-2"
         onSubmit={(event) => {
           event.preventDefault();
-          void sendMessage({ text: message, chatId: chatId! }).then(() => {
+          void sendMessage({ text: message, chatId: chatId }).then(() => {
             setMessage("");
           });
         }}
@@ -136,7 +135,6 @@ function MessageBoard() {
 export default function ChatBoard() {
   return (
     <div className="max-w-xl flex flex-col gap-2 mt-8">
-      <CreateChatButton />
       <Suspense fallback={<Loading />}>
         <MessageBoard />
       </Suspense>

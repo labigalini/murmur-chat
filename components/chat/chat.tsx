@@ -1,17 +1,16 @@
 import React from "react";
-import { Message, UserData } from "./chat-data";
+import { Message, ChatData } from "./chat-data";
 import { ChatList } from "./chat-list";
 import ChatTopbar from "./chat-topbar";
 
 interface ChatProps {
-  messages?: Message[];
-  selectedUser: UserData;
+  data: ChatData;
   isMobile: boolean;
 }
 
-export function Chat({ messages, selectedUser, isMobile }: ChatProps) {
+export function Chat({ data, isMobile }: ChatProps) {
   const [messagesState, setMessages] = React.useState<Message[]>(
-    messages ?? [],
+    data.messages ?? [],
   );
 
   const sendMessage = (newMessage: Message) => {
@@ -20,11 +19,11 @@ export function Chat({ messages, selectedUser, isMobile }: ChatProps) {
 
   return (
     <div className="flex flex-col justify-between w-full h-full">
-      <ChatTopbar selectedUser={selectedUser} />
+      <ChatTopbar name={data.name} avatar={data.avatar} />
 
       <ChatList
         messages={messagesState}
-        selectedUser={selectedUser}
+        selectedChat={data}
         sendMessage={sendMessage}
         isMobile={isMobile}
       />

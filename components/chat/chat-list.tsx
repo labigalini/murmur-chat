@@ -3,18 +3,18 @@ import { AnimatePresence, motion } from "framer-motion";
 import React, { useRef } from "react";
 import ChatAvatar from "./chat-avatar";
 import ChatBottombar from "./chat-bottombar";
-import { Message, UserData } from "./chat-data";
+import { ChatData, Message } from "./chat-data";
 
 interface ChatListProps {
   messages?: Message[];
-  selectedUser: UserData;
+  selectedChat: Pick<ChatData, "name">;
   sendMessage: (newMessage: Message) => void;
   isMobile: boolean;
 }
 
 export function ChatList({
   messages,
-  selectedUser,
+  selectedChat,
   sendMessage,
   isMobile,
 }: ChatListProps) {
@@ -55,19 +55,19 @@ export function ChatList({
               }}
               className={cn(
                 "flex flex-col gap-2 p-4 whitespace-pre-wrap",
-                message.name !== selectedUser.name
+                message.name !== selectedChat.name
                   ? "items-end"
                   : "items-start",
               )}
             >
               <div className="flex gap-3 items-center">
-                {message.name === selectedUser.name && (
+                {message.name === selectedChat.name && (
                   <ChatAvatar name={message.name} avatar={message.avatar} />
                 )}
                 <span className=" bg-accent p-3 rounded-md max-w-xs">
                   {message.message}
                 </span>
-                {message.name !== selectedUser.name && (
+                {message.name !== selectedChat.name && (
                   <ChatAvatar name={message.name} avatar={message.avatar} />
                 )}
               </div>

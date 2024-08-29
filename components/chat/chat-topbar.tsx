@@ -3,21 +3,19 @@ import { Info, Phone, Video } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 import ChatAvatar from "./chat-avatar";
-import { UserData } from "./chat-data";
+import { ChatData } from "./chat-data";
 
-interface ChatTopbarProps {
-  selectedUser: UserData;
-}
+type ChatTopbarProps = Pick<ChatData, "name" | "avatar">;
 
 export const TopbarIcons = [{ icon: Phone }, { icon: Video }, { icon: Info }];
 
-export default function ChatTopbar({ selectedUser }: ChatTopbarProps) {
+export default function ChatTopbar({ name, avatar }: ChatTopbarProps) {
   return (
     <div className="w-full h-20 flex p-4 justify-between items-center border-b">
       <div className="flex items-center gap-2">
-        <ChatAvatar name={selectedUser.name} avatar={selectedUser.avatar} />
+        <ChatAvatar name={name} avatar={avatar} />
         <div className="flex flex-col">
-          <span className="font-medium">{selectedUser.name}</span>
+          <span className="font-medium">{name}</span>
           <span className="text-xs">Active 2 mins ago</span>
         </div>
       </div>
