@@ -1,10 +1,10 @@
 "use client";
 
-import { ChatData } from "@/components/chat/chat-data";
 import { ChatLayout } from "@/components/chat/chat-layout";
 import { api } from "@/convex/_generated/api";
 import { useSuspenseQuery } from "@/hooks";
-import { useCallback, useEffect, useState } from "react";
+import { useMutation } from "convex/react";
+import { useCallback, useState } from "react";
 import { CreateChatDialog } from "./CreateChatDialog";
 
 type ChatBoardProps = {
@@ -13,22 +13,25 @@ type ChatBoardProps = {
 
 export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
   const chats = useSuspenseQuery(api.chats.list);
-  const [chatData, setChatData] = useState<ChatData[]>();
+  const selectedChat = chats[0];
+
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
-
-  useEffect(() => {
-    const newChatData = [];
-    for (const chat of chats) {
-      newChatData.push({ id: chat._id, name: chat.name });
-    }
-    setChatData(newChatData);
-  }, [chats]);
-
   const handleCreateChat = useCallback(() => {
     setOpenCreateDialog(true);
   }, [setOpenCreateDialog]);
 
-  if (!chatData) return;
+  const sendMessage = useMutation(api.messages.create);
+  const handleSendMessage = useCallback(
+    async (newMessage: string) => {
+      await sendMessage({
+        chatId: selectedChat._id,
+        text: newMessage,
+      });
+    },
+    [selectedChat, sendMessage],
+  );
+
+  if (!chats) return;
 
   return (
     <>
@@ -37,10 +40,15 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
         onOpenChange={setOpenCreateDialog}
       />
       <ChatLayout
-        chatData={chatData}
-        selectedChat={chatData[0]}
+        chats={chats}
+        selectedChat={chats[0]}
         defaultLayout={defaultLayout}
-        handlers={{ onCreateChat: handleCreateChat }}
+        handlers={{
+          onCreateChat: handleCreateChat,
+          onSendMessage: (newMessage) => {
+            void handleSendMessage(newMessage);
+          },
+        }}
       />
     </>
   );

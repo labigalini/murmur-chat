@@ -11,14 +11,12 @@ import { cn } from "@/lib/utils";
 import { MoreHorizontal, SquarePen } from "lucide-react";
 import Link from "next/link";
 import ChatAvatar from "./chat-avatar";
-import { Message } from "./chat-data";
 
 interface SidebarProps {
   isCollapsed: boolean;
   links: {
     name: string;
-    messages: Message[];
-    avatar?: string;
+    image?: string;
     variant: "grey" | "ghost";
   }[];
   isMobile: boolean;
@@ -77,7 +75,7 @@ export function Sidebar({ isCollapsed, links, onCreateChat }: SidebarProps) {
                         "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white",
                     )}
                   >
-                    <ChatAvatar name={link.name} avatar={link.avatar} />{" "}
+                    <ChatAvatar name={link.name} avatar={link.image} />{" "}
                     <span className="sr-only">{link.name}</span>
                   </Link>
                 </TooltipTrigger>
@@ -100,15 +98,16 @@ export function Sidebar({ isCollapsed, links, onCreateChat }: SidebarProps) {
                 "justify-start gap-4 min-w-0",
               )}
             >
-              <ChatAvatar name={link.name} avatar={link.avatar} />
+              <ChatAvatar name={link.name} avatar={link.image} />
               <div className="flex flex-col max-w-28 min-w-0">
                 <span>{link.name}</span>
-                {link.messages.length > 0 && (
+                {/* TODO need to show the unread message counter */}
+                {/* {link.messages.length > 0 && (
                   <span className="text-zinc-300 text-xs truncate min-w-0">
                     {link.messages[link.messages.length - 1].name.split(" ")[0]}
                     : {link.messages[link.messages.length - 1].message}
                   </span>
-                )}
+                )} */}
               </div>
             </Link>
           ),

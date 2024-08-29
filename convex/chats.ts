@@ -17,6 +17,7 @@ export const list = query({
         return {
           _id: chat._id,
           name: chat.name,
+          image: chat.image,
         };
       });
   },

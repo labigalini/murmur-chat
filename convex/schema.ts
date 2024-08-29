@@ -24,6 +24,7 @@ const schema = defineEntSchema(
 
     chats: defineEnt({
       name: v.string(),
+      image: v.optional(v.string()),
     })
       .edges("messages", { ref: true })
       .edges("members", { ref: true })

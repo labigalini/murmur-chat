@@ -7,23 +7,24 @@ import {
 } from "@/components/ui/resizable";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { Chat } from "./chat";
-import { ChatData } from "./chat-data";
+import { ChatMain } from "./chat-main";
 import { Sidebar } from "./chat-sidebar";
+import { Chat } from "./chat-types";
 
 interface ChatLayoutProps {
-  chatData: ChatData[];
-  selectedChat?: ChatData;
+  chats: Chat[];
+  selectedChat?: Chat;
   defaultLayout?: number[];
   defaultCollapsed?: boolean;
   navCollapsedSize?: number;
   handlers: {
     onCreateChat: () => void;
+    onSendMessage: (newMessage: string) => void;
   };
 }
 
 export function ChatLayout({
-  chatData = [],
+  chats = [],
   selectedChat,
   defaultLayout = [320, 480],
   defaultCollapsed = false,
@@ -85,11 +86,10 @@ export function ChatLayout({
       >
         <Sidebar
           isCollapsed={isCollapsed || isMobile}
-          links={chatData.map((chat) => ({
+          links={chats.map((chat) => ({
             name: chat.name,
-            messages: chat.messages ?? [],
-            avatar: chat.avatar,
-            variant: selectedChat?.id === chat.id ? "grey" : "ghost",
+            image: chat.image,
+            variant: selectedChat?._id === chat._id ? "grey" : "ghost",
           }))}
           isMobile={isMobile}
           onCreateChat={handlers.onCreateChat}
@@ -98,7 +98,12 @@ export function ChatLayout({
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
         {selectedChat ? (
-          <Chat data={selectedChat} isMobile={isMobile} />
+          <ChatMain
+            chat={selectedChat}
+            messages={[]}
+            sendMessage={handlers.onSendMessage}
+            isMobile={isMobile}
+          />
         ) : (
           <>No Chat Selected</>
         )}

@@ -3,12 +3,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import React, { useRef } from "react";
 import ChatAvatar from "./chat-avatar";
 import ChatBottombar from "./chat-bottombar";
-import { ChatData, Message } from "./chat-data";
+import { Chat, Message } from "./chat-types";
 
 interface ChatListProps {
   messages?: Message[];
-  selectedChat: Pick<ChatData, "name">;
-  sendMessage: (newMessage: Message) => void;
+  selectedChat: Pick<Chat, "name">;
+  sendMessage: (newMessage: string) => void;
   isMobile: boolean;
 }
 
