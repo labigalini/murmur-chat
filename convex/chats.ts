@@ -7,7 +7,7 @@ export const list = query({
   args: {},
   async handler(ctx) {
     if (ctx.viewer === null) {
-      return null;
+      return [];
     }
     return await ctx.viewer
       .edge("members")

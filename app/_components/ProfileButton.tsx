@@ -3,7 +3,12 @@
 import { SignInForm } from "@/components/auth/SignInForm";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { DialogTitle } from "@radix-ui/react-dialog";
@@ -22,7 +27,7 @@ export function ProfileButton() {
   // const handleSubmit = () => setOpen(false);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
       <AuthLoading>
         <Skeleton className="rounded-full w-9 h-9" />
       </AuthLoading>
@@ -33,15 +38,21 @@ export function ProfileButton() {
         />
       </Authenticated>
       <Unauthenticated>
-        <DialogTrigger asChild>
-          <Button>Sign In</Button>
-        </DialogTrigger>
-      </Unauthenticated>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button>Sign In</Button>
+          </DialogTrigger>
 
-      <DialogContent>
-        <DialogTitle />
-        <SignInForm />
-      </DialogContent>
-    </Dialog>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="font-semibold text-2xl tracking-tight text-center">
+                Sign in or create an account
+              </DialogTitle>
+            </DialogHeader>
+            <SignInForm onSignIn={() => setOpen(false)} />
+          </DialogContent>
+        </Dialog>
+      </Unauthenticated>
+    </>
   );
 }

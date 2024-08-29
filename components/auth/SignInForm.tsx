@@ -6,18 +6,19 @@ import { CodeInput } from "./CodeInput";
 import { SignInWithEmailCode } from "./SignInWithEmailCode";
 import { SignInWithOAuth } from "./SignInWithOAuth";
 
-export function SignInForm() {
+type SignInFormProps = {
+  onSignIn?: () => void;
+};
+
+export function SignInForm({ onSignIn }: SignInFormProps) {
   const { signIn } = useAuthActions();
   const [step, setStep] = useState<"signIn" | { email: string }>("signIn");
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
   return (
-    <div className="max-w-[384px] mx-auto flex flex-col gap-4">
+    <div className="max-w-[384px] mx-auto flex flex-col gap-4 mb-2">
       {step === "signIn" ? (
         <>
-          <h2 className="font-semibold text-2xl tracking-tight">
-            Sign in or create an account
-          </h2>
           <SignInWithOAuth />
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
@@ -45,13 +46,15 @@ export function SignInForm() {
               event.preventDefault();
               setSubmitting(true);
               const formData = new FormData(event.currentTarget);
-              signIn("resend-otp", formData).catch(() => {
-                toast({
-                  title: "Code could not be verified, try again",
-                  variant: "destructive",
+              signIn("resend-otp", formData)
+                .then(onSignIn)
+                .catch(() => {
+                  toast({
+                    title: "Code could not be verified, try again",
+                    variant: "destructive",
+                  });
+                  setSubmitting(false);
                 });
-                setSubmitting(false);
-              });
             }}
           >
             <div className="my-4">

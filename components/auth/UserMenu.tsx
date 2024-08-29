@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -50,8 +51,14 @@ export function UserMenu({ name, avatar }: UserMenuProps) {
 }
 
 function SignOutButton() {
+  const router = useRouter();
   const { signOut } = useAuthActions();
+
   return (
-    <DropdownMenuItem onClick={() => void signOut()}>Sign out</DropdownMenuItem>
+    <DropdownMenuItem
+      onClick={() => void signOut().then(() => router.push("/"))}
+    >
+      Sign out
+    </DropdownMenuItem>
   );
 }

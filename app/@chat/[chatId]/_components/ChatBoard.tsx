@@ -17,7 +17,6 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
   useEffect(() => {
-    if (!chats) return;
     const newChatData = [];
     for (const chat of chats) {
       newChatData.push({ id: chat._id, name: chat.name });
