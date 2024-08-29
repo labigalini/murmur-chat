@@ -1,10 +1,10 @@
-import { ConvexClientProvider } from "@/app/(context)/ConvexClientProvider";
+import { ConvexClientProvider } from "@/app/_context/ConvexClientProvider";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
-import { Notifications } from "./(components)/Notifications";
-import { ProfileButton } from "./(components)/ProfileButton";
+import { Notifications } from "./_components/Notifications";
+import { ProfileButton } from "./_components/ProfileButton";
 
 import "@/styles/globals.css";
 import { ThemeProvider } from "next-themes";
