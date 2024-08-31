@@ -10,7 +10,9 @@ import {
 import { cn } from "@/lib/utils";
 import { MoreHorizontal, SquarePen } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import ChatAvatar from "./chat-avatar";
+import { ChatCreateDialog } from "./chat-create-dialog";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -20,15 +22,20 @@ interface SidebarProps {
     variant: "grey" | "ghost";
   }[];
   isMobile: boolean;
-  onCreateChat: () => void;
 }
 
-export function Sidebar({ isCollapsed, links, onCreateChat }: SidebarProps) {
+export function Sidebar({ isCollapsed, links }: SidebarProps) {
+  const [openCreateDialog, setOpenCreateDialog] = useState(false);
+
   return (
     <div
       data-collapsed={isCollapsed}
       className="relative group flex flex-col h-full gap-4 p-2 data-[collapsed=true]:p-2 "
     >
+      <ChatCreateDialog
+        open={openCreateDialog}
+        onOpenChange={setOpenCreateDialog}
+      />
       {!isCollapsed && (
         <div className="flex justify-between p-2 items-center">
           <div className="flex gap-2 items-center text-2xl">
@@ -49,7 +56,7 @@ export function Sidebar({ isCollapsed, links, onCreateChat }: SidebarProps) {
 
             <Link
               href="#"
-              onClick={onCreateChat}
+              onClick={() => setOpenCreateDialog(true)}
               className={cn(
                 buttonVariants({ variant: "ghost", size: "icon" }),
                 "h-9 w-9",

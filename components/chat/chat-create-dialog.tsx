@@ -17,13 +17,12 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { api } from "@/convex/_generated/api";
 import { handleFailure } from "@/lib/handleFailure";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogProps } from "@radix-ui/react-dialog";
-import { useMutation } from "convex/react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useChatContext } from "./chat-context";
 
 const FormSchema = z.object({
   name: z.string().min(4, "Team name must be at least 4 characters long."),
@@ -33,11 +32,11 @@ type CreateChatDialogProps = Required<
   Pick<DialogProps, "open" | "onOpenChange">
 >;
 
-export function CreateChatDialog({
+export function ChatCreateDialog({
   open,
   onOpenChange,
 }: CreateChatDialogProps) {
-  const createChat = useMutation(api.chats.create);
+  const { onCreateChat } = useChatContext();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -47,8 +46,8 @@ export function CreateChatDialog({
   });
 
   const handleSubmit = handleFailure(
-    form.handleSubmit(async ({ name }) => {
-      await createChat({ name });
+    form.handleSubmit(async ({ name: newChat }) => {
+      onCreateChat(newChat);
       onOpenChange(false);
     }),
   );
