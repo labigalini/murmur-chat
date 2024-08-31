@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/resizable";
 import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useState } from "react";
-import { ChatHandlers, ChatProvider } from "./chat-context";
+import { ChatContextType, ChatHandlers, ChatProvider } from "./chat-context";
 import { ChatMain } from "./chat-main";
 import { Sidebar } from "./chat-sidebar";
 import { Chat } from "./chat-types";
@@ -49,12 +49,14 @@ export function ChatContainer({
     };
   }, []);
 
-  const chatContext = useMemo(() => {
-    return {
-      state: { selectedChat: selectedChat?._id ?? "" }, // FIXME
-      ...handlers,
-    };
-  }, [selectedChat, handlers]);
+  const chatContext = useMemo(
+    () =>
+      ({
+        state: { selectedChat: selectedChat?._id ?? "" }, // FIXME
+        ...handlers,
+      }) satisfies ChatContextType,
+    [selectedChat, handlers],
+  );
 
   return (
     <ChatProvider value={chatContext}>
