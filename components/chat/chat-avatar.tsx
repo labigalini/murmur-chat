@@ -2,7 +2,7 @@ import { Info, Phone, Video } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface ChatAvatarProps {
-  name: string;
+  name?: string;
   avatar?: string;
 }
 
@@ -13,11 +13,11 @@ export default function ChatAvatar({ name, avatar }: ChatAvatarProps) {
     <Avatar className="flex justify-center items-center">
       <AvatarImage
         src={avatar ?? `https://avatar.vercel.sh/${name}.png`}
-        alt={name}
+        alt={name ?? "?"}
         width={6}
         height={6}
       />
-      <AvatarFallback>{name[0].toUpperCase()}</AvatarFallback>
+      <AvatarFallback>{(name ?? "?")[0].toUpperCase()}</AvatarFallback>
     </Avatar>
   );
 }

@@ -6,15 +6,15 @@ export type Chat = {
 };
 
 export type Message = {
-  id: number;
-  avatar?: string;
-  name: string;
-  message: string;
+  _id: string;
+  text: string;
+  author?: string;
+  authorImage?: string;
 };
 
 export type User = {
   id: number;
-  avatar: string;
+  image?: string;
   messages: Message[];
   name: string;
 };

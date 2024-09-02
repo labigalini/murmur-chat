@@ -1,10 +1,12 @@
 "use client";
 
 import { ChatContainer } from "@/components/chat/chat-container";
+import { Chat } from "@/components/chat/chat-types";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useSuspenseQuery } from "@/hooks";
-import { useMutation } from "convex/react";
-import { useCallback } from "react";
+import { useMutation, useQuery } from "convex/react";
+import { useCallback, useEffect, useState } from "react";
 
 type ChatBoardProps = {
   defaultLayout?: number[];
@@ -12,7 +14,26 @@ type ChatBoardProps = {
 
 export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
   const chats = useSuspenseQuery(api.chats.list);
-  const selectedChat = chats[0];
+
+  const [selectedChat, setSelectedChat] = useState<Chat | null>();
+  useEffect(() => {
+    if (chats && chats.length > 0 && !selectedChat) {
+      setSelectedChat(chats[0]);
+    }
+  }, [chats, selectedChat]);
+
+  const selectedChatMessages = useQuery(
+    api.messages.list,
+    selectedChat
+      ? {
+          chatId: selectedChat._id as Id<"chats">,
+        }
+      : "skip",
+  );
+  const handleSelectChat = useCallback((newSelection: Chat) => {
+    console.log({ newSelection });
+    setSelectedChat(newSelection);
+  }, []);
 
   const createChat = useMutation(api.chats.create);
   const handleCreateChat = useCallback(
@@ -25,22 +46,24 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
   const sendMessage = useMutation(api.messages.create);
   const handleSendMessage = useCallback(
     async (newMessage: string) => {
+      if (!selectedChat) return;
       await sendMessage({
-        chatId: selectedChat._id,
+        chatId: selectedChat._id as Id<"chats">,
         text: newMessage,
       });
     },
     [selectedChat, sendMessage],
   );
 
-  if (!chats) return;
+  if (!chats || !selectedChat || !selectedChatMessages) return;
 
   return (
     <ChatContainer
       chats={chats}
-      selectedChat={chats[0]}
+      selectedChat={{ ...selectedChat, messages: selectedChatMessages }}
       defaultLayout={defaultLayout}
       handlers={{
+        onSelectChat: handleSelectChat,
         onCreateChat: (newChat) => void handleCreateChat(newChat),
         onSendMessage: (newMessage) => void handleSendMessage(newMessage),
       }}

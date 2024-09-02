@@ -1,4 +1,3 @@
-import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { mutation, query } from "./functions";
 import { viewerHasPermission, viewerWithPermissionX } from "./permissions";
@@ -6,25 +5,20 @@ import { viewerHasPermission, viewerWithPermissionX } from "./permissions";
 export const list = query({
   args: {
     chatId: v.id("chats"),
-    paginationOpts: paginationOptsValidator,
   },
-  handler: async (ctx, { chatId, paginationOpts }) => {
+  handler: async (ctx, { chatId }) => {
     if (
       ctx.viewer === null ||
       !(await viewerHasPermission(ctx, chatId, "Contribute"))
     ) {
-      return {
-        page: [],
-        isDone: true,
-        continueCursor: "",
-      };
+      return [];
     }
+
     return await ctx
       .table("chats")
       .getX(chatId)
       .edge("messages")
       .order("desc")
-      .paginate(paginationOpts)
       .map(async (message) => {
         const member = await message.edge("member");
         const user = await member.edge("user");

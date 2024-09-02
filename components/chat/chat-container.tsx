@@ -7,19 +7,21 @@ import {
 } from "@/components/ui/resizable";
 import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useState } from "react";
-import { ChatContextType, ChatHandlers, ChatProvider } from "./chat-context";
+import {
+  ChatContextType,
+  ChatHandlers,
+  ChatProvider,
+  ChatState,
+} from "./chat-context";
 import { ChatMain } from "./chat-main";
 import { Sidebar } from "./chat-sidebar";
-import { Chat } from "./chat-types";
 
-interface ChatLayoutProps {
-  chats: Chat[];
-  selectedChat?: Chat;
+type ChatLayoutProps = Omit<ChatState, "isMobile"> & {
   defaultLayout?: number[];
   defaultCollapsed?: boolean;
   navCollapsedSize?: number;
   handlers: ChatHandlers;
-}
+};
 
 export function ChatContainer({
   chats = [],
@@ -52,10 +54,10 @@ export function ChatContainer({
   const chatContext = useMemo(
     () =>
       ({
-        state: { selectedChat: selectedChat?._id ?? "" }, // FIXME
+        state: { chats, selectedChat, isMobile },
         ...handlers,
       }) satisfies ChatContextType,
-    [selectedChat, handlers],
+    [chats, selectedChat, isMobile, handlers],
   );
 
   return (
@@ -92,23 +94,11 @@ export function ChatContainer({
               "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out",
           )}
         >
-          <Sidebar
-            isCollapsed={isCollapsed || isMobile}
-            links={chats.map((chat) => ({
-              name: chat.name,
-              image: chat.image,
-              variant: selectedChat?._id === chat._id ? "grey" : "ghost",
-            }))}
-            isMobile={isMobile}
-          />
+          <Sidebar isCollapsed={isCollapsed || isMobile} />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
-          {selectedChat ? (
-            <ChatMain chat={selectedChat} messages={[]} isMobile={isMobile} />
-          ) : (
-            <>No Chat Selected</>
-          )}
+          {selectedChat ? <ChatMain /> : <>No Chat Selected</>}
         </ResizablePanel>
       </ResizablePanelGroup>
     </ChatProvider>

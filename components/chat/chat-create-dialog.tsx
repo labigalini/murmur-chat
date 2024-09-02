@@ -46,7 +46,7 @@ export function ChatCreateDialog({
   });
 
   const handleSubmit = handleFailure(
-    form.handleSubmit(async ({ name: newChat }) => {
+    form.handleSubmit(({ name: newChat }) => {
       onCreateChat(newChat);
       onOpenChange(false);
     }),
