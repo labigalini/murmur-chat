@@ -1,4 +1,4 @@
-import { useConvex } from "convex/react";
+import { OptionalRestArgsOrSkip, useConvex } from "convex/react";
 import {
   getFunctionName,
   type FunctionReference,
@@ -56,8 +56,14 @@ function useMemoValue<T>(
 
 export function useSuspenseQuery<Query extends FunctionReference<"query">>(
   query: Query,
-  ...args: OptionalRestArgs<Query>
+  ...argsOrSkip: OptionalRestArgsOrSkip<Query>
 ) {
+  if (argsOrSkip[0] === "skip") {
+    return undefined;
+  }
+
+  const args = argsOrSkip as OptionalRestArgs<Query>;
+
   const convex = useConvex();
   const cacheData = getQueryCacheData(query, args);
 
