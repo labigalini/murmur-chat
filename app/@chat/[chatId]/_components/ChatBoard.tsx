@@ -31,7 +31,6 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
       : "skip",
   );
   const handleSelectChat = useCallback((newSelection: Chat) => {
-    console.log({ newSelection });
     setSelectedChat(newSelection);
   }, []);
 
