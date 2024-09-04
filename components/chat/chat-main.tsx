@@ -8,9 +8,7 @@ import ChatTopbar from "./chat-topbar";
 
 export function ChatMain() {
   const {
-    state: {
-      selectedChat: { messages, ...chat },
-    },
+    state: { selectedChat },
   } = useChatContext();
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -20,7 +18,13 @@ export function ChatMain() {
       messagesContainerRef.current.scrollTop =
         messagesContainerRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [selectedChat]);
+
+  if (selectedChat === "loading") return "Loading selected chat";
+
+  const { messages, ...chat } = selectedChat;
+
+  if (messages === "loading") return "Loading messages";
 
   return (
     <div className="flex flex-col justify-between w-full h-full">

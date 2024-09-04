@@ -27,6 +27,9 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
 
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
+  if (chats === "loading" || selectedChat === "loading")
+    return "Loading chat list";
+
   return (
     <div
       data-collapsed={isCollapsed}

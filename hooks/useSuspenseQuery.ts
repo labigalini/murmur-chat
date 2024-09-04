@@ -16,9 +16,9 @@ const cache = new LRUCache<string, NonNullable<unknown>>({
   max: 100,
 });
 
-function getCacheKey(
-  query: FunctionReference<"query">,
-  args: [args?: Record<string, unknown>],
+function getCacheKey<Query extends FunctionReference<"query">>(
+  query: Query,
+  args: OptionalRestArgsOrSkip<Query>,
 ) {
   // JSON.stringify is basic and misses some edge cases,
   // but is more than good enough for simple cases
@@ -28,25 +28,23 @@ function getCacheKey(
 
 function getQueryCacheData<Query extends FunctionReference<"query">>(
   query: Query,
-  args: OptionalRestArgs<Query>,
-) {
-  return cache.get(getCacheKey(query, args)) as
-    | FunctionReturnType<Query>
-    | undefined;
+  args: OptionalRestArgsOrSkip<Query>,
+): FunctionReturnType<Query> | undefined {
+  return cache.get(getCacheKey(query, args));
 }
 
 function setQueryCacheData<Query extends FunctionReference<"query">>(
   query: Query,
-  args: OptionalRestArgs<Query>,
+  args: OptionalRestArgsOrSkip<Query>,
   data: FunctionReturnType<Query>,
 ) {
   cache.set(getCacheKey(query, args), data);
 }
 
-function useMemoValue<T>(
-  value: T,
-  isEqual: (prev: T, next: T) => unknown = isDeepEqual,
-): T {
+function useMemoValue<Query>(
+  value: Query,
+  isEqual: (prev: Query, next: Query) => unknown = isDeepEqual,
+): Query {
   const ref = useRef(value);
   if (!isEqual(value, ref.current)) {
     ref.current = value;
@@ -57,17 +55,16 @@ function useMemoValue<T>(
 export function useSuspenseQuery<Query extends FunctionReference<"query">>(
   query: Query,
   ...argsOrSkip: OptionalRestArgsOrSkip<Query>
-) {
-  if (argsOrSkip[0] === "skip") {
-    return undefined;
-  }
-
+): FunctionReturnType<Query> | "loading" {
+  const skip = argsOrSkip[0] === "skip";
   const args = argsOrSkip as OptionalRestArgs<Query>;
 
   const convex = useConvex();
   const cacheData = getQueryCacheData(query, args);
 
-  if (cacheData === undefined) {
+  if (skip) {
+    setQueryCacheData(query, args, null);
+  } else if (cacheData === undefined) {
     throw new Promise<void>((resolve) => {
       const watch = convex.watchQuery(query, ...args);
 
@@ -101,6 +98,7 @@ export function useSuspenseQuery<Query extends FunctionReference<"query">>(
   const memoArgs = useMemoValue(args);
 
   useEffect(() => {
+    if (skip) return;
     const watch = convex.watchQuery(memoQuery, ...memoArgs);
     return watch.onUpdate(() => {
       const result = watch.localQueryResult();
@@ -110,7 +108,8 @@ export function useSuspenseQuery<Query extends FunctionReference<"query">>(
       setData(result);
       setQueryCacheData(memoQuery, memoArgs, result);
     });
-  }, [convex, memoQuery, memoArgs]);
+  }, [convex, memoQuery, memoArgs, skip]);
 
-  return data;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return data === undefined ? "loading" : data;
 }

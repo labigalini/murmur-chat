@@ -4,31 +4,31 @@ import { ChatContainer } from "@/components/chat/chat-container";
 import { Chat } from "@/components/chat/chat-types";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useSuspenseQuery } from "@/hooks";
-import { useMutation, useQuery } from "convex/react";
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@/hooks";
+import { useMutation } from "convex/react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type ChatBoardProps = {
   defaultLayout?: number[];
 };
 
 export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
-  const chats = useSuspenseQuery(api.chats.list);
+  const chats = useQuery(api.chats.list);
 
-  const [selectedChat, setSelectedChat] = useState<Chat | null>();
+  const [selectedChat, setSelectedChat] = useState<Chat | "loading">("loading");
   useEffect(() => {
-    if (chats && chats.length > 0 && !selectedChat) {
+    if (chats !== "loading" && selectedChat === "loading") {
       setSelectedChat(chats[0]);
     }
   }, [chats, selectedChat]);
 
   const selectedChatMessages = useQuery(
     api.messages.list,
-    selectedChat
-      ? {
+    selectedChat === "loading"
+      ? "skip"
+      : {
           chatId: selectedChat._id as Id<"chats">,
-        }
-      : "skip",
+        },
   );
   const handleSelectChat = useCallback((newSelection: Chat) => {
     setSelectedChat(newSelection);
@@ -45,7 +45,7 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
   const sendMessage = useMutation(api.messages.create);
   const handleSendMessage = useCallback(
     async (newMessage: string) => {
-      if (!selectedChat) return;
+      if (selectedChat === "loading") return;
       await sendMessage({
         chatId: selectedChat._id as Id<"chats">,
         text: newMessage,
@@ -54,12 +54,18 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
     [selectedChat, sendMessage],
   );
 
-  if (!chats || !selectedChat || !selectedChatMessages) return;
+  const selectedChatWithMessages = useMemo(
+    () =>
+      selectedChat === "loading"
+        ? selectedChat
+        : { ...selectedChat, messages: selectedChatMessages },
+    [selectedChat, selectedChatMessages],
+  );
 
   return (
     <ChatContainer
       chats={chats}
-      selectedChat={{ ...selectedChat, messages: selectedChatMessages }}
+      selectedChat={selectedChatWithMessages}
       defaultLayout={defaultLayout}
       handlers={{
         onSelectChat: handleSelectChat,
