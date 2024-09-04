@@ -16,11 +16,9 @@ import { Textarea } from "../ui/textarea";
 import { useChatContext } from "./chat-context";
 import { EmojiPicker } from "./emoji-picker";
 
-type ChatBottombarProps = {};
-
 export const BottombarIcons = [{ icon: FileImage }, { icon: Paperclip }];
 
-export default function ChatBottombar({}: ChatBottombarProps) {
+export default function ChatBottombar() {
   const {
     state: { isMobile },
     onSendMessage,

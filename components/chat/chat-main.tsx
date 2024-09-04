@@ -6,9 +6,7 @@ import ChatBottombar from "./chat-bottombar";
 import { useChatContext } from "./chat-context";
 import ChatTopbar from "./chat-topbar";
 
-type ChatMainProps = {};
-
-export function ChatMain({}: ChatMainProps) {
+export function ChatMain() {
   const {
     state: {
       selectedChat: { messages, ...chat },
