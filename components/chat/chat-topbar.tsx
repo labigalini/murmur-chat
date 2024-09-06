@@ -1,9 +1,13 @@
-import { cn } from "@/lib/utils";
-import { Info, Phone, Video } from "lucide-react";
 import Link from "next/link";
-import { buttonVariants } from "../ui/button";
+
+import { Info, Phone, Video } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
 import ChatAvatar from "./chat-avatar";
 import { Chat } from "./chat-types";
+
+import { buttonVariants } from "../ui/button";
 
 type ChatTopbarProps = Pick<Chat, "name" | "image">;
 

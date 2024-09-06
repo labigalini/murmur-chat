@@ -1,13 +1,18 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
+
+import { useMutation } from "convex/react";
+
 import { ChatContainer } from "@/components/chat/chat-container";
 import { Chat } from "@/components/chat/chat-types";
+
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useQuery } from "@/hooks";
+
 import { skipIfUnset } from "@/lib/utils";
-import { useMutation } from "convex/react";
-import { useCallback, useEffect, useState } from "react";
+
+import { useQuery } from "@/hooks";
 
 type ChatBoardProps = {
   defaultLayout?: number[];

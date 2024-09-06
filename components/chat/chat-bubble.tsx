@@ -1,9 +1,13 @@
 "use client";
 
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
-import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
+
+import { type VariantProps, cva } from "class-variance-authority";
+
+import { Progress } from "@/components/ui/progress";
+
+import { cn } from "@/lib/utils";
+
 import ChatMessageLoading from "./chat-message-loading";
 
 // ChatBubble
@@ -181,7 +185,7 @@ export {
   ChatBubble,
   ChatBubbleCountdown,
   ChatBubbleMessage,
-  chatBubbleMessageVariants,
   ChatBubbleTimestamp,
+  chatBubbleMessageVariants,
   chatBubbleVariant,
 };

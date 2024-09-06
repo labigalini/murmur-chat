@@ -1,5 +1,7 @@
-import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef } from "react";
+
+import { AnimatePresence, motion } from "framer-motion";
+
 import ChatAvatar from "./chat-avatar";
 import ChatBottombar from "./chat-bottombar";
 import {
@@ -43,8 +45,18 @@ export function ChatMain() {
                 <motion.div
                   key={message._id}
                   layout
-                  initial={{ opacity: 0, scale: 1, y: 50, x: 0 }}
-                  animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+                  initial={{
+                    opacity: 0,
+                    scale: 1,
+                    y: 50,
+                    x: 0,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    y: 0,
+                    x: 0,
+                  }}
                   exit={{ opacity: 0, scale: 1, y: 1, x: 0 }}
                   transition={{
                     opacity: { duration: 0.1 },

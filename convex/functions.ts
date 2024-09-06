@@ -1,19 +1,20 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { entsTableFactory } from "convex-ents";
 import {
   customCtx,
   customMutation,
   customQuery,
 } from "convex-helpers/server/customFunctions";
+
 import {
+  MutationCtx,
+  QueryCtx,
   internalMutation as baseInternalMutation,
   internalQuery as baseInternalQuery,
   mutation as baseMutation,
   query as baseQuery,
-  MutationCtx,
-  QueryCtx,
 } from "./_generated/server";
 import { entDefinitions } from "./schema";
-import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const query = customQuery(
   baseQuery,

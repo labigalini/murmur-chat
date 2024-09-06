@@ -1,4 +1,7 @@
-import { cn } from "@/lib/utils";
+import React, { useRef, useState } from "react";
+
+import Link from "next/link";
+
 import { AnimatePresence, motion } from "framer-motion";
 import {
   FileImage,
@@ -8,13 +11,15 @@ import {
   SendHorizontal,
   ThumbsUp,
 } from "lucide-react";
-import Link from "next/link";
-import React, { useRef, useState } from "react";
-import { Button, buttonVariants } from "../ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+
+import { cn } from "@/lib/utils";
+
 import { useChatContext } from "./chat-context";
 import { ChatEmojiPicker } from "./chat-emoji-picker";
 import { ChatInput } from "./chat-input";
+
+import { Button, buttonVariants } from "../ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 export const BottombarIcons = [{ icon: FileImage }, { icon: Paperclip }];
 
@@ -68,7 +73,10 @@ export default function ChatBottombar() {
             <Link
               href="#"
               className={cn(
-                buttonVariants({ variant: "ghost", size: "icon" }),
+                buttonVariants({
+                  variant: "ghost",
+                  size: "icon",
+                }),
                 "h-9 w-9",
                 "shrink-0",
               )}
@@ -82,7 +90,10 @@ export default function ChatBottombar() {
                 <Link
                   href="#"
                   className={cn(
-                    buttonVariants({ variant: "ghost", size: "icon" }),
+                    buttonVariants({
+                      variant: "ghost",
+                      size: "icon",
+                    }),
                     "h-9 w-9",
                     "shrink-0",
                   )}
@@ -94,7 +105,10 @@ export default function ChatBottombar() {
                     key={index}
                     href="#"
                     className={cn(
-                      buttonVariants({ variant: "ghost", size: "icon" }),
+                      buttonVariants({
+                        variant: "ghost",
+                        size: "icon",
+                      }),
                       "h-9 w-9",
                       "shrink-0",
                     )}
@@ -107,7 +121,10 @@ export default function ChatBottombar() {
               <Link
                 href="#"
                 className={cn(
-                  buttonVariants({ variant: "ghost", size: "icon" }),
+                  buttonVariants({
+                    variant: "ghost",
+                    size: "icon",
+                  }),
                   "h-9 w-9",
                   "shrink-0",
                 )}
@@ -124,7 +141,10 @@ export default function ChatBottombar() {
                 key={index}
                 href="#"
                 className={cn(
-                  buttonVariants({ variant: "ghost", size: "icon" }),
+                  buttonVariants({
+                    variant: "ghost",
+                    size: "icon",
+                  }),
                   "h-9 w-9",
                   "shrink-0",
                 )}

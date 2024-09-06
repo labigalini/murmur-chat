@@ -1,7 +1,8 @@
 import { v } from "convex/values";
+
 import { mutation, query } from "./functions";
-import { Ent, QueryCtx } from "./types";
 import { createMember } from "./members";
+import { Ent, QueryCtx } from "./types";
 
 export const list = query({
   args: {},

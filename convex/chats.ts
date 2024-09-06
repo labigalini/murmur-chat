@@ -1,7 +1,8 @@
 import { v } from "convex/values";
+
+import { mutation, query } from "./functions";
 import { createMember } from "./members";
 import { getRole, viewerHasPermissionX } from "./permissions";
-import { mutation, query } from "./functions";
 
 export const list = query({
   args: {},

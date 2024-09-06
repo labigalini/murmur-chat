@@ -1,5 +1,16 @@
 "use client";
 
+import { useState } from "react";
+
+import {
+  AuthLoading,
+  Authenticated,
+  Unauthenticated,
+  useQuery,
+} from "convex/react";
+
+import { DialogTitle } from "@radix-ui/react-dialog";
+
 import { SignInForm } from "@/components/auth/SignInForm";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { Button } from "@/components/ui/button";
@@ -10,15 +21,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+
 import { api } from "@/convex/_generated/api";
-import { DialogTitle } from "@radix-ui/react-dialog";
-import {
-  Authenticated,
-  AuthLoading,
-  Unauthenticated,
-  useQuery,
-} from "convex/react";
-import { useState } from "react";
 
 export function ProfileButton() {
   const user = useQuery(api.users.viewer);

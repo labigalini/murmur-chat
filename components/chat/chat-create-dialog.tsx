@@ -1,5 +1,11 @@
 "use client";
 
+import { useForm } from "react-hook-form";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { DialogProps } from "@radix-ui/react-dialog";
+import * as z from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,11 +23,9 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+
 import { handleFailure } from "@/lib/handleFailure";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { DialogProps } from "@radix-ui/react-dialog";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+
 import { useChatContext } from "./chat-context";
 
 const FormSchema = z.object({

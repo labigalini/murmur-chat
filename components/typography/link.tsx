@@ -1,5 +1,6 @@
-import { cn, fr } from "@/lib/utils";
 import NextLink, { LinkProps } from "next/link";
+
+import { cn, fr } from "@/lib/utils";
 
 export const Link = fr<
   HTMLAnchorElement,

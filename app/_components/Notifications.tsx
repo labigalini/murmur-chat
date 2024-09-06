@@ -1,5 +1,11 @@
 "use client";
 
+import { Fragment } from "react";
+
+import { useMutation, useQuery } from "convex/react";
+
+import { BellIcon } from "@radix-ui/react-icons";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,11 +15,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+
 import { api } from "@/convex/_generated/api";
+
 import { handleFailure } from "@/lib/handleFailure";
-import { BellIcon } from "@radix-ui/react-icons";
-import { useMutation, useQuery } from "convex/react";
-import { Fragment } from "react";
 
 export function Notifications() {
   const invites = useQuery(api.invites.list);

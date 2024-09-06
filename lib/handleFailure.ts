@@ -1,5 +1,6 @@
-import { toast } from "@/components/ui/use-toast";
 import { ConvexError } from "convex/values";
+
+import { toast } from "@/components/ui/use-toast";
 
 export function handleFailure<TFailure extends unknown[]>(
   callback: (...args: TFailure) => Promise<unknown>,

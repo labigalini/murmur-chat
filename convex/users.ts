@@ -1,4 +1,5 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
+
 import { query } from "./functions";
 
 export const viewer = query({

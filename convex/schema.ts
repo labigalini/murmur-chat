@@ -7,6 +7,7 @@ import {
   getEntDefinitions,
 } from "convex-ents";
 import { v } from "convex/values";
+
 import { vPermission, vRole } from "./permissions";
 
 // Example: 7 day soft deletion period for chats

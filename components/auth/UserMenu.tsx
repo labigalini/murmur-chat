@@ -1,3 +1,7 @@
+import { useRouter } from "next/navigation";
+
+import { useAuthActions } from "@convex-dev/auth/react";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,10 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAuthActions } from "@convex-dev/auth/react";
-import { useRouter } from "next/navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+
 import { ThemeToggle } from "./ThemeToggle";
+
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface UserMenuProps {
   name: string;

@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+
 import ChatBoard from "./_components/ChatBoard";
 
 export default function Page({ params }: { params: { chatId?: string } }) {

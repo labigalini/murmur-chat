@@ -1,5 +1,11 @@
 "use client";
 
+import { useState } from "react";
+
+import Link from "next/link";
+
+import { MoreHorizontal, SquarePen } from "lucide-react";
+
 import { buttonVariants } from "@/components/ui/button";
 import {
   Tooltip,
@@ -7,10 +13,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+
 import { cn } from "@/lib/utils";
-import { MoreHorizontal, SquarePen } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
+
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
 import { ChatCreateDialog } from "./chat-create-dialog";
@@ -50,7 +55,10 @@ export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
             <Link
               href="#"
               className={cn(
-                buttonVariants({ variant: "ghost", size: "icon" }),
+                buttonVariants({
+                  variant: "ghost",
+                  size: "icon",
+                }),
                 "h-9 w-9",
               )}
             >
@@ -61,7 +69,10 @@ export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
               href="#"
               onClick={() => setOpenCreateDialog(true)}
               className={cn(
-                buttonVariants({ variant: "ghost", size: "icon" }),
+                buttonVariants({
+                  variant: "ghost",
+                  size: "icon",
+                }),
                 "h-9 w-9",
               )}
             >
@@ -84,7 +95,10 @@ export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
                     href="#"
                     onClick={() => onSelectChat(chat)}
                     className={cn(
-                      buttonVariants({ variant, size: "icon" }),
+                      buttonVariants({
+                        variant,
+                        size: "icon",
+                      }),
                       "h-11 w-11 md:h-16 md:w-16",
                       variant === "grey" &&
                         "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white",
@@ -108,7 +122,10 @@ export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
               href="#"
               onClick={() => onSelectChat(chat)}
               className={cn(
-                buttonVariants({ variant: variant, size: "xl" }),
+                buttonVariants({
+                  variant: variant,
+                  size: "xl",
+                }),
                 variant === "grey" &&
                   "shrink dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
                 "min-w-0 justify-start gap-4",

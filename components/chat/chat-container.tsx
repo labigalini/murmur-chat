@@ -1,12 +1,15 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
+
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+
 import { cn } from "@/lib/utils";
-import { useEffect, useMemo, useState } from "react";
+
 import {
   ChatContextType,
   ChatHandlers,
