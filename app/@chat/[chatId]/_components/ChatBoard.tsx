@@ -5,6 +5,7 @@ import { Chat } from "@/components/chat/chat-types";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "@/hooks";
+import { skipIfUnset } from "@/lib/utils";
 import { useMutation } from "convex/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -20,21 +21,24 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
   );
   useEffect(() => {
     if (chats !== "loading" && selectedChat === "loading") {
-      setSelectedChat(chats.length > 0 ? chats[0] : null);
+      setSelectedChat(chats[0] ?? null);
     }
   }, [chats, selectedChat]);
 
   const selectedChatMessages = useQuery(
     api.messages.list,
-    selectedChat === "loading" || !selectedChat
-      ? "skip"
-      : { chatId: selectedChat._id as Id<"chats"> },
+    skipIfUnset(selectedChat, (c) => ({
+      chatId: c._id as Id<"chats">,
+    })),
   );
+
+  const createChat = useMutation(api.chats.create);
+  const sendMessage = useMutation(api.messages.create);
+
   const handleSelectChat = useCallback((newSelection: Chat) => {
     setSelectedChat(newSelection);
   }, []);
 
-  const createChat = useMutation(api.chats.create);
   const handleCreateChat = useCallback(
     (newChatName: string) => {
       void createChat({ name: newChatName });
@@ -42,7 +46,6 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
     [createChat],
   );
 
-  const sendMessage = useMutation(api.messages.create);
   const handleSendMessage = useCallback(
     (chat: Chat, message: string) => {
       void sendMessage({
@@ -55,9 +58,9 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
 
   const selectedChatWithMessages = useMemo(
     () =>
-      selectedChat === "loading" || !selectedChat
-        ? selectedChat
-        : { ...selectedChat, messages: selectedChatMessages },
+      selectedChat && selectedChat !== "loading"
+        ? { ...selectedChat, messages: selectedChatMessages }
+        : selectedChat,
     [selectedChat, selectedChatMessages],
   );
 
