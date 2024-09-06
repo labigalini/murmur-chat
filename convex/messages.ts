@@ -1,6 +1,11 @@
 import { v } from "convex/values";
-import { mutation, query } from "./functions";
+import { subMinutes } from "date-fns";
+import { internal } from "./_generated/api";
+import { internalMutation, mutation, query } from "./functions";
 import { viewerHasPermission, viewerWithPermissionX } from "./permissions";
+
+const MESSAGE_EXPIRATION_MINUTES = 5;
+const MESSAGE_EXPIRATION_MILLISECONDS = MESSAGE_EXPIRATION_MINUTES * 60 * 1000;
 
 export const list = query({
   args: {
@@ -47,10 +52,36 @@ export const create = mutation({
     if (text.trim().length === 0) {
       throw new Error("Message must not be empty");
     }
-    await ctx.table("messages").insert({
+    const messageId = await ctx.table("messages").insert({
       text,
       chatId: chatId,
       memberId: member._id,
     });
+    await ctx.scheduler.runAfter(
+      MESSAGE_EXPIRATION_MILLISECONDS,
+      internal.messages.destruct,
+      { messageId },
+    );
+  },
+});
+
+export const destruct = internalMutation({
+  args: {
+    messageId: v.id("messages"),
+  },
+  handler: async (ctx, { messageId }) => {
+    const message = await ctx.table("messages").getX(messageId);
+    await message.delete();
+  },
+});
+
+export const destructAllExpired = internalMutation({
+  handler: async (ctx) => {
+    const fiveMinutesAgo = subMinutes(new Date(), MESSAGE_EXPIRATION_MINUTES);
+    const messages = await ctx
+      .table("messages")
+      .filter((q) => q.lt(q.field("_creationTime"), fiveMinutesAgo.getTime()));
+    await Promise.all(messages.map(async (message) => await message.delete()));
+    return messages.length;
   },
 });

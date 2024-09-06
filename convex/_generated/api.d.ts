@@ -17,6 +17,7 @@ import type {
 import type * as auth_ResendOTP from "../auth/ResendOTP.js";
 import type * as auth from "../auth.js";
 import type * as chats from "../chats.js";
+import type * as crons from "../crons.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
 import type * as invites from "../invites.js";
@@ -40,6 +41,7 @@ declare const fullApi: ApiFromModules<{
   "auth/ResendOTP": typeof auth_ResendOTP;
   auth: typeof auth;
   chats: typeof chats;
+  crons: typeof crons;
   functions: typeof functions;
   http: typeof http;
   invites: typeof invites;
