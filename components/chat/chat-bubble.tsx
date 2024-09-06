@@ -137,31 +137,32 @@ interface ChatBubbleCountdownProps
   duration: number;
 }
 
+function calculateProgress(timestamp: number, duration: number) {
+  const now = Date.now();
+  const timeLeft = Math.max(0, timestamp - now);
+  const newProgress = (timeLeft / duration) * 100;
+  return newProgress;
+}
+
 const ChatBubbleCountdown: React.FC<ChatBubbleCountdownProps> = ({
   variant,
   timestamp,
   duration,
 }) => {
-  const [progress, setProgress] = React.useState(100);
+  const [progress, setProgress] = React.useState(
+    calculateProgress(timestamp, duration),
+  );
 
   React.useEffect(() => {
     const updateProgress = () => {
-      const now = Date.now();
-      const timeLeft = Math.max(0, timestamp - now);
-      const newProgress = (timeLeft / duration) * 100;
-
-      setProgress(newProgress);
-
-      if (timeLeft > 0) {
-        requestAnimationFrame(updateProgress);
-      }
+      setProgress(calculateProgress(timestamp, duration));
     };
 
-    updateProgress();
+    // Update every second
+    const intervalId = setInterval(updateProgress, 1000);
 
     return () => {
-      // Clean up any ongoing animation frame
-      updateProgress();
+      clearInterval(intervalId);
     };
   }, [timestamp, duration]);
 
@@ -170,7 +171,7 @@ const ChatBubbleCountdown: React.FC<ChatBubbleCountdownProps> = ({
       <Progress
         value={progress}
         className="h-1 bg-transparent rounded-none"
-        indicatorClassName="bg-blue-500"
+        indicatorClassName="transition-transform duration-1000 ease-linear bg-blue-500"
       />
     </div>
   );

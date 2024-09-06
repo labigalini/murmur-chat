@@ -43,7 +43,7 @@ export function ChatMain() {
               const variant = message.isViewer ? "sent" : "received";
               return (
                 <motion.div
-                  key={index}
+                  key={message._id}
                   layout
                   initial={{ opacity: 0, scale: 1, y: 50, x: 0 }}
                   animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
