@@ -57,23 +57,23 @@ export function ChatMain() {
                 }}
                 className={cn(
                   "flex flex-col gap-2 p-4 whitespace-pre-wrap",
-                  message.author !== chat.name ? "items-end" : "items-start",
+                  message.isViewer ? "items-end" : "items-start",
                 )}
               >
                 <div className="flex gap-3 items-center">
-                  {message.author === chat.name && (
+                  {!message.isViewer && (
                     <ChatAvatar
-                      name={message.author}
-                      avatar={message.authorImage}
+                      name={message.author.name}
+                      avatar={message.author.image}
                     />
                   )}
                   <span className=" bg-accent p-3 rounded-md max-w-xs">
                     {message.text}
                   </span>
-                  {message.author !== chat.name && (
+                  {message.isViewer && (
                     <ChatAvatar
-                      name={message.author}
-                      avatar={message.authorImage}
+                      name={message.author.name}
+                      avatar={message.author.image}
                     />
                   )}
                 </div>

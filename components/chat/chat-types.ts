@@ -7,9 +7,14 @@ export type Chat = {
 
 export type Message = {
   _id: string;
+  _creationTime: number;
   text: string;
-  author?: string;
-  authorImage?: string;
+  author: {
+    _id: string;
+    name: string;
+    image?: string;
+  };
+  isViewer: boolean;
 };
 
 export type User = {

@@ -7,13 +7,13 @@ export const list = query({
     chatId: v.id("chats"),
   },
   handler: async (ctx, { chatId }) => {
+    const viewer = ctx.viewer;
     if (
-      ctx.viewer === null ||
+      viewer === null ||
       !(await viewerHasPermission(ctx, chatId, "Contribute"))
     ) {
       return [];
     }
-
     return await ctx
       .table("chats")
       .getX(chatId)
@@ -26,9 +26,12 @@ export const list = query({
           _id: message._id,
           _creationTime: message._creationTime,
           text: message.text,
-          author: user.name,
-          authorImage: user.image,
-          isAuthorDeleted: member.deletionTime !== undefined,
+          author: {
+            _id: user._id,
+            name: user.name ?? user.email!,
+            image: user.image,
+          },
+          isViewer: user._id === viewer._id,
         };
       });
   },

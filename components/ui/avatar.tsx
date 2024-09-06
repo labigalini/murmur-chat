@@ -1,9 +1,21 @@
 "use client";
 
-import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
+
+export function djb2(str: string) {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) + hash + str.charCodeAt(i);
+  }
+  return hash;
+}
+
+function first2(str: string) {
+  return (str[0] ?? "?") + (str[1] ?? "");
+}
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -23,13 +35,20 @@ Avatar.displayName = AvatarPrimitive.Root.displayName;
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Image
-    ref={ref}
-    className={cn("aspect-square h-full w-full", className)}
-    {...props}
-  />
-));
+>(({ className, src: initialSrc, ...props }, ref) => {
+  let src = initialSrc;
+  if (!src && props.alt) {
+    src = `https://avatar.vercel.sh/${djb2(props.alt)}.svg?text=${first2(props.alt)}`;
+  }
+  return (
+    <AvatarPrimitive.Image
+      ref={ref}
+      src={src}
+      className={cn("aspect-square h-full w-full", className)}
+      {...props}
+    />
+  );
+});
 AvatarImage.displayName = AvatarPrimitive.Image.displayName;
 
 const AvatarFallback = React.forwardRef<
@@ -37,8 +56,8 @@ const AvatarFallback = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
 >(({ className, children: initialChildren, ...props }, ref) => {
   let children = initialChildren ?? "?";
-  if (typeof children === "string" && children.length > 0) {
-    children = children[0].toUpperCase();
+  if (typeof children === "string") {
+    children = first2(children);
   }
   return (
     <AvatarPrimitive.Fallback
@@ -55,4 +74,4 @@ const AvatarFallback = React.forwardRef<
 });
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
-export { Avatar, AvatarImage, AvatarFallback };
+export { Avatar, AvatarFallback, AvatarImage };
