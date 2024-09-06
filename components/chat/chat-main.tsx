@@ -21,6 +21,7 @@ export function ChatMain() {
   }, [selectedChat]);
 
   if (selectedChat === "loading") return "Loading selected chat";
+  else if (!selectedChat) return "No chat selected";
 
   const { messages, ...chat } = selectedChat;
 

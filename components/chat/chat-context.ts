@@ -2,24 +2,24 @@ import { createContext, useContext } from "react";
 import { Chat, Message } from "./chat-types";
 
 export type ChatState = {
-  chats: Chat[] | "loading";
-  selectedChat: (Chat & { messages: Message[] | "loading" }) | "loading";
+  chats: "loading" | Chat[];
+  selectedChat: "loading" | (Chat & { messages: "loading" | Message[] }) | null;
   isMobile: boolean;
 };
 
 export type ChatHandlers = {
-  onSelectChat: (newSelection: Chat) => void;
-  onCreateChat: (newChat: string) => void;
-  onSendMessage: (newMessage: string) => void;
+  onSelectChat: (newChatSelection: Chat) => void;
+  onCreateChat: (newChatName: string) => void;
+  onSendMessage: (chat: Chat, newMessage: string) => void;
 };
 
 export type ChatContextType = { state: ChatState } & ChatHandlers;
 
 export const ChatContex = createContext({
   state: {} as ChatState,
-  onSelectChat: (_newSelection) => {},
-  onCreateChat: (_newChat: string) => {},
-  onSendMessage: (_newMessage: string) => {},
+  onSelectChat: (_newChatSelection) => {},
+  onCreateChat: (_newChatName: string) => {},
+  onSendMessage: (_chat: Chat, _newMessage: string) => {},
 } satisfies ChatContextType);
 
 export const ChatProvider = ChatContex.Provider;

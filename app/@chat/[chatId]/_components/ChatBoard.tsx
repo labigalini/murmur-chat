@@ -15,20 +15,20 @@ type ChatBoardProps = {
 export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
   const chats = useQuery(api.chats.list);
 
-  const [selectedChat, setSelectedChat] = useState<Chat | "loading">("loading");
+  const [selectedChat, setSelectedChat] = useState<"loading" | Chat | null>(
+    "loading",
+  );
   useEffect(() => {
     if (chats !== "loading" && selectedChat === "loading") {
-      setSelectedChat(chats[0]);
+      setSelectedChat(chats.length > 0 ? chats[0] : null);
     }
   }, [chats, selectedChat]);
 
   const selectedChatMessages = useQuery(
     api.messages.list,
-    selectedChat === "loading"
+    selectedChat === "loading" || !selectedChat
       ? "skip"
-      : {
-          chatId: selectedChat._id as Id<"chats">,
-        },
+      : { chatId: selectedChat._id as Id<"chats"> },
   );
   const handleSelectChat = useCallback((newSelection: Chat) => {
     setSelectedChat(newSelection);
@@ -36,27 +36,26 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
 
   const createChat = useMutation(api.chats.create);
   const handleCreateChat = useCallback(
-    async (newChat: string) => {
-      await createChat({ name: newChat });
+    (newChatName: string) => {
+      void createChat({ name: newChatName });
     },
     [createChat],
   );
 
   const sendMessage = useMutation(api.messages.create);
   const handleSendMessage = useCallback(
-    async (newMessage: string) => {
-      if (selectedChat === "loading") return;
-      await sendMessage({
-        chatId: selectedChat._id as Id<"chats">,
-        text: newMessage,
+    (chat: Chat, message: string) => {
+      void sendMessage({
+        chatId: chat._id as Id<"chats">,
+        text: message,
       });
     },
-    [selectedChat, sendMessage],
+    [sendMessage],
   );
 
   const selectedChatWithMessages = useMemo(
     () =>
-      selectedChat === "loading"
+      selectedChat === "loading" || !selectedChat
         ? selectedChat
         : { ...selectedChat, messages: selectedChatMessages },
     [selectedChat, selectedChatMessages],
@@ -69,8 +68,8 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
       defaultLayout={defaultLayout}
       handlers={{
         onSelectChat: handleSelectChat,
-        onCreateChat: (newChat) => void handleCreateChat(newChat),
-        onSendMessage: (newMessage) => void handleSendMessage(newMessage),
+        onCreateChat: handleCreateChat,
+        onSendMessage: handleSendMessage,
       }}
     />
   );
