@@ -8,6 +8,7 @@ export type Chat = {
 export type Message = {
   _id: string;
   _creationTime: number;
+  _expirationTime: number;
   text: string;
   author: {
     _id: string;

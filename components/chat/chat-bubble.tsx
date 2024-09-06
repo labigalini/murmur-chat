@@ -1,3 +1,6 @@
+"use client";
+
+import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
@@ -39,7 +42,7 @@ const ChatBubble = React.forwardRef<HTMLDivElement, ChatBubbleProps>(
 ChatBubble.displayName = "ChatBubble";
 
 // ChatBubbleMessage
-const chatBubbleMessageVariants = cva("p-4", {
+const chatBubbleMessageVariants = cva("p-4 relative overflow-hidden", {
   variants: {
     variant: {
       received:
@@ -115,8 +118,67 @@ const ChatBubbleTimestamp: React.FC<ChatBubbleTimestampProps> = ({
   </div>
 );
 
+// ChatBubbleCountdown
+const chatBubbleCountdownVariant = cva("absolute bottom-0 left-0 w-full", {
+  variants: {
+    variant: {
+      received: "pr-[6px]",
+      sent: "pl-[6px]",
+    },
+  },
+  defaultVariants: {
+    variant: "received",
+  },
+});
+
+interface ChatBubbleCountdownProps
+  extends VariantProps<typeof chatBubbleCountdownVariant> {
+  timestamp: number;
+  duration: number;
+}
+
+const ChatBubbleCountdown: React.FC<ChatBubbleCountdownProps> = ({
+  variant,
+  timestamp,
+  duration,
+}) => {
+  const [progress, setProgress] = React.useState(100);
+
+  React.useEffect(() => {
+    const updateProgress = () => {
+      const now = Date.now();
+      const timeLeft = Math.max(0, timestamp - now);
+      const newProgress = (timeLeft / duration) * 100;
+
+      setProgress(newProgress);
+
+      if (timeLeft > 0) {
+        requestAnimationFrame(updateProgress);
+      }
+    };
+
+    updateProgress();
+
+    return () => {
+      // Clean up any ongoing animation frame
+      updateProgress();
+    };
+  }, [timestamp, duration]);
+
+  return (
+    <div className={chatBubbleCountdownVariant({ variant })}>
+      <Progress
+        value={progress}
+        className="h-1 bg-transparent rounded-none"
+        indicatorClassName="bg-blue-500"
+      />
+    </div>
+  );
+};
+
 export {
   ChatBubble,
+  ChatBubbleCountdown,
   ChatBubbleMessage,
   chatBubbleMessageVariants,
   ChatBubbleTimestamp,

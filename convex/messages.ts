@@ -33,6 +33,8 @@ export const list = query({
         return {
           _id: message._id,
           _creationTime: message._creationTime,
+          _expirationTime:
+            message._creationTime + MESSAGE_EXPIRATION_MILLISECONDS,
           text: message.text,
           author: {
             _id: user._id,

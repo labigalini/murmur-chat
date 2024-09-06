@@ -4,6 +4,7 @@ import ChatAvatar from "./chat-avatar";
 import ChatBottombar from "./chat-bottombar";
 import {
   ChatBubble,
+  ChatBubbleCountdown,
   ChatBubbleMessage,
   ChatBubbleTimestamp,
 } from "./chat-bubble";
@@ -69,6 +70,13 @@ export function ChatMain() {
                     >
                       {message.text}
                       <ChatBubbleTimestamp timestamp={message._creationTime} />
+                      <ChatBubbleCountdown
+                        variant={variant}
+                        timestamp={message._expirationTime}
+                        duration={
+                          message._expirationTime - message._creationTime
+                        }
+                      />
                     </ChatBubbleMessage>
                   </ChatBubble>
                 </motion.div>
