@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
+
+import { useRouter } from "next/navigation";
 
 import {
   AuthLoading,
@@ -27,8 +29,16 @@ import { api } from "@/convex/_generated/api";
 export function ProfileButton() {
   const user = useQuery(api.users.viewer);
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
-  // const handleSubmit = () => setOpen(false);
+  const handleSignIn = useCallback(() => {
+    setOpen(false);
+    router.refresh();
+  }, [router, setOpen]);
+
+  const handleSignOut = useCallback(() => {
+    router.refresh();
+  }, [router]);
 
   return (
     <>
@@ -39,6 +49,7 @@ export function ProfileButton() {
         <UserMenu
           name={user?.name ?? user?.email ?? user?.phone ?? "Anonymous"}
           avatar={undefined}
+          onSignOut={handleSignOut}
         />
       </Authenticated>
       <Unauthenticated>
@@ -53,7 +64,7 @@ export function ProfileButton() {
                 Sign in or create an account
               </DialogTitle>
             </DialogHeader>
-            <SignInForm onSignIn={() => setOpen(false)} />
+            <SignInForm onSignIn={handleSignIn} />
           </DialogContent>
         </Dialog>
       </Unauthenticated>

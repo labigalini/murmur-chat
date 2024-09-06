@@ -1,5 +1,3 @@
-import { useRouter } from "next/navigation";
-
 import { useAuthActions } from "@convex-dev/auth/react";
 
 import { Button } from "@/components/ui/button";
@@ -19,9 +17,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 interface UserMenuProps {
   name: string;
   avatar?: string;
+  onSignOut?: () => void;
 }
 
-export function UserMenu({ name, avatar }: UserMenuProps) {
+export function UserMenu({ name, avatar, onSignOut }: UserMenuProps) {
+  const { signOut } = useAuthActions();
   return (
     <div className="flex items-center gap-2 text-sm font-medium">
       <DropdownMenu>
@@ -42,22 +42,13 @@ export function UserMenu({ name, avatar }: UserMenuProps) {
             <ThemeToggle />
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <SignOutButton />
+          <DropdownMenuItem
+            onClick={() => void signOut().then(() => onSignOut?.())}
+          >
+            Sign out
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  );
-}
-
-function SignOutButton() {
-  const router = useRouter();
-  const { signOut } = useAuthActions();
-
-  return (
-    <DropdownMenuItem
-      onClick={() => void signOut().then(() => router.push("/"))}
-    >
-      Sign out
-    </DropdownMenuItem>
   );
 }
