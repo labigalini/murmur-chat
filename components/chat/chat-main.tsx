@@ -1,9 +1,14 @@
-import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import ChatAvatar from "./chat-avatar";
 import ChatBottombar from "./chat-bottombar";
+import {
+  ChatBubble,
+  ChatBubbleMessage,
+  ChatBubbleTimestamp,
+} from "./chat-bubble";
 import { useChatContext } from "./chat-context";
+import { ChatMessageList } from "./chat-message-list";
 import ChatTopbar from "./chat-topbar";
 
 export function ChatMain() {
@@ -30,59 +35,49 @@ export function ChatMain() {
   return (
     <div className="flex flex-col justify-between w-full h-full">
       <ChatTopbar name={chat.name} image={chat.image} />
-      <div className="w-full overflow-y-auto overflow-x-hidden h-full flex flex-col">
-        <div
-          ref={messagesContainerRef}
-          className="w-full overflow-y-auto overflow-x-hidden h-full flex flex-col"
-        >
+      <div className="w-full overflow-y-auto h-full flex flex-col">
+        <ChatMessageList ref={messagesContainerRef}>
           <AnimatePresence>
-            {messages?.map((message, index) => (
-              <motion.div
-                key={index}
-                layout
-                initial={{ opacity: 0, scale: 1, y: 50, x: 0 }}
-                animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
-                exit={{ opacity: 0, scale: 1, y: 1, x: 0 }}
-                transition={{
-                  opacity: { duration: 0.1 },
-                  layout: {
-                    type: "spring",
-                    bounce: 0.3,
-                    duration: messages.indexOf(message) * 0.05 + 0.2,
-                  },
-                }}
-                style={{
-                  originX: 0.5,
-                  originY: 0.5,
-                }}
-                className={cn(
-                  "flex flex-col gap-2 p-4 whitespace-pre-wrap",
-                  message.isViewer ? "items-end" : "items-start",
-                )}
-              >
-                <div className="flex gap-3 items-center">
-                  {!message.isViewer && (
+            {messages.map((message, index) => {
+              const variant = message.isViewer ? "sent" : "received";
+              return (
+                <motion.div
+                  key={index}
+                  layout
+                  initial={{ opacity: 0, scale: 1, y: 50, x: 0 }}
+                  animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+                  exit={{ opacity: 0, scale: 1, y: 1, x: 0 }}
+                  transition={{
+                    opacity: { duration: 0.1 },
+                    layout: {
+                      type: "spring",
+                      bounce: 0.3,
+                      duration: index * 0.05 + 0.2,
+                    },
+                  }}
+                  style={{ originX: 0.5, originY: 0.5 }}
+                  className="flex flex-col gap-2 p-4"
+                >
+                  <ChatBubble variant={variant}>
                     <ChatAvatar
                       name={message.author.name}
                       avatar={message.author.image}
                     />
-                  )}
-                  <span className=" bg-accent p-3 rounded-md max-w-xs">
-                    {message.text}
-                  </span>
-                  {message.isViewer && (
-                    <ChatAvatar
-                      name={message.author.name}
-                      avatar={message.author.image}
-                    />
-                  )}
-                </div>
-              </motion.div>
-            ))}
+                    <ChatBubbleMessage
+                      variant={variant}
+                      // isLoading={message.isLoading} // TODO add support to typing...
+                    >
+                      {message.text}
+                      <ChatBubbleTimestamp timestamp={message._creationTime} />
+                    </ChatBubbleMessage>
+                  </ChatBubble>
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
-        </div>
-        <ChatBottombar />
+        </ChatMessageList>
       </div>
+      <ChatBottombar />
     </div>
   );
 }

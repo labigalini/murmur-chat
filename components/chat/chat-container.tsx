@@ -14,7 +14,7 @@ import {
   ChatState,
 } from "./chat-context";
 import { ChatMain } from "./chat-main";
-import { Sidebar } from "./chat-sidebar";
+import { ChatSidebar } from "./chat-sidebar";
 
 type ChatLayoutProps = Omit<ChatState, "isMobile"> & {
   defaultLayout?: number[];
@@ -94,11 +94,11 @@ export function ChatContainer({
               "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out",
           )}
         >
-          <Sidebar isCollapsed={isCollapsed || isMobile} />
+          <ChatSidebar isCollapsed={isCollapsed || isMobile} />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
-          {selectedChat ? <ChatMain /> : <>No Chat Selected</>}
+          <ChatMain />
         </ResizablePanel>
       </ResizablePanelGroup>
     </ChatProvider>

@@ -20,7 +20,7 @@ export default function ChatTopbar({ name, image }: ChatTopbarProps) {
         </div>
       </div>
 
-      <div>
+      <div className="flex gap-1">
         {TopbarIcons.map((icon, index) => (
           <Link
             key={index}
@@ -28,7 +28,6 @@ export default function ChatTopbar({ name, image }: ChatTopbarProps) {
             className={cn(
               buttonVariants({ variant: "ghost", size: "icon" }),
               "h-9 w-9",
-              "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white",
             )}
           >
             <icon.icon size={20} className="text-muted-foreground" />

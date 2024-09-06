@@ -9,11 +9,11 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { SmileIcon } from "lucide-react";
 
-interface EmojiPickerProps {
+interface ChatEmojiPickerProps {
   onChange: (value: string) => void;
 }
 
-export const EmojiPicker = ({ onChange }: EmojiPickerProps) => {
+export const ChatEmojiPicker = ({ onChange }: ChatEmojiPickerProps) => {
   return (
     <Popover>
       <PopoverTrigger>

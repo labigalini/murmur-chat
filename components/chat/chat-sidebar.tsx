@@ -15,11 +15,11 @@ import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
 import { ChatCreateDialog } from "./chat-create-dialog";
 
-interface SidebarProps {
+interface ChatSidebarProps {
   isCollapsed: boolean;
 }
 
-export function Sidebar({ isCollapsed }: SidebarProps) {
+export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
   const {
     state: { chats, selectedChat },
     onSelectChat,
@@ -33,7 +33,7 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
   return (
     <div
       data-collapsed={isCollapsed}
-      className="relative group flex flex-col h-full gap-4 p-2 data-[collapsed=true]:p-2 "
+      className="relative group flex flex-col h-full bg-muted/10 dark:bg-muted/20 gap-4 p-2 data-[collapsed=true]:p-2 "
     >
       <ChatCreateDialog
         open={openCreateDialog}
@@ -71,67 +71,63 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
         </div>
       )}
       <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
-        {chats
-          .map((chat) => ({
-            ...chat,
-            variant:
-              selectedChat?._id === chat._id
-                ? "grey"
-                : ("ghost" as "grey" | "ghost"),
-          }))
-          .map((chat) =>
-            isCollapsed ? (
-              <TooltipProvider key={chat._id}>
-                <Tooltip key={chat._id} delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href="#"
-                      onClick={() => onSelectChat(chat)}
-                      className={cn(
-                        buttonVariants({ variant: chat.variant, size: "icon" }),
-                        "h-11 w-11 md:h-16 md:w-16",
-                        chat.variant === "grey" &&
-                          "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white",
-                      )}
-                    >
-                      <ChatAvatar name={chat.name} avatar={chat.image} />{" "}
-                      <span className="sr-only">{chat.name}</span>
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="right"
-                    className="flex items-center gap-4"
+        {chats.map((chat) => {
+          const variant =
+            selectedChat?._id === chat._id
+              ? "grey"
+              : ("ghost" as "grey" | "ghost");
+          return isCollapsed ? (
+            <TooltipProvider key={chat._id}>
+              <Tooltip key={chat._id} delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Link
+                    href="#"
+                    onClick={() => onSelectChat(chat)}
+                    className={cn(
+                      buttonVariants({ variant, size: "icon" }),
+                      "h-11 w-11 md:h-16 md:w-16",
+                      variant === "grey" &&
+                        "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white",
+                    )}
                   >
-                    {chat.name}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ) : (
-              <Link
-                key={chat._id}
-                href="#"
-                onClick={() => onSelectChat(chat)}
-                className={cn(
-                  buttonVariants({ variant: chat.variant, size: "xl" }),
-                  chat.variant === "grey" &&
-                    "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white shrink",
-                  "justify-start gap-4 min-w-0",
-                )}
-              >
-                <ChatAvatar name={chat.name} avatar={chat.image} />
-                <div className="flex flex-col max-w-28 min-w-0">
-                  <span>{chat.name}</span>
-                  {/* TODO need to show the unread message counter */}
-                  {/* {link.messages.length > 0 && (
+                    <ChatAvatar name={chat.name} avatar={chat.image} />{" "}
+                    <span className="sr-only">{chat.name}</span>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="flex items-center gap-4"
+                >
+                  {chat.name}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <Link
+              key={chat._id}
+              href="#"
+              onClick={() => onSelectChat(chat)}
+              className={cn(
+                buttonVariants({ variant: variant, size: "xl" }),
+                variant === "grey" &&
+                  "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white shrink",
+                "justify-start gap-4 min-w-0",
+              )}
+            >
+              <ChatAvatar name={chat.name} avatar={chat.image} />
+              <div className="flex flex-col max-w-28 min-w-0">
+                <span className="truncate min-w-0">{chat.name}</span>
+                {/* TODO need to show the unread message counter */}
+                {/* {link.messages.length > 0 && (
                   <span className="text-zinc-300 text-xs truncate min-w-0">
                     {link.messages[link.messages.length - 1].name.split(" ")[0]}
                     : {link.messages[link.messages.length - 1].message}
                   </span>
                 )} */}
-                </div>
-              </Link>
-            ),
-          )}
+              </div>
+            </Link>
+          );
+        })}
       </nav>
     </div>
   );
