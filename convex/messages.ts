@@ -4,8 +4,11 @@ import { internal } from "./_generated/api";
 import { internalMutation, mutation, query } from "./functions";
 import { viewerHasPermission, viewerWithPermissionX } from "./permissions";
 
-const MESSAGE_EXPIRATION_MINUTES = 5;
-const MESSAGE_EXPIRATION_MILLISECONDS = MESSAGE_EXPIRATION_MINUTES * 60 * 1000;
+export const MESSAGE_EXPIRATION_MINUTES = parseFloat(
+  process.env.MESSAGE_EXPIRATION_MINUTES ?? "5",
+);
+export const MESSAGE_EXPIRATION_MILLISECONDS =
+  MESSAGE_EXPIRATION_MINUTES * 60 * 1000;
 
 export const list = query({
   args: {
