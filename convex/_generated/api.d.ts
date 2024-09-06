@@ -1,5 +1,4 @@
 /* eslint-disable */
-
 /**
  * Generated `api` utility.
  *
@@ -8,14 +7,14 @@
  * To regenerate, run `npx convex dev`.
  * @module
  */
+
 import type {
   ApiFromModules,
   FilterApi,
   FunctionReference,
 } from "convex/server";
-
-import type * as auth from "../auth.js";
 import type * as auth_ResendOTP from "../auth/ResendOTP.js";
+import type * as auth from "../auth.js";
 import type * as chats from "../chats.js";
 import type * as crons from "../crons.js";
 import type * as functions from "../functions.js";
