@@ -16,7 +16,7 @@ export function SignInForm({ onSignIn }: SignInFormProps) {
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
   return (
-    <div className="max-w-[384px] mx-auto flex flex-col gap-4 mb-2">
+    <div className="mx-auto mb-2 flex max-w-[384px] flex-col gap-4">
       {step === "signIn" ? (
         <>
           <SignInWithOAuth />
@@ -34,10 +34,10 @@ export function SignInForm({ onSignIn }: SignInFormProps) {
         </>
       ) : (
         <>
-          <h2 className="font-semibold text-2xl tracking-tight">
+          <h2 className="text-2xl font-semibold tracking-tight">
             Check your email
           </h2>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             Enter the 8-digit code we sent to your email address.
           </p>
           <form

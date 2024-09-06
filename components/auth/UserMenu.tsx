@@ -23,7 +23,7 @@ export function UserMenu({ name, avatar }: UserMenuProps) {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="icon" className="rounded-full">
-            <Avatar className="flex justify-center items-center">
+            <Avatar className="flex items-center justify-center">
               <AvatarImage src={avatar} alt={name} width={6} height={6} />
               <AvatarFallback>{name}</AvatarFallback>
             </Avatar>

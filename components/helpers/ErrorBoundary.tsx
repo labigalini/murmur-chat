@@ -21,7 +21,7 @@ export class ErrorBoundary extends Component<
   render() {
     if (this.state.error !== null) {
       return (
-        <div className="bg-destructive/30 p-8 flex flex-col gap-4 container">
+        <div className="container flex flex-col gap-4 bg-destructive/30 p-8">
           <h1 className="text-xl font-bold">
             Caught an error while rendering:
           </h1>

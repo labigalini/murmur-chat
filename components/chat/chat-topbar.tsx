@@ -11,7 +11,7 @@ export const TopbarIcons = [{ icon: Phone }, { icon: Video }, { icon: Info }];
 
 export default function ChatTopbar({ name, image }: ChatTopbarProps) {
   return (
-    <div className="w-full h-20 flex p-4 justify-between items-center border-b">
+    <div className="flex h-20 w-full items-center justify-between border-b p-4">
       <div className="flex items-center gap-2">
         <ChatAvatar name={name} avatar={image} />
         <div className="flex flex-col">

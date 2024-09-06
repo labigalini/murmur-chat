@@ -29,7 +29,7 @@ export function ProfileButton() {
   return (
     <>
       <AuthLoading>
-        <Skeleton className="rounded-full w-9 h-9" />
+        <Skeleton className="h-9 w-9 rounded-full" />
       </AuthLoading>
       <Authenticated>
         <UserMenu
@@ -45,7 +45,7 @@ export function ProfileButton() {
 
           <DialogContent>
             <DialogHeader>
-              <DialogTitle className="font-semibold text-2xl tracking-tight text-center">
+              <DialogTitle className="text-center text-2xl font-semibold tracking-tight">
                 Sign in or create an account
               </DialogTitle>
             </DialogHeader>

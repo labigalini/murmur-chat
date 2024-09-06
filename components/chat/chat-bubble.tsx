@@ -77,7 +77,7 @@ const ChatBubbleMessage = React.forwardRef<
     <div
       className={cn(
         chatBubbleMessageVariants({ variant, layout, className }),
-        "break-words max-w-full whitespace-pre-wrap",
+        "max-w-full whitespace-pre-wrap break-words",
       )}
       ref={ref}
       {...props}
@@ -113,7 +113,7 @@ const ChatBubbleTimestamp: React.FC<ChatBubbleTimestampProps> = ({
   className,
   ...props
 }) => (
-  <div className={cn("text-xs mt-2 text-right", className)} {...props}>
+  <div className={cn("mt-2 text-right text-xs", className)} {...props}>
     {formatTime(timestamp)}
   </div>
 );
@@ -170,7 +170,7 @@ const ChatBubbleCountdown: React.FC<ChatBubbleCountdownProps> = ({
     <div className={chatBubbleCountdownVariant({ variant })}>
       <Progress
         value={progress}
-        className="h-1 bg-transparent rounded-none"
+        className="h-1 rounded-none bg-transparent"
         indicatorClassName="transition-transform duration-1000 ease-linear bg-blue-500"
       />
     </div>

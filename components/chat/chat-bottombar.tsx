@@ -61,7 +61,7 @@ export default function ChatBottombar() {
   };
 
   return (
-    <div className="px-2 py-4 flex justify-between w-full items-center gap-2">
+    <div className="flex w-full items-center justify-between gap-2 px-2 py-4">
       <div className="flex">
         <Popover>
           <PopoverTrigger asChild>
@@ -139,7 +139,7 @@ export default function ChatBottombar() {
       <AnimatePresence initial={false}>
         <motion.div
           key="input"
-          className="w-full relative"
+          className="relative w-full"
           layout
           initial={{ opacity: 0, scale: 1 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -160,7 +160,7 @@ export default function ChatBottombar() {
             placeholder="Type a message..."
             className="rounded-full"
           />
-          <div className="absolute right-4 bottom-2  ">
+          <div className="absolute bottom-2 right-4">
             <ChatEmojiPicker
               onChange={(value) => {
                 setMessage(message + value);

@@ -12,7 +12,7 @@ export const Link = fr<
     <NextLink
       ref={ref}
       className={cn(
-        "font-medium text-primary underline underline-offset-4 hover:no-underline cursor-pointer",
+        "cursor-pointer font-medium text-primary underline underline-offset-4 hover:no-underline",
         className,
       )}
       {...props}

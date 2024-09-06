@@ -39,9 +39,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ConvexClientProvider>
-            <div className="flex h-[calc(100dvh)] flex-col items-center justify-center p-4 md:px-24 py-32 gap-4">
-              <div className="flex justify-between max-w-5xl w-full items-center">
-                <Link href="#" className="text-4xl font-bold text-gradient">
+            <div className="flex h-[calc(100dvh)] flex-col items-center justify-center gap-4 p-4 py-32 md:px-24">
+              <div className="flex w-full max-w-5xl items-center justify-between">
+                <Link href="#" className="text-gradient text-4xl font-bold">
                   murmur-chat
                 </Link>
                 <div className="flex justify-end gap-4">
@@ -50,11 +50,11 @@ export default function RootLayout({
                 </div>
               </div>
 
-              <div className="z-10 border rounded-lg max-w-5xl w-full h-full text-sm lg:flex">
-                <main className="w-full h-full">{chat}</main>
+              <div className="z-10 h-full w-full max-w-5xl rounded-lg border text-sm lg:flex">
+                <main className="h-full w-full">{chat}</main>
               </div>
 
-              <div className="flex justify-end max-w-5xl w-full items-start text-xs md:text-sm text-muted-foreground ">
+              <div className="flex w-full max-w-5xl items-start justify-end text-xs text-muted-foreground md:text-sm">
                 <p className="max-w-[150px] sm:max-w-lg">
                   by{" "}
                   <a className="font-semibold" href="https://spiteful.io/">

@@ -32,9 +32,9 @@ export function ChatMain() {
   if (messages === "loading") return "Loading messages";
 
   return (
-    <div className="flex flex-col justify-between w-full h-full">
+    <div className="flex h-full w-full flex-col justify-between">
       <ChatTopbar name={chat.name} image={chat.image} />
-      <div className="w-full overflow-y-auto h-full flex flex-col">
+      <div className="flex h-full w-full flex-col overflow-y-auto">
         <ChatMessageList ref={messagesContainerRef}>
           <AnimatePresence>
             {messages.map((message, index) => {
