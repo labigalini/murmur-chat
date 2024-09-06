@@ -1,5 +1,3 @@
-import { useEffect, useRef } from "react";
-
 import { AnimatePresence, motion } from "framer-motion";
 
 import ChatAvatar from "./chat-avatar";
@@ -19,15 +17,6 @@ export function ChatMain() {
     state: { chat, messages },
   } = useChatContext();
 
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop =
-        messagesContainerRef.current.scrollHeight;
-    }
-  }, [chat]);
-
   if (chat === "loading") return "Loading selected chat";
   else if (!chat) return "No chat selected";
 
@@ -36,7 +25,7 @@ export function ChatMain() {
   return (
     <div className="flex h-full w-full flex-col justify-between">
       <ChatTopbar name={chat.name} image={chat.image} />
-      <ChatMessageList ref={messagesContainerRef}>
+      <ChatMessageList>
         <AnimatePresence>
           {messages.map((message, index) => {
             const variant = message.isViewer ? "sent" : "received";

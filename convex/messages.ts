@@ -28,7 +28,7 @@ export const list = query({
       .table("chats")
       .getX(chatId)
       .edge("messages")
-      .order("asc")
+      .order("desc")
       .map(async (message) => {
         const member = await message.edge("member");
         const user = await member.edge("user");
