@@ -40,7 +40,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ConvexClientProvider>
-            <div className="flex h-[calc(100dvh)] flex-col items-center justify-center gap-4 px-4 lg:px-24 py-16 lg:py-32">
+            <div className="flex h-[calc(100dvh)] flex-col items-center justify-center gap-4 px-4 py-16 lg:px-24 lg:py-32">
               <div className="flex w-full max-w-5xl items-center justify-between">
                 <Link href="#" className="text-gradient text-4xl font-bold">
                   murmur-chat
@@ -51,7 +51,7 @@ export default function RootLayout({
                 </div>
               </div>
 
-              <div className="z-10 h-full w-full max-w-5xl rounded-lg border text-sm lg:flex flex-shrink-0">
+              <div className="z-10 h-full w-full max-w-5xl flex-shrink-0 rounded-lg border text-sm lg:flex">
                 <main className="h-full w-full">{chat}</main>
               </div>
 
