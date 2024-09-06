@@ -2,8 +2,9 @@ import { createContext, useContext } from "react";
 import { Chat, Message } from "./chat-types";
 
 export type ChatState = {
-  chats: "loading" | Chat[];
-  selectedChat: "loading" | (Chat & { messages: "loading" | Message[] }) | null;
+  chatList: "loading" | Chat[];
+  chat: "loading" | Chat | null;
+  messages: "loading" | Message[];
   isMobile: boolean;
 };
 

@@ -21,13 +21,13 @@ interface ChatSidebarProps {
 
 export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
   const {
-    state: { chats, selectedChat },
+    state: { chatList, chat: selectedChat },
     onSelectChat,
   } = useChatContext();
 
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
-  if (chats === "loading" || selectedChat === "loading")
+  if (chatList === "loading" || selectedChat === "loading")
     return "Loading chat list";
 
   return (
@@ -43,7 +43,7 @@ export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
         <div className="flex justify-between p-2 items-center">
           <div className="flex gap-2 items-center text-2xl">
             <p className="font-medium">Chats</p>
-            <span className="text-zinc-300">({chats.length})</span>
+            <span className="text-zinc-300">({chatList.length})</span>
           </div>
 
           <div>
@@ -71,7 +71,7 @@ export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
         </div>
       )}
       <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
-        {chats.map((chat) => {
+        {chatList.map((chat) => {
           const variant =
             selectedChat?._id === chat._id
               ? "grey"

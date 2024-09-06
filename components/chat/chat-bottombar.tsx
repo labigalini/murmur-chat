@@ -20,7 +20,7 @@ export const BottombarIcons = [{ icon: FileImage }, { icon: Paperclip }];
 
 export default function ChatBottombar() {
   const {
-    state: { selectedChat, isMobile },
+    state: { chat, isMobile },
     onSendMessage,
   } = useChatContext();
 
@@ -32,14 +32,14 @@ export default function ChatBottombar() {
   };
 
   const handleThumbsUp = () => {
-    if (selectedChat === "loading" || !selectedChat) return;
-    onSendMessage(selectedChat, "👍");
+    if (chat === "loading" || !chat) return;
+    onSendMessage(chat, "👍");
   };
 
   const handleSend = () => {
-    if (selectedChat === "loading" || !selectedChat) return;
+    if (chat === "loading" || !chat) return;
     if (message.trim()) {
-      onSendMessage(selectedChat, message.trim());
+      onSendMessage(chat, message.trim());
       setMessage("");
 
       if (inputRef.current) {

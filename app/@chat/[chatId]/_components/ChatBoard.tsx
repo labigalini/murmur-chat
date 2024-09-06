@@ -7,7 +7,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "@/hooks";
 import { skipIfUnset } from "@/lib/utils";
 import { useMutation } from "convex/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type ChatBoardProps = {
   defaultLayout?: number[];
@@ -56,18 +56,11 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
     [sendMessage],
   );
 
-  const selectedChatWithMessages = useMemo(
-    () =>
-      selectedChat && selectedChat !== "loading"
-        ? { ...selectedChat, messages: selectedChatMessages }
-        : selectedChat,
-    [selectedChat, selectedChatMessages],
-  );
-
   return (
     <ChatContainer
-      chats={chats}
-      selectedChat={selectedChatWithMessages}
+      chatList={chats}
+      chat={selectedChat}
+      messages={selectedChatMessages}
       defaultLayout={defaultLayout}
       handlers={{
         onSelectChat: handleSelectChat,

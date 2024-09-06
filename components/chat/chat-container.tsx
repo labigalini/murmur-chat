@@ -24,8 +24,9 @@ type ChatLayoutProps = Omit<ChatState, "isMobile"> & {
 };
 
 export function ChatContainer({
-  chats = [],
-  selectedChat,
+  chatList,
+  chat,
+  messages,
   defaultLayout = [320, 480],
   defaultCollapsed = false,
   navCollapsedSize = 8,
@@ -54,10 +55,10 @@ export function ChatContainer({
   const chatContext = useMemo(
     () =>
       ({
-        state: { chats, selectedChat, isMobile },
+        state: { chatList, chat, messages, isMobile },
         ...handlers,
       }) satisfies ChatContextType,
-    [chats, selectedChat, isMobile, handlers],
+    [chatList, chat, messages, isMobile, handlers],
   );
 
   return (

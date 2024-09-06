@@ -14,7 +14,7 @@ import ChatTopbar from "./chat-topbar";
 
 export function ChatMain() {
   const {
-    state: { selectedChat },
+    state: { chat, messages },
   } = useChatContext();
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -24,12 +24,10 @@ export function ChatMain() {
       messagesContainerRef.current.scrollTop =
         messagesContainerRef.current.scrollHeight;
     }
-  }, [selectedChat]);
+  }, [chat]);
 
-  if (selectedChat === "loading") return "Loading selected chat";
-  else if (!selectedChat) return "No chat selected";
-
-  const { messages, ...chat } = selectedChat;
+  if (chat === "loading") return "Loading selected chat";
+  else if (!chat) return "No chat selected";
 
   if (messages === "loading") return "Loading messages";
 
