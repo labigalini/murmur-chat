@@ -11,7 +11,7 @@ const Card = React.forwardRef<
     className={cn(
       "rounded-xl border bg-card text-card-foreground shadow",
       disabled && "cursor-not-allowed text-muted-foreground",
-      className
+      className,
     )}
     {...props}
   />
