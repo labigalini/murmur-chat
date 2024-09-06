@@ -20,7 +20,7 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
     "loading",
   );
   useEffect(() => {
-    if (chats !== "loading" && selectedChat === "loading") {
+    if (chats !== "loading" && (!chats.length || selectedChat === "loading")) {
       setSelectedChat(chats[0] ?? null);
     }
   }, [chats, selectedChat]);
