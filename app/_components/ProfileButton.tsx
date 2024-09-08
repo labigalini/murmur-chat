@@ -26,12 +26,23 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { api } from "@/convex/_generated/api";
 
+import { generateKeyPair, saveKeyPair } from "@/lib/encryption";
+
 export function ProfileButton() {
   const user = useQuery(api.users.viewer);
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
+  const handleKeyPairGeneration = useCallback(async () => {
+    // loading while key is being generated
+    // generate key here maybe?
+    const keys = await generateKeyPair();
+    await saveKeyPair(keys.privateKey, keys.publicKey);
+  }, []);
+
   const handleSignIn = useCallback(() => {
+    // loading while key is being generated
+    // generate key here maybe?
     setOpen(false);
     router.refresh();
   }, [router, setOpen]);
@@ -42,6 +53,12 @@ export function ProfileButton() {
 
   return (
     <>
+      <Button
+        variant={"secondary"}
+        onClick={() => void handleKeyPairGeneration()}
+      >
+        Test Keys
+      </Button>
       <AuthLoading>
         <Skeleton className="h-9 w-9 rounded-full" />
       </AuthLoading>
