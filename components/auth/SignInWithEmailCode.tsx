@@ -37,8 +37,14 @@ export function SignInWithEmailCode({
           });
       }}
     >
-      <label htmlFor="email">Email</label>
-      <Input name="email" id="email" className="mb-4" autoComplete="email" />
+      <Input
+        name="email"
+        id="email"
+        className="mb-4"
+        autoComplete="email"
+        placeholder="Your email"
+        aria-label="Email to receive one time login code"
+      />
       {children}
       <Button type="submit" disabled={submitting}>
         Send code

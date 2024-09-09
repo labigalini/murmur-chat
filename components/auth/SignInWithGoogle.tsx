@@ -8,7 +8,6 @@ export function SignInWithGoogle() {
   return (
     <Button
       className="flex-1"
-      variant="outline"
       type="button"
       onClick={() => void signIn("google")}
       disabled={true}

@@ -8,7 +8,6 @@ export function SignInWithGitHub() {
   return (
     <Button
       className="flex-1"
-      variant="outline"
       type="button"
       onClick={() => void signIn("github")}
       disabled={true}

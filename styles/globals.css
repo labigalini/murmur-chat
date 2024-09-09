@@ -24,6 +24,7 @@
     --input: 240 5.9% 90%;
     --ring: 240 5.9% 10%;
     --radius: 1rem;
+    --bg-gradient-color: linear-gradient(to bottom right, #9333ea, #ef4444);
   }
 
   .dark {
@@ -46,6 +47,7 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+    --bg-gradient-color: linear-gradient(to bottom right, #3b0764, #450a0a);
   }
 }
 
@@ -60,8 +62,12 @@
 }
 
 .text-gradient {
-  background: linear-gradient(90deg, #6366f1, rgba(168, 85, 247, 0.8));
+  background: linear-gradient(to bottom right, #9333ea, #ef4444);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.bg-gradient {
+  background: var(--bg-gradient-color);
 }
