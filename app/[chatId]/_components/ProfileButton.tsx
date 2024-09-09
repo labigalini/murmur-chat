@@ -3,14 +3,8 @@
 import { useCallback } from "react";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-import {
-  AuthLoading,
-  Authenticated,
-  Unauthenticated,
-  useQuery,
-} from "convex/react";
+import { AuthLoading, Authenticated, Unauthenticated } from "convex/react";
 
 import { UserMenu } from "@/components/auth/UserMenu";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -20,9 +14,10 @@ import { api } from "@/convex/_generated/api";
 
 import { generateKeyPair, saveKeyPair } from "@/lib/encryption";
 
+import { useQuery } from "@/hooks";
+
 export function ProfileButton() {
   const user = useQuery(api.users.viewer);
-  const router = useRouter();
 
   const handleKeyPairGeneration = useCallback(async () => {
     // loading while key is being generated
@@ -30,10 +25,6 @@ export function ProfileButton() {
     const keys = await generateKeyPair();
     await saveKeyPair(keys.privateKey, keys.publicKey);
   }, []);
-
-  const handleSignOut = useCallback(() => {
-    router.push("/");
-  }, [router]);
 
   return (
     <>
@@ -47,11 +38,11 @@ export function ProfileButton() {
         <Skeleton className="h-9 w-9 rounded-full" />
       </AuthLoading>
       <Authenticated>
-        <UserMenu
-          name={user?.name ?? user?.email ?? user?.phone ?? "Anonymous"}
-          avatar={undefined}
-          onSignOut={handleSignOut}
-        />
+        {user && user !== "loading" ? (
+          <UserMenu name={user.name} avatar={user.image} />
+        ) : (
+          <Skeleton className="h-9 w-9 rounded-full" />
+        )}
       </Authenticated>
       <Unauthenticated>
         <Link href="/login" className={buttonVariants()}>

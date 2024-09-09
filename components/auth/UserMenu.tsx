@@ -1,4 +1,4 @@
-import { useAuthActions } from "@convex-dev/auth/react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,11 +17,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 interface UserMenuProps {
   name: string;
   avatar?: string;
-  onSignOut?: () => void;
 }
 
-export function UserMenu({ name, avatar, onSignOut }: UserMenuProps) {
-  const { signOut } = useAuthActions();
+export function UserMenu({ name, avatar }: UserMenuProps) {
   return (
     <div className="flex items-center gap-2 text-sm font-medium">
       <DropdownMenu>
@@ -42,10 +40,8 @@ export function UserMenu({ name, avatar, onSignOut }: UserMenuProps) {
             <ThemeToggle />
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => void signOut().then(() => onSignOut?.())}
-          >
-            Sign out
+          <DropdownMenuItem>
+            <Link href="/logout">Sign out</Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
