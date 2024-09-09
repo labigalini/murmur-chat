@@ -10,8 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { ThemeToggle } from "./ThemeToggle";
-
+import { ThemeToggle } from "../layout/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface UserMenuProps {
