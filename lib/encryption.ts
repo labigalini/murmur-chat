@@ -13,7 +13,13 @@ export async function generateKeyPair() {
 }
 
 // Save the keys in localStorage
-export async function saveKeyPair(privateKey: CryptoKey, publicKey: CryptoKey) {
+export async function saveKeyPair({
+  publicKey,
+  privateKey,
+}: {
+  privateKey: CryptoKey;
+  publicKey: CryptoKey;
+}) {
   const privateKeyData = await crypto.subtle.exportKey("jwk", privateKey);
   const publicKeyData = await crypto.subtle.exportKey("jwk", publicKey);
 

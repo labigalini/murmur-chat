@@ -14,18 +14,19 @@ import {
   decryptText,
   encryptText,
   encryptedDataToString,
-  loadKeyPair,
   stringToEncryptedData,
 } from "@/lib/encryption";
 import { skipIfUnset } from "@/lib/utils";
 
-import { useQuery } from "@/hooks";
+import { useEncryption, useQuery } from "@/hooks";
 
 type ChatBoardProps = {
   defaultLayout?: number[];
 };
 
 export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
+  const encryption = useEncryption();
+
   const chats = useQuery(api.chats.list);
 
   const [selectedChat, setSelectedChat] = useState<"loading" | Chat | null>(
@@ -60,11 +61,13 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
 
   const handleSendMessage = useCallback(
     async (chat: Chat, message: string) => {
-      const keyData = await loadKeyPair();
-      if (keyData == null) throw new Error("Encryption key not found");
+      if (encryption === "loading") return;
+
+      const { publicKey, privateKey } = encryption;
+
       const { encryptedData, iv } = await encryptText(
-        keyData.privateKey,
-        keyData.publicKey,
+        privateKey,
+        publicKey,
         message,
       );
       const encryptedMessage = encryptedDataToString(encryptedData, iv);
@@ -74,7 +77,7 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
         // TODO probably need to send one message to each pub key maybe change schema
       });
     },
-    [sendMessage],
+    [encryption, sendMessage],
   );
 
   const [decryptedMessages, setDecryptedMessages] =
@@ -82,24 +85,22 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
 
   useEffect(() => {
     const decryptMessages = async () => {
-      if (!selectedChatMessages || selectedChatMessages === "loading") {
+      if (
+        !selectedChatMessages ||
+        selectedChatMessages === "loading" ||
+        encryption === "loading"
+      ) {
         setDecryptedMessages("loading");
         return;
       }
 
-      const keyData = await loadKeyPair();
-      if (keyData == null) throw new Error("Encryption key not found");
+      const { publicKey, privateKey } = encryption;
 
       const decrypted = await Promise.all(
         selectedChatMessages.map(async (original) => {
           const { encryptedData, iv } = stringToEncryptedData(original.text);
           const decryptedText = original.isViewer
-            ? await decryptText(
-                keyData.privateKey,
-                keyData.publicKey,
-                encryptedData,
-                iv,
-              )
+            ? await decryptText(privateKey, publicKey, encryptedData, iv)
             : original.text;
           return {
             ...original,
@@ -112,7 +113,7 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
     };
 
     decryptMessages().catch(console.error);
-  }, [selectedChatMessages]);
+  }, [encryption, selectedChatMessages]);
 
   return (
     <ChatContainer
