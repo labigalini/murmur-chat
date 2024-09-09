@@ -8,6 +8,7 @@ module.exports = {
     "^next",
     "^convex|@convex",
     "<THIRD_PARTY_MODULES>",
+    "^@/styles/(.*)$",
     "^@/components/(.*)$",
     "^@/convex/(.*)$",
     "^@/hooks/(.*)$",
