@@ -9,11 +9,7 @@ import { CodeInput } from "./CodeInput";
 import { SignInWithEmailCode } from "./SignInWithEmailCode";
 import { SignInWithOAuth } from "./SignInWithOAuth";
 
-type SignInFormProps = {
-  onSignIn?: () => void;
-};
-
-export function SignInForm({ onSignIn }: SignInFormProps) {
+export function SignInForm() {
   const { signIn } = useAuthActions();
   const [step, setStep] = useState<"signIn" | { email: string }>("signIn");
   const { toast } = useToast();
@@ -55,15 +51,13 @@ export function SignInForm({ onSignIn }: SignInFormProps) {
               event.preventDefault();
               setSubmitting(true);
               const formData = new FormData(event.currentTarget);
-              signIn("resend-otp", formData)
-                .then(onSignIn)
-                .catch(() => {
-                  toast({
-                    title: "Code could not be verified, try again",
-                    variant: "destructive",
-                  });
-                  setSubmitting(false);
+              signIn("resend-otp", formData).catch(() => {
+                toast({
+                  title: "Code could not be verified, try again",
+                  variant: "destructive",
                 });
+                setSubmitting(false);
+              });
             }}
           >
             <div className="my-4">

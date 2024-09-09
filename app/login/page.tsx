@@ -1,9 +1,16 @@
 "use client";
 
-import { useCallback } from "react";
+import { useEffect, useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+import {
+  AuthLoading,
+  Authenticated,
+  Unauthenticated,
+  useConvexAuth,
+} from "convex/react";
 
 import { SignInForm } from "@/components/auth/SignInForm";
 import { ThemeToggle } from "@/components/auth/ThemeToggle";
@@ -11,11 +18,15 @@ import { buttonVariants } from "@/components/ui/button";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { isLoading, isAuthenticated } = useConvexAuth();
 
-  const handleSignIn = useCallback(() => {
-    // TODO push to first chat or param selection
-    router.push("/chat");
-  }, [router]);
+  // TODO get the redirect URL to send back to previous chat
+  const [redirect, _setRedirect] = useState("/chatid-placeholder");
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (isAuthenticated) router.push(redirect);
+  }, [isAuthenticated, isLoading, redirect, router]);
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
@@ -36,18 +47,26 @@ export default function LoginPage() {
       {/* Right Panel */}
       <div className="flex w-full items-center justify-center p-8 lg:w-1/2 lg:pt-36">
         <div className="w-full max-w-md">
-          <SignInForm onSignIn={handleSignIn} />
-          <div className="mx-auto mt-8 max-w-[384px] border-t pt-6 text-center">
-            <Link
-              href="/"
-              className={buttonVariants({
-                variant: "ghost",
-                className: "text-sm",
-              })}
-            >
-              ← Back to Home
-            </Link>
-          </div>
+          <AuthLoading>
+            <div>Signing you in, hang on tight...</div>
+          </AuthLoading>
+          <Authenticated>
+            <div>All set, sending you back to {redirect}...</div>
+          </Authenticated>
+          <Unauthenticated>
+            <SignInForm />
+            <div className="mx-auto mt-8 max-w-[384px] border-t pt-6 text-center">
+              <Link
+                href="/"
+                className={buttonVariants({
+                  variant: "ghost",
+                  className: "text-sm",
+                })}
+              >
+                ← Back to Home
+              </Link>
+            </div>
+          </Unauthenticated>
         </div>
       </div>
 
