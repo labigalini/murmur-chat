@@ -43,7 +43,7 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
     if (chats !== "loading" && (!chats.length || selectedChat === "loading")) {
       setSelectedChat(chats[0] ?? null);
     }
-  }, [chats, selectedChat]);
+  }, [chats, selectedChat, setSelectedChat]);
 
   // decrypt messages
   useEffect(() => {
@@ -74,9 +74,12 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
     decryptMessages().catch(console.error);
   }, [encryption, selectedChatMessages]);
 
-  const handleSelectChat = useCallback((newSelection: Chat) => {
-    setSelectedChat(newSelection);
-  }, []);
+  const handleSelectChat = useCallback(
+    (newSelection: Chat) => {
+      setSelectedChat(newSelection);
+    },
+    [setSelectedChat],
+  );
 
   const handleCreateChat = useCallback(
     async (newChatName: string) => {
@@ -87,21 +90,27 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
 
   const handleSendMessage = useCallback(
     async (chat: Chat, message: string) => {
-      if (auth === "loading" || encryption === "loading") return;
+      if (encryption === "loading" || chats === "loading") {
+        return;
+      }
 
-      const { session } = auth;
       const { encrypt } = encryption;
 
-      if (!session?.publicKey) return; // TODO fix I don't like it
-
-      const encryptedMessage = await encrypt(message, session.publicKey);
+      const encryptedMessages = await Promise.all(
+        chats
+          .find((c) => c._id === chat._id) // TODO fix this, I should be able to infer selectedChat... or maybe state by id
+          ?.sessions.map(async (recipient) => ({
+            text: await encrypt(message, recipient.publicKey),
+            recipientSessionId: recipient._id,
+          })) ?? [],
+      );
 
       await sendMessage({
         chatId: chat._id as Id<"chats">,
-        messages: [{ text: encryptedMessage, recipientSessionId: session._id }],
+        messages: encryptedMessages,
       });
     },
-    [auth, encryption, sendMessage],
+    [chats, encryption, sendMessage],
   );
 
   return (

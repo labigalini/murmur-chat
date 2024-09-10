@@ -17,17 +17,23 @@ const schema = defineEntSchema(
   {
     ...defineEntsFromTables(authTables),
 
-    authSessions: defineEntFromTable(authTables.authSessions) // override to extend
-      .field("publicKey", v.optional(v.string()))
+    authSessions: defineEnt({
+      // override to extend
+      userId: v.id("user"),
+      expirationTime: v.number(),
+      publicKey: v.optional(v.string()),
+    })
       .edges("messages", {
         ref: "recipientSessionId",
-      }),
+      })
+      .edge("user"),
 
     users: defineEntFromTable(authTables.users) // override to extend
       .edges("members", {
         ref: true,
         deletion: "soft",
-      }),
+      })
+      .edges("authSessions", { ref: true }),
 
     chats: defineEnt({
       name: v.string(),

@@ -15,10 +15,24 @@ export const list = query({
       .order("desc")
       .map(async (member) => {
         const chat = await member.edge("chat");
+        const sessions = (
+          await Promise.all(
+            (await chat.edge("members")).map((m) =>
+              m.edge("user").edge("authSessions"),
+            ), // TODO filter by expiration time
+          )
+        )
+          .flat()
+          .filter((session) => !!session.publicKey)
+          .map((session) => ({
+            _id: session._id,
+            publicKey: session.publicKey!,
+          }));
         return {
           _id: chat._id,
           name: chat.name,
           image: chat.image,
+          sessions,
         };
       });
   },
