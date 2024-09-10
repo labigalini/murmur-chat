@@ -82,9 +82,9 @@ export const destruct = internalMutation({
     messageIds: v.array(v.id("messages")),
   },
   handler: async (ctx, { messageIds }) => {
-    const messages = await ctx.table("messages").getMany(messageIds);
     await Promise.all(
-      messages.map(async (message) => {
+      messageIds.map(async (messageId) => {
+        const message = await ctx.table("messages").get(messageId);
         if (message) await message.delete();
       }),
     );
