@@ -1,37 +1,70 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
-import { generateKeyPair, loadKeyPair, saveKeyPair } from "@/lib/encryption";
+import { Id } from "@/convex/_generated/dataModel";
+
+import {
+  encryptText,
+  encryptedDataToString,
+  generateKeyPair,
+  loadKeyPair,
+  saveKeyPair,
+} from "@/lib/encryption";
+
+type Recipient = { _id: Id<"users">; publicKey: CryptoKey };
+
+type EncryptResult = { recipient: Recipient; message: string }[];
+type EncryptFunction = (
+  message: string,
+  ...recipients: Recipient[]
+) => Promise<EncryptResult>;
 
 export function useEncryption():
   | {
-      publicKey: CryptoKey;
-      privateKey: CryptoKey;
-      // encrypt: () => void;
+      encrypt: EncryptFunction;
       // decrypt: () => void;
     }
   | "loading" {
-  const [publicKey, setPublicKey] = useState<CryptoKey>();
-  const [privateKey, setPrivateKey] = useState<CryptoKey>();
+  const isInitialized = useRef(false);
 
   useEffect(() => {
-    const getOrCreateKeyPair = async () => {
-      let keyPair = await loadKeyPair();
-
-      if (!keyPair) {
-        keyPair = await generateKeyPair();
-        await saveKeyPair(keyPair);
+    const createIfNotExists = async () => {
+      const loadedKeyPair = await loadKeyPair();
+      if (!loadedKeyPair) {
+        const newKeyPair = await generateKeyPair();
+        await saveKeyPair(newKeyPair);
       }
-
-      setPublicKey(keyPair.publicKey);
-      setPrivateKey(keyPair.privateKey);
+      isInitialized.current = true;
     };
-
-    getOrCreateKeyPair().catch(console.error);
+    createIfNotExists().catch(console.error);
   }, []);
 
-  if (publicKey && privateKey) {
-    return { publicKey, privateKey };
-  }
+  const encryption = useMemo(
+    () => ({
+      encrypt: async (
+        message: string,
+        ...recipients: Recipient[]
+      ): Promise<EncryptResult> => {
+        const keyPair = await loadKeyPair();
+        if (!keyPair) throw new Error("Key pair not available");
+        const { privateKey } = keyPair;
 
-  return "loading";
+        const encrypted: EncryptResult = [];
+
+        for (const recipient of recipients) {
+          const { encryptedData, iv } = await encryptText(
+            privateKey,
+            recipient.publicKey,
+            message,
+          );
+          const encryptedMessage = encryptedDataToString(encryptedData, iv);
+          encrypted.push({ recipient, message: encryptedMessage });
+        }
+
+        return encrypted;
+      },
+    }),
+    [],
+  );
+
+  return !isInitialized.current ? "loading" : encryption;
 }

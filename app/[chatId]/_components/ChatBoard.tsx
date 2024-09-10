@@ -12,19 +12,19 @@ import { Id } from "@/convex/_generated/dataModel";
 
 import {
   decryptText,
-  encryptText,
-  encryptedDataToString,
+  loadKeyPair,
   stringToEncryptedData,
 } from "@/lib/encryption";
 import { skipIfUnset } from "@/lib/utils";
 
-import { useEncryption, useQuery } from "@/hooks";
+import { useAuth, useEncryption, useQuery } from "@/hooks";
 
 type ChatBoardProps = {
   defaultLayout?: number[];
 };
 
 export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
+  const auth = useAuth();
   const encryption = useEncryption();
 
   const chats = useQuery(api.chats.list);
@@ -61,23 +61,28 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
 
   const handleSendMessage = useCallback(
     async (chat: Chat, message: string) => {
-      if (encryption === "loading") return;
+      if (encryption === "loading" || auth === "loading") return;
 
-      const { publicKey, privateKey } = encryption;
+      const { encrypt } = encryption;
+      const { user } = auth;
 
-      const { encryptedData, iv } = await encryptText(
-        privateKey,
-        publicKey,
-        message,
-      );
-      const encryptedMessage = encryptedDataToString(encryptedData, iv);
+      const keyPair = await loadKeyPair(); // TODO remove this will come from chat
+      if (!keyPair) throw new Error("Key pair not available");
+      const { publicKey } = keyPair;
+
+      if (!user) return; // TODO this is ugly
+
+      const encryptedMessage = (
+        await encrypt(message, { _id: user._id, publicKey })
+      )[0].message;
+
       await sendMessage({
         chatId: chat._id as Id<"chats">,
         text: encryptedMessage,
         // TODO probably need to send one message to each pub key maybe change schema
       });
     },
-    [encryption, sendMessage],
+    [auth, encryption, sendMessage],
   );
 
   const [decryptedMessages, setDecryptedMessages] =
@@ -94,7 +99,9 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
         return;
       }
 
-      const { publicKey, privateKey } = encryption;
+      const keyPair = await loadKeyPair();
+      if (!keyPair) throw new Error("Key pair not available");
+      const { publicKey, privateKey } = keyPair;
 
       const decrypted = await Promise.all(
         selectedChatMessages.map(async (original) => {
@@ -108,7 +115,7 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
           };
         }),
       );
-      console.log(decrypted);
+
       setDecryptedMessages(decrypted);
     };
 
