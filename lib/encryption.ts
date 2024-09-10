@@ -61,6 +61,20 @@ export async function loadKeyPair() {
     return null;
   }
 }
+
+export async function encryptTextToString(
+  privateKey: CryptoKey,
+  recipientPublicKey: CryptoKey,
+  text: string,
+) {
+  const { encryptedData, iv } = await encryptText(
+    privateKey,
+    recipientPublicKey,
+    text,
+  );
+  return encryptedDataToString(encryptedData, iv);
+}
+
 export async function encryptText(
   privateKey: CryptoKey,
   recipientPublicKey: CryptoKey,
@@ -95,6 +109,15 @@ export async function encryptText(
   );
 
   return { encryptedData, iv };
+}
+
+export async function decryptTextFromString(
+  privateKey: CryptoKey,
+  senderPublicKey: CryptoKey,
+  encryptedText: string,
+) {
+  const { encryptedData, iv } = stringToEncryptedData(encryptedText);
+  return await decryptText(privateKey, senderPublicKey, encryptedData, iv);
 }
 
 export async function decryptText(

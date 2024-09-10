@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useRef } from "react";
 
 import {
-  decryptText,
-  encryptText,
-  encryptedDataToString,
+  decryptTextFromString,
+  encryptTextToString,
   generateKeyPair,
   loadKeyPair,
   saveKeyPair,
-  stringToEncryptedData,
 } from "@/lib/encryption";
 
 type EncryptFunction = (
@@ -43,46 +41,35 @@ export function useEncryption():
 
   const encryption = useMemo(
     () => ({
-      encrypt: async (
-        text: string,
-        recipientPublicKey: CryptoKey,
-      ): Promise<string> => {
-        const keyPair = await loadKeyPair();
-        if (!keyPair) throw new Error("Key pair not available");
-        const { privateKey } = keyPair;
-
-        const { encryptedData, iv } = await encryptText(
-          privateKey,
-          recipientPublicKey,
-          text,
-        );
-
-        const encryptedText = encryptedDataToString(encryptedData, iv);
-
-        return encryptedText;
-      },
-      decrypt: async (
-        text: string,
-        senderPublicKey: CryptoKey,
-      ): Promise<string> => {
-        const keyPair = await loadKeyPair();
-        if (!keyPair) throw new Error("Key pair not available");
-        const { privateKey } = keyPair;
-
-        const { encryptedData, iv } = stringToEncryptedData(text);
-
-        const decryptedText = await decryptText(
-          privateKey,
-          senderPublicKey,
-          encryptedData,
-          iv,
-        );
-
-        return decryptedText;
-      },
+      encrypt,
+      decrypt,
     }),
     [],
   );
 
   return !isInitialized.current ? "loading" : encryption;
+}
+
+async function loadKeyPairX() {
+  const keyPair = await loadKeyPair();
+  if (!keyPair) throw new Error("Key pair not available");
+  return keyPair;
+}
+
+async function encrypt(
+  text: string,
+  recipientPublicKey: CryptoKey,
+): Promise<string> {
+  const keyPair = await loadKeyPair();
+  if (!keyPair) throw new Error("Key pair not available");
+  const { privateKey } = await loadKeyPairX();
+  return await encryptTextToString(privateKey, recipientPublicKey, text);
+}
+
+async function decrypt(
+  text: string,
+  senderPublicKey: CryptoKey,
+): Promise<string> {
+  const { privateKey } = await loadKeyPairX();
+  return await decryptTextFromString(privateKey, senderPublicKey, text);
 }
