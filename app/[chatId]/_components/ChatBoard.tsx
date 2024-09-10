@@ -94,15 +94,11 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
 
       const { decrypt } = encryption;
 
-      const keyPair = await loadKeyPair(); // TODO remove this will come from message.senderPublicKey
-      if (!keyPair) throw new Error("Key pair not available");
-      const { publicKey } = keyPair;
-
       const decrypted = await Promise.all(
         selectedChatMessages.map(async (original) => {
           return {
             ...original,
-            text: await decrypt(original.text, publicKey),
+            text: await decrypt(original.text),
           };
         }),
       );

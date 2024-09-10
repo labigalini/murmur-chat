@@ -64,9 +64,9 @@ export const create = mutation({
     const messageIds = await ctx.table("messages").insertMany(
       messages.map(({ text, recipientSessionId }) => ({
         text,
-        recipientSessionId,
         chatId,
         memberId: member._id,
+        recipientSessionId,
       })),
     );
     await ctx.scheduler.runAfter(

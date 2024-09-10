@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef } from "react";
 
 import {
-  decryptTextFromString,
-  encryptTextToString,
+  decryptText,
+  encryptText,
   generateKeyPair,
   loadKeyPair,
   saveKeyPair,
@@ -13,10 +13,7 @@ type EncryptFunction = (
   recipientPublicKey: CryptoKey,
 ) => Promise<string>;
 
-type DecryptFunction = (
-  text: string,
-  senderPublicKey: CryptoKey,
-) => Promise<string>;
+type DecryptFunction = (text: string) => Promise<string>;
 
 export function useEncryption():
   | {
@@ -60,16 +57,10 @@ async function encrypt(
   text: string,
   recipientPublicKey: CryptoKey,
 ): Promise<string> {
-  const keyPair = await loadKeyPair();
-  if (!keyPair) throw new Error("Key pair not available");
-  const { privateKey } = await loadKeyPairX();
-  return await encryptTextToString(privateKey, recipientPublicKey, text);
+  return await encryptText(text, recipientPublicKey);
 }
 
-async function decrypt(
-  text: string,
-  senderPublicKey: CryptoKey,
-): Promise<string> {
+async function decrypt(text: string): Promise<string> {
   const { privateKey } = await loadKeyPairX();
-  return await decryptTextFromString(privateKey, senderPublicKey, text);
+  return await decryptText(text, privateKey);
 }
