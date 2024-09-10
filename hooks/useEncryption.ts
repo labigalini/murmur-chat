@@ -1,16 +1,22 @@
 import { useEffect, useMemo, useRef } from "react";
 
+import { useMutation } from "convex/react";
+
+import { api } from "@/convex/_generated/api";
+
 import {
   decryptText,
   encryptText,
+  exportKey,
   generateKeyPair,
+  importKey,
   loadKeyPair,
   saveKeyPair,
 } from "@/lib/encryption";
 
 type EncryptFunction = (
   text: string,
-  recipientPublicKey: CryptoKey,
+  recipientPublicKey: string,
 ) => Promise<string>;
 
 type DecryptFunction = (text: string) => Promise<string>;
@@ -23,13 +29,15 @@ export function useEncryption():
     }
   | "loading" {
   const isInitialized = useRef(false);
+  const patchSession = useMutation(api.auth.patchSession);
 
   useEffect(() => {
     const createIfNotExists = async () => {
       const loadedKeyPair = await loadKeyPair();
       if (!loadedKeyPair) {
-        const newKeyPair = await generateKeyPair();
-        await saveKeyPair(newKeyPair);
+        const { privateKey, publicKey } = await generateKeyPair();
+        await saveKeyPair(privateKey, publicKey);
+        await patchSession({ publicKey: await exportKey(publicKey) });
       }
       isInitialized.current = true;
     };
@@ -55,9 +63,10 @@ async function loadKeyPairX() {
 
 async function encrypt(
   text: string,
-  recipientPublicKey: CryptoKey,
+  recipientPublicKey: string,
 ): Promise<string> {
-  return await encryptText(text, recipientPublicKey);
+  const publicKey = await importKey(recipientPublicKey, ["encrypt"]);
+  return await encryptText(text, publicKey);
 }
 
 async function decrypt(text: string): Promise<string> {

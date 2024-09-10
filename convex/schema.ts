@@ -17,12 +17,13 @@ const schema = defineEntSchema(
   {
     ...defineEntsFromTables(authTables),
 
-    authSessions: defineEntFromTable(authTables.authSessions) // override to add edges
+    authSessions: defineEntFromTable(authTables.authSessions) // override to extend
+      .field("publicKey", v.optional(v.string()))
       .edges("messages", {
         ref: "recipientSessionId",
       }),
 
-    users: defineEntFromTable(authTables.users) // override to add edges
+    users: defineEntFromTable(authTables.users) // override to extend
       .edges("members", {
         ref: true,
         deletion: "soft",

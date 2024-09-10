@@ -10,7 +10,6 @@ import { Chat } from "@/components/chat/chat-types";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
-import { loadKeyPair } from "@/lib/encryption";
 import { skipIfUnset } from "@/lib/utils";
 
 import { useAuth, useEncryption, useQuery } from "@/hooks";
@@ -62,13 +61,9 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
       const { session } = auth;
       const { encrypt } = encryption;
 
-      if (!session) return; // TODO fix I don't like it
+      if (!session?.publicKey) return; // TODO fix I don't like it
 
-      const keyPair = await loadKeyPair(); // TODO remove this will come from chat member edges
-      if (!keyPair) throw new Error("Key pair not available");
-      const { publicKey } = keyPair;
-
-      const encryptedMessage = await encrypt(message, publicKey);
+      const encryptedMessage = await encrypt(message, session.publicKey);
 
       await sendMessage({
         chatId: chat._id as Id<"chats">,

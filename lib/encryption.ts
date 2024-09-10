@@ -18,18 +18,26 @@ export async function generateKeyPair() {
   return keyPair;
 }
 
-export async function saveKeyPair({
-  publicKey,
-  privateKey,
-}: {
-  privateKey: CryptoKey;
-  publicKey: CryptoKey;
-}) {
-  const privateKeyData = await crypto.subtle.exportKey("jwk", privateKey);
-  const publicKeyData = await crypto.subtle.exportKey("jwk", publicKey);
+export async function exportKey(key: CryptoKey) {
+  return JSON.stringify(await crypto.subtle.exportKey("jwk", key));
+}
 
-  localStorage.setItem("privateKey", JSON.stringify(privateKeyData));
-  localStorage.setItem("publicKey", JSON.stringify(publicKeyData));
+export async function saveKeyPair(privateKey: CryptoKey, publicKey: CryptoKey) {
+  localStorage.setItem("privateKey", await exportKey(privateKey));
+  localStorage.setItem("publicKey", await exportKey(publicKey));
+}
+
+export async function importKey(
+  key: string,
+  keyUsages: ReadonlyArray<KeyUsage>,
+) {
+  return await crypto.subtle.importKey(
+    "jwk",
+    JSON.parse(key) as JsonWebKey,
+    ALGORITHM,
+    EXTRACTABLE,
+    keyUsages,
+  );
 }
 
 export async function loadKeyPair() {
@@ -38,21 +46,8 @@ export async function loadKeyPair() {
 
   if (!privateKeyData || !publicKeyData) return null;
 
-  const privateKey = await crypto.subtle.importKey(
-    "jwk",
-    JSON.parse(privateKeyData) as JsonWebKey,
-    ALGORITHM,
-    EXTRACTABLE,
-    ["decrypt"],
-  );
-
-  const publicKey = await crypto.subtle.importKey(
-    "jwk",
-    JSON.parse(publicKeyData) as JsonWebKey,
-    ALGORITHM,
-    EXTRACTABLE,
-    ["encrypt"],
-  );
+  const privateKey = await importKey(privateKeyData, ["decrypt"]);
+  const publicKey = await importKey(publicKeyData, ["encrypt"]);
 
   return { privateKey, publicKey };
 }
