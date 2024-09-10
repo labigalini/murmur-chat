@@ -22,26 +22,57 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
   const auth = useAuth();
   const encryption = useEncryption();
 
-  const chats = useQuery(api.chats.list);
+  const createChat = useMutation(api.chats.create);
+  const sendMessage = useMutation(api.messages.create);
 
+  const chats = useQuery(api.chats.list);
   const [selectedChat, setSelectedChat] = useState<"loading" | Chat | null>(
     "loading",
   );
-  useEffect(() => {
-    if (chats !== "loading" && (!chats.length || selectedChat === "loading")) {
-      setSelectedChat(chats[0] ?? null);
-    }
-  }, [chats, selectedChat]);
-
   const selectedChatMessages = useQuery(
     api.messages.list,
     skipIfUnset(selectedChat, (c) => ({
       chatId: c._id as Id<"chats">,
     })),
   );
+  const [decryptedMessages, setDecryptedMessages] =
+    useState<typeof selectedChatMessages>("loading");
 
-  const createChat = useMutation(api.chats.create);
-  const sendMessage = useMutation(api.messages.create);
+  // initialize active chat selection
+  useEffect(() => {
+    if (chats !== "loading" && (!chats.length || selectedChat === "loading")) {
+      setSelectedChat(chats[0] ?? null);
+    }
+  }, [chats, selectedChat]);
+
+  // decrypt messages
+  useEffect(() => {
+    const decryptMessages = async () => {
+      if (
+        encryption === "loading" ||
+        !selectedChatMessages ||
+        selectedChatMessages === "loading"
+      ) {
+        setDecryptedMessages("loading");
+        return;
+      }
+
+      const { decrypt } = encryption;
+
+      const decrypted = await Promise.all(
+        selectedChatMessages.map(async (original) => {
+          return {
+            ...original,
+            text: await decrypt(original.text),
+          };
+        }),
+      );
+
+      setDecryptedMessages(decrypted);
+    };
+
+    decryptMessages().catch(console.error);
+  }, [encryption, selectedChatMessages]);
 
   const handleSelectChat = useCallback((newSelection: Chat) => {
     setSelectedChat(newSelection);
@@ -72,37 +103,6 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
     },
     [auth, encryption, sendMessage],
   );
-
-  const [decryptedMessages, setDecryptedMessages] =
-    useState<typeof selectedChatMessages>("loading");
-
-  useEffect(() => {
-    const decryptMessages = async () => {
-      if (
-        encryption === "loading" ||
-        !selectedChatMessages ||
-        selectedChatMessages === "loading"
-      ) {
-        setDecryptedMessages("loading");
-        return;
-      }
-
-      const { decrypt } = encryption;
-
-      const decrypted = await Promise.all(
-        selectedChatMessages.map(async (original) => {
-          return {
-            ...original,
-            text: await decrypt(original.text),
-          };
-        }),
-      );
-
-      setDecryptedMessages(decrypted);
-    };
-
-    decryptMessages().catch(console.error);
-  }, [encryption, selectedChatMessages]);
 
   return (
     <ChatContainer
