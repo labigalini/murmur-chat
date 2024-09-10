@@ -1,27 +1,30 @@
 import { useEffect, useMemo, useRef } from "react";
 
-import { Id } from "@/convex/_generated/dataModel";
-
 import {
+  decryptText,
   encryptText,
   encryptedDataToString,
   generateKeyPair,
   loadKeyPair,
   saveKeyPair,
+  stringToEncryptedData,
 } from "@/lib/encryption";
 
-type Recipient = { _id: Id<"users">; publicKey: CryptoKey };
-
-type EncryptResult = { recipient: Recipient; message: string }[];
 type EncryptFunction = (
-  message: string,
-  ...recipients: Recipient[]
-) => Promise<EncryptResult>;
+  text: string,
+  recipientPublicKey: CryptoKey,
+) => Promise<string>;
+
+type DecryptFunction = (
+  text: string,
+  senderPublicKey: CryptoKey,
+) => Promise<string>;
 
 export function useEncryption():
   | {
       encrypt: EncryptFunction;
-      // decrypt: () => void;
+      decrypt: DecryptFunction;
+      // TODO add some sort of erase keys function here to use on sign out
     }
   | "loading" {
   const isInitialized = useRef(false);
@@ -41,26 +44,41 @@ export function useEncryption():
   const encryption = useMemo(
     () => ({
       encrypt: async (
-        message: string,
-        ...recipients: Recipient[]
-      ): Promise<EncryptResult> => {
+        text: string,
+        recipientPublicKey: CryptoKey,
+      ): Promise<string> => {
         const keyPair = await loadKeyPair();
         if (!keyPair) throw new Error("Key pair not available");
         const { privateKey } = keyPair;
 
-        const encrypted: EncryptResult = [];
+        const { encryptedData, iv } = await encryptText(
+          privateKey,
+          recipientPublicKey,
+          text,
+        );
 
-        for (const recipient of recipients) {
-          const { encryptedData, iv } = await encryptText(
-            privateKey,
-            recipient.publicKey,
-            message,
-          );
-          const encryptedMessage = encryptedDataToString(encryptedData, iv);
-          encrypted.push({ recipient, message: encryptedMessage });
-        }
+        const encryptedText = encryptedDataToString(encryptedData, iv);
 
-        return encrypted;
+        return encryptedText;
+      },
+      decrypt: async (
+        text: string,
+        senderPublicKey: CryptoKey,
+      ): Promise<string> => {
+        const keyPair = await loadKeyPair();
+        if (!keyPair) throw new Error("Key pair not available");
+        const { privateKey } = keyPair;
+
+        const { encryptedData, iv } = stringToEncryptedData(text);
+
+        const decryptedText = await decryptText(
+          privateKey,
+          senderPublicKey,
+          encryptedData,
+          iv,
+        );
+
+        return decryptedText;
       },
     }),
     [],
