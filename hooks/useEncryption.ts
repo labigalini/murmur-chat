@@ -14,6 +14,8 @@ import {
   saveKeyPair,
 } from "@/lib/encryption";
 
+import { useAuth } from "./useAuth";
+
 type EncryptFunction = (
   text: string,
   recipientPublicKey: string,
@@ -28,6 +30,7 @@ export function useEncryption():
       // TODO add some sort of erase keys function here to use on sign out
     }
   | "loading" {
+  const auth = useAuth(); // TODO need a better way to update session keys after sign in
   const isInitialized = useRef(false);
   const patchSession = useMutation(api.auth.patchSession);
 
@@ -42,7 +45,7 @@ export function useEncryption():
       isInitialized.current = true;
     };
     createIfNotExists().catch(console.error);
-  }, []);
+  }, [auth, patchSession]);
 
   const encryption = useMemo(
     () => ({

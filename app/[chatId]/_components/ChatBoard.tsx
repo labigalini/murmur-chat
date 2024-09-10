@@ -12,14 +12,13 @@ import { Id } from "@/convex/_generated/dataModel";
 
 import { skipIfUnset } from "@/lib/utils";
 
-import { useAuth, useEncryption, useQuery } from "@/hooks";
+import { useEncryption, useQuery } from "@/hooks";
 
 type ChatBoardProps = {
   defaultLayout?: number[];
 };
 
 export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
-  const auth = useAuth();
   const encryption = useEncryption();
 
   const createChat = useMutation(api.chats.create);
