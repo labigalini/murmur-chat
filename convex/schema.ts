@@ -17,6 +17,11 @@ const schema = defineEntSchema(
   {
     ...defineEntsFromTables(authTables),
 
+    authSessions: defineEntFromTable(authTables.authSessions) // override to add edges
+      .edges("messages", {
+        ref: "recipientSessionId",
+      }),
+
     users: defineEntFromTable(authTables.users) // override to add edges
       .edges("members", {
         ref: true,
@@ -69,7 +74,9 @@ const schema = defineEntSchema(
       text: v.string(),
     })
       .edge("chat")
-      .edge("member"),
+      .edge("member")
+      .edge("authSession", { field: "recipientSessionId" })
+      .index("recipient", ["chatId", "recipientSessionId"]),
   },
   { schemaValidation: false },
 );

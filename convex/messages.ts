@@ -1,3 +1,4 @@
+import { getAuthSessionId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 
 import { subMinutes } from "date-fns";
@@ -18,16 +19,18 @@ export const list = query({
   },
   handler: async (ctx, { chatId }) => {
     const viewer = ctx.viewer;
+    const sessionId = await getAuthSessionId(ctx);
     if (
       viewer === null ||
+      sessionId === null ||
       !(await viewerHasPermission(ctx, chatId, "Contribute"))
     ) {
       return [];
     }
     return await ctx
-      .table("chats")
-      .getX(chatId)
-      .edge("messages")
+      .table("messages", "recipient", (q) =>
+        q.eq("chatId", chatId).eq("recipientSessionId", sessionId),
+      )
       .order("desc")
       .map(async (message) => {
         const member = await message.edge("member");
@@ -52,33 +55,39 @@ export const list = query({
 export const create = mutation({
   args: {
     chatId: v.id("chats"),
-    text: v.string(),
+    messages: v.array(
+      v.object({ text: v.string(), recipientSessionId: v.id("authSessions") }),
+    ),
   },
-  handler: async (ctx, { chatId, text }) => {
+  handler: async (ctx, { chatId, messages }) => {
     const member = await viewerWithPermissionX(ctx, chatId, "Contribute");
-    if (text.trim().length === 0) {
-      throw new Error("Message must not be empty");
-    }
-    const messageId = await ctx.table("messages").insert({
-      text,
-      chatId: chatId,
-      memberId: member._id,
-    });
+    const messageIds = await ctx.table("messages").insertMany(
+      messages.map(({ text, recipientSessionId }) => ({
+        text,
+        recipientSessionId,
+        chatId,
+        memberId: member._id,
+      })),
+    );
     await ctx.scheduler.runAfter(
       MESSAGE_EXPIRATION_MILLISECONDS,
       internal.messages.destruct,
-      { messageId },
+      { messageIds },
     );
   },
 });
 
 export const destruct = internalMutation({
   args: {
-    messageId: v.id("messages"),
+    messageIds: v.array(v.id("messages")),
   },
-  handler: async (ctx, { messageId }) => {
-    const message = await ctx.table("messages").getX(messageId);
-    await message.delete();
+  handler: async (ctx, { messageIds }) => {
+    const messages = await ctx.table("messages").getMany(messageIds);
+    await Promise.all(
+      messages.map(async (message) => {
+        if (message) await message.delete();
+      }),
+    );
   },
 });
 
