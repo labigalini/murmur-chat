@@ -1,31 +1,16 @@
 import React, { useRef, useState } from "react";
 
-import Link from "next/link";
-
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  FileImage,
-  Mic,
-  Paperclip,
-  PlusCircle,
-  SendHorizontal,
-  ThumbsUp,
-} from "lucide-react";
-
-import { cn } from "@/lib/utils";
+import { SendHorizontal } from "lucide-react";
 
 import { useChatContext } from "./chat-context";
 import { ChatEmojiPicker } from "./chat-emoji-picker";
 import { ChatInput } from "./chat-input";
 
-import { Button, buttonVariants } from "../ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-
-export const BottombarIcons = [{ icon: FileImage }, { icon: Paperclip }];
+import { Button } from "../ui/button";
 
 export default function ChatBottombar() {
   const {
-    state: { chat, isMobile },
+    state: { chat },
     onSendMessage,
   } = useChatContext();
 
@@ -36,182 +21,62 @@ export default function ChatBottombar() {
     setMessage(event.target.value);
   };
 
-  const handleThumbsUp = () => {
-    if (chat === "loading" || !chat) return;
-    onSendMessage(chat, "👍");
-  };
-
   const handleSend = () => {
-    if (chat === "loading" || !chat) return;
-    if (message.trim()) {
-      onSendMessage(chat, message.trim());
-      setMessage("");
+    if (chat === "loading" || !chat || !message.trim()) return;
 
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
+    onSendMessage(chat, message.trim());
+    setMessage("");
+
+    if (inputRef.current) {
+      inputRef.current.focus();
     }
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      handleSend();
-    }
+    if (event.key !== "Enter") return;
 
-    if (event.key === "Enter" && event.shiftKey) {
-      event.preventDefault();
+    event.preventDefault();
+
+    if (event.shiftKey) {
       setMessage((prev) => prev + "\n");
+    } else {
+      handleSend();
     }
   };
 
   return (
-    <div className="flex w-full items-center justify-between gap-2 px-2 py-4">
-      <div className="flex">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Link
-              href="#"
-              className={cn(
-                buttonVariants({
-                  variant: "ghost",
-                  size: "icon",
-                }),
-                "h-9 w-9",
-                "shrink-0",
-              )}
-            >
-              <PlusCircle size={22} className="text-muted-foreground" />
-            </Link>
-          </PopoverTrigger>
-          <PopoverContent side="top" className="w-full p-2">
-            {message.trim() || isMobile ? (
-              <div className="flex gap-2">
-                <Link
-                  href="#"
-                  className={cn(
-                    buttonVariants({
-                      variant: "ghost",
-                      size: "icon",
-                    }),
-                    "h-9 w-9",
-                    "shrink-0",
-                  )}
-                >
-                  <Mic size={22} className="text-muted-foreground" />
-                </Link>
-                {BottombarIcons.map((icon, index) => (
-                  <Link
-                    key={index}
-                    href="#"
-                    className={cn(
-                      buttonVariants({
-                        variant: "ghost",
-                        size: "icon",
-                      }),
-                      "h-9 w-9",
-                      "shrink-0",
-                    )}
-                  >
-                    <icon.icon size={22} className="text-muted-foreground" />
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <Link
-                href="#"
-                className={cn(
-                  buttonVariants({
-                    variant: "ghost",
-                    size: "icon",
-                  }),
-                  "h-9 w-9",
-                  "shrink-0",
-                )}
-              >
-                <Mic size={22} className="text-muted-foreground" />
-              </Link>
-            )}
-          </PopoverContent>
-        </Popover>
-        {!message.trim() && !isMobile && (
-          <div className="flex">
-            {BottombarIcons.map((icon, index) => (
-              <Link
-                key={index}
-                href="#"
-                className={cn(
-                  buttonVariants({
-                    variant: "ghost",
-                    size: "icon",
-                  }),
-                  "h-9 w-9",
-                  "shrink-0",
-                )}
-              >
-                <icon.icon size={22} className="text-muted-foreground" />
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <AnimatePresence initial={false}>
-        <motion.div
-          key="input"
-          className="relative w-full"
-          layout
-          initial={{ opacity: 0, scale: 1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 1 }}
-          transition={{
-            opacity: { duration: 0.05 },
-            layout: {
-              type: "spring",
-              bounce: 0.15,
-            },
-          }}
-        >
-          <ChatInput
-            value={message}
-            ref={inputRef}
-            onKeyDown={handleKeyPress}
-            onChange={handleInputChange}
-            placeholder="Type a message..."
-            className="rounded-full"
+    <div className="flex w-full items-center justify-between gap-2 p-4">
+      <div key="input" className="relative w-full">
+        <ChatInput
+          value={message}
+          ref={inputRef}
+          onKeyDown={handleKeyPress}
+          onChange={handleInputChange}
+          placeholder="Type a message..."
+          className="px-12"
+        />
+        <div className="absolute bottom-[.6rem] left-4">
+          <ChatEmojiPicker
+            onChange={(value) => {
+              setMessage(message + value);
+              if (inputRef.current) {
+                inputRef.current.focus();
+              }
+            }}
           />
-          <div className="absolute bottom-2 right-4">
-            <ChatEmojiPicker
-              onChange={(value) => {
-                setMessage(message + value);
-                if (inputRef.current) {
-                  inputRef.current.focus();
-                }
-              }}
-            />
-          </div>
-        </motion.div>
-
-        {message.trim() ? (
+        </div>
+        <div className="absolute bottom-[.4rem] right-2">
           <Button
             className="h-9 w-9 shrink-0"
             onClick={handleSend}
             variant="ghost"
             size="icon"
+            disabled={!message.trim()}
           >
             <SendHorizontal size={22} className="text-muted-foreground" />
           </Button>
-        ) : (
-          <Button
-            className="h-9 w-9 shrink-0"
-            onClick={handleThumbsUp}
-            variant="ghost"
-            size="icon"
-          >
-            <ThumbsUp size={22} className="text-muted-foreground" />
-          </Button>
-        )}
-      </AnimatePresence>
+        </div>
+      </div>
     </div>
   );
 }
