@@ -30,20 +30,22 @@ export function useEncryption():
       // TODO add some sort of erase keys function here to use on sign out
     }
   | "loading" {
-  const auth = useAuth(); // TODO need a better way to update session keys after sign in
+  const auth = useAuth();
   const isInitialized = useRef(false);
   const patchSession = useMutation(api.auth.patchSession);
 
   useEffect(() => {
     const createIfNotExists = async () => {
-      const loadedKeyPair = await loadKeyPair();
+      let loadedKeyPair = await loadKeyPair();
       if (!loadedKeyPair) {
-        const { privateKey, publicKey } = await generateKeyPair();
-        await saveKeyPair(privateKey, publicKey);
-        await patchSession({ publicKey: await exportKey(publicKey) });
+        loadedKeyPair = await generateKeyPair();
+        await saveKeyPair(loadedKeyPair.privateKey, loadedKeyPair.publicKey);
       }
+      await patchSession({
+        publicKey: await exportKey(loadedKeyPair.publicKey),
+      });
       isInitialized.current = true;
-    };
+    }; // TODO need a better way to update session keys after sign in
     createIfNotExists().catch(console.error);
   }, [auth, patchSession]);
 
