@@ -6,7 +6,6 @@ export type ChatState = {
   chatList: "loading" | Chat[];
   chat: "loading" | Chat | null;
   messages: "loading" | Message[];
-  isMobile: boolean;
 };
 
 export type ChatHandlers = {

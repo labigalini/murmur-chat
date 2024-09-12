@@ -19,7 +19,7 @@ import {
 import { ChatMain } from "./chat-main";
 import { ChatSidebar } from "./chat-sidebar";
 
-type ChatLayoutProps = Omit<ChatState, "isMobile"> & {
+type ChatLayoutProps = ChatState & {
   defaultLayout?: number[];
   defaultCollapsed?: boolean;
   navCollapsedSize?: number;
@@ -58,10 +58,10 @@ export function ChatContainer({
   const chatContext = useMemo(
     () =>
       ({
-        state: { chatList, chat, messages, isMobile },
+        state: { chatList, chat, messages },
         ...handlers,
       }) satisfies ChatContextType,
-    [chatList, chat, messages, isMobile, handlers],
+    [chatList, chat, messages, handlers],
   );
 
   return (
@@ -80,7 +80,7 @@ export function ChatContainer({
           collapsedSize={navCollapsedSize}
           collapsible={true}
           minSize={isMobile ? 0 : 24}
-          maxSize={isMobile ? 8 : 30}
+          maxSize={isMobile ? 8 : 50}
           onCollapse={() => {
             setIsCollapsed(true);
             document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
