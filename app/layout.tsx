@@ -38,7 +38,7 @@ export default function RootLayout({
         <body className={inter.className}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <ConvexClientProvider>
-              {children}
+              <>{children}</>
               <Toaster />
             </ConvexClientProvider>
           </ThemeProvider>

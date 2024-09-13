@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default function Page() {
-  return <main className="h-full w-full">Nothing to see here...</main>;
+  redirect("/chatid-placeholder");
 }

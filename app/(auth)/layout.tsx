@@ -25,9 +25,9 @@ export default function AuthLayout({
 
       {/* Right Panel */}
       <div className="flex w-full items-center justify-center p-8 lg:w-1/2 lg:pt-36">
-        <div className="w-full max-w-md">
+        <main className="w-full max-w-md">
           <>{children}</>
-        </div>
+        </main>
       </div>
 
       {/* Theme Toggle */}
