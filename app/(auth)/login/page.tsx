@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import {
   AuthLoading,
@@ -17,15 +17,18 @@ import { buttonVariants } from "@/components/ui/button";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { isLoading, isAuthenticated } = useConvexAuth();
 
-  // TODO get the redirect URL to send back to previous chat
-  const [redirect, _setRedirect] = useState("/chatid-placeholder");
+  const redirectUrl = useMemo(
+    () => searchParams.get("redirect") ?? "/",
+    [searchParams],
+  );
 
   useEffect(() => {
-    if (isLoading) return;
-    if (isAuthenticated) setTimeout(() => router.push(redirect), 2000);
-  }, [isAuthenticated, isLoading, redirect, router]);
+    if (isLoading || !isAuthenticated) return;
+    setTimeout(() => router.push(redirectUrl), 2000);
+  }, [isAuthenticated, isLoading, redirectUrl, router]);
 
   return (
     <>
@@ -33,7 +36,7 @@ export default function LoginPage() {
         <div>Verifying authentication, hang on tight...</div>
       </AuthLoading>
       <Authenticated>
-        <div>All set, sending you back to {redirect}...</div>
+        <div>All set, sending you back to {redirectUrl}...</div>
       </Authenticated>
       <Unauthenticated>
         <SignInForm />
