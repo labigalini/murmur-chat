@@ -40,7 +40,9 @@ export function UserMenu({ name, avatar }: UserMenuProps) {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <Link href="/logout">Sign out</Link>
+            <Link href="/logout" className="w-full">
+              Sign out
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
