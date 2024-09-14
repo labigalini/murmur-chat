@@ -1,6 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 import { query } from "./functions";
+import { Ent } from "./types";
 
 export const viewer = query({
   args: {},
@@ -10,8 +11,12 @@ export const viewer = query({
     return user
       ? {
           ...user,
-          name: user.name ?? user.email ?? "noname",
+          name: getUsername(user),
         }
       : null;
   },
 });
+
+export function getUsername(user: Ent<"users">) {
+  return user.name ?? user.email ?? "noname";
+}

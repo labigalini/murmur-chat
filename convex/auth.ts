@@ -3,15 +3,35 @@ import { ConvexError, v } from "convex/values";
 
 import { ResendOTP } from "./auth/ResendOTP";
 import { mutation, query } from "./functions";
+import { hasInvite } from "./invites";
 
 export const { auth, signIn, signOut, store } = convexAuth({
   providers: [ResendOTP],
   callbacks: {
-    createOrUpdateUser(_ctx, args) {
-      if (args.existingUserId) {
-        return Promise.resolve(args.existingUserId);
+    async createOrUpdateUser(
+      ctx,
+      { existingUserId, profile: { emailVerified, ...profile } },
+    ) {
+      const userData = {
+        ...(emailVerified ? { emailVerificationTime: Date.now() } : null),
+        ...profile,
+      };
+
+      if (existingUserId) {
+        await ctx.db.patch(existingUserId, userData);
+        return Promise.resolve(existingUserId);
       }
-      // Do not allow new users to sign up
+
+      if (profile.email) {
+        const emailHasInvite = await hasInvite(ctx, {
+          email: profile.email,
+        });
+        if (emailHasInvite) {
+          return await ctx.db.insert("users", userData);
+        }
+      }
+
+      // If no invites found, prevent new user signup
       throw new ConvexError("New users not allowed");
     },
   },

@@ -48,10 +48,10 @@ export function Notifications() {
               )}
             >
               <div>
-                <span className="font-medium">{invite.inviterEmail}</span> has
-                invited you to join{" "}
-                <span className="font-medium">{invite.chat}</span>. Click to
-                accept.
+                <span className="font-medium">{invite.inviter}</span> has
+                invited you to join{' "'}
+                <span className="font-medium">{invite.chat}</span>
+                {'"'}. Click to accept.
               </div>
             </DropdownMenuItem>
             {i < invites.length - 1 ? <DropdownMenuSeparator /> : null}

@@ -33,7 +33,8 @@ const schema = defineEntSchema(
         ref: true,
         deletion: "soft",
       })
-      .edges("authSessions", { ref: true }),
+      .edges("authSessions", { ref: true })
+      .edges("invites", { ref: "inviterUserId" }),
 
     chats: defineEnt({
       name: v.string(),
@@ -58,10 +59,9 @@ const schema = defineEntSchema(
       .edges("messages", { ref: true })
       .deletion("soft"),
 
-    invites: defineEnt({
-      inviterEmail: v.string(),
-    })
+    invites: defineEnt({})
       .field("email", v.string(), { unique: true })
+      .edge("user", { field: "inviterUserId" })
       .edge("chat")
       .edge("role"),
 

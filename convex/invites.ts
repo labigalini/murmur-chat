@@ -1,8 +1,22 @@
 import { v } from "convex/values";
 
-import { mutation, query } from "./functions";
+import { internalQuery, mutation, query } from "./functions";
 import { createMember } from "./members";
 import { Ent, QueryCtx } from "./types";
+import { getUsername } from "./users";
+
+// Temporary internal function to only allow invited users to signup
+export const hasInvite = internalQuery({
+  args: {
+    email: v.string(),
+  },
+  async handler(ctx, { email }) {
+    const invites = await ctx
+      .table("invites", "email", (q) => q.eq("email", email))
+      .take(1);
+    return invites.length > 0;
+  },
+});
 
 export const list = query({
   args: {},
@@ -19,7 +33,7 @@ export const list = query({
       .map(async (invite) => ({
         _id: invite._id,
         email: invite.email,
-        inviterEmail: invite.inviterEmail,
+        inviter: (await invite.edge("user")).email,
         chat: (await invite.edge("chat")).name,
         role: (await invite.edge("role")).name,
       }));
@@ -36,10 +50,11 @@ export const get = query({
     }
     const invite = await ctx.table("invites").getX(inviteId);
     checkViewerWasInvited(ctx, invite);
+    const user = await invite.edge("user");
     return {
       _id: invite._id,
       email: invite.email,
-      inviterEmail: invite.inviterEmail,
+      inviter: getUsername(user),
       chat: (await invite.edge("chat")).name,
       role: (await invite.edge("role")).name,
     };
