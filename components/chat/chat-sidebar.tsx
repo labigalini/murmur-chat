@@ -42,16 +42,16 @@ export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
     return "Loading chat list";
 
   return (
-    <div
-      data-collapsed={isCollapsed}
-      className="group relative flex h-full flex-col bg-muted/10 p-2 dark:bg-muted/20"
-    >
+    <div className="group relative flex h-full flex-col bg-muted/10 p-2 dark:bg-muted/20">
       <ChatSidebarTopbar
         isCollapsed={isCollapsed}
         chatCount={chatList.length}
       />
       <div className="h-full overflow-y-auto px-2">
-        <nav className="grid justify-center">
+        <nav
+          data-collapsed={isCollapsed}
+          className="grid data-[collapsed=true]:justify-center"
+        >
           {chatList.map((chat) => {
             const variant =
               selectedChat?._id === chat._id
@@ -69,7 +69,7 @@ export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
                           variant,
                           size: "icon",
                         }),
-                        "h-11 w-11 md:h-16 md:w-16",
+                        "h-16 w-16",
                         variant === "grey" &&
                           "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white",
                       )}
@@ -131,7 +131,10 @@ function ChatSidebarTopbar({
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
   return (
-    <div className="flex items-center justify-between p-2 pb-4">
+    <div
+      data-collapsed={isCollapsed}
+      className="flex items-center justify-between pb-5 pl-3 pr-2 pt-2 data-[collapsed=true]:justify-center data-[collapsed=true]:py-0"
+    >
       {!isCollapsed && (
         <div className="flex items-center gap-2 text-2xl">
           <p className="font-medium">Chats</p>
@@ -155,7 +158,7 @@ function ChatSidebarTopbar({
                     variant: "ghost",
                     size: "icon",
                   }),
-                  "h-9 w-9",
+                  "h-16 w-16",
                 )}
               >
                 <MoreHorizontal size={20} />
