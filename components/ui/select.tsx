@@ -2,10 +2,11 @@
 
 import * as React from "react";
 
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import * as SelectPrimitive from "@radix-ui/react-select";
 
 import { cn } from "@/lib/utils";
+
+import { CaretSortIcon, CheckIcon } from "../icons";
 
 const Select = SelectPrimitive.Root;
 
@@ -111,11 +112,11 @@ SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
 export {
   Select,
-  SelectGroup,
-  SelectValue,
-  SelectTrigger,
   SelectContent,
-  SelectLabel,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectSeparator,
+  SelectTrigger,
+  SelectValue,
 };

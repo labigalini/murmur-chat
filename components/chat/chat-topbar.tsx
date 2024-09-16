@@ -1,17 +1,14 @@
 import Link from "next/link";
 
-import { Info, Phone, Video } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 
 import ChatAvatar from "./chat-avatar";
 import { Chat } from "./chat-types";
 
+import { InfoIcon } from "../icons";
 import { buttonVariants } from "../ui/button";
 
 type ChatTopbarProps = Pick<Chat, "name" | "image">;
-
-export const TopbarIcons = [{ icon: Phone }, { icon: Video }, { icon: Info }];
 
 export default function ChatTopbar({ name, image }: ChatTopbarProps) {
   return (

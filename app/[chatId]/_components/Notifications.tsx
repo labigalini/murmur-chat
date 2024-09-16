@@ -4,8 +4,7 @@ import { Fragment } from "react";
 
 import { useMutation, useQuery } from "convex/react";
 
-import { BellIcon } from "@radix-ui/react-icons";
-
+import { BellIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

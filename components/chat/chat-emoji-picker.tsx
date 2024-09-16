@@ -2,13 +2,14 @@
 
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
-import { SmileIcon } from "lucide-react";
 
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+
+import { SmileIcon } from "../icons";
 
 interface ChatEmojiPickerProps {
   onChange: (value: string) => void;

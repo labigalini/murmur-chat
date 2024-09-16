@@ -1,11 +1,10 @@
 import React, { useRef, useState } from "react";
 
-import { SendHorizontal } from "lucide-react";
-
 import { useChatContext } from "./chat-context";
 import { ChatEmojiPicker } from "./chat-emoji-picker";
 import { ChatInput } from "./chat-input";
 
+import { SendHorizontalIcon } from "../icons";
 import { Button } from "../ui/button";
 
 export default function ChatBottombar() {
@@ -73,7 +72,7 @@ export default function ChatBottombar() {
             size="icon"
             disabled={!message.trim()}
           >
-            <SendHorizontal size={22} className="text-muted-foreground" />
+            <SendHorizontalIcon size={22} className="text-muted-foreground" />
           </Button>
         </div>
       </div>

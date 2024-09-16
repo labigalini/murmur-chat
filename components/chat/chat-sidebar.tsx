@@ -4,8 +4,6 @@ import { useState } from "react";
 
 import Link from "next/link";
 
-import { MoreHorizontal, SquarePen } from "lucide-react";
-
 import { buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,6 +25,8 @@ import { cn } from "@/lib/utils";
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
 import { ChatCreateDialog } from "./chat-create-dialog";
+
+import { MoreHorizontalIcon, SquarePenIcon } from "../icons";
 
 interface ChatSidebarProps {
   isCollapsed: boolean;
@@ -161,7 +161,7 @@ function ChatSidebarTopbar({
                   "h-16 w-16",
                 )}
               >
-                <MoreHorizontal size={20} />
+                <MoreHorizontalIcon size={20} />
               </Link>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
@@ -173,7 +173,7 @@ function ChatSidebarTopbar({
                   onClick={() => setOpenCreateDialog(true)}
                   className="flex w-full items-center gap-2"
                 >
-                  <SquarePen size={20} />
+                  <SquarePenIcon size={20} />
                   Create new chat
                 </Link>
               </DropdownMenuItem>
@@ -192,7 +192,7 @@ function ChatSidebarTopbar({
               "h-9 w-9",
             )}
           >
-            <SquarePen size={20} />
+            <SquarePenIcon size={20} />
           </Link>
         )}
       </div>

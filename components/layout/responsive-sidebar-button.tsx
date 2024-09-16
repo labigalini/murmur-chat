@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { RemoveScroll } from "react-remove-scroll";
 
-import { Cross2Icon, HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { Slot } from "@radix-ui/react-slot";
 
 import { Button, ButtonProps } from "@/components/ui/button";
 
 import { fr } from "@/lib/utils";
+
+import { Cross2Icon, HamburgerMenuIcon } from "../icons";
 
 // Pass the sidebar displayed when the button is clicked as children
 export const ResponsiveSidebarButton = fr<HTMLButtonElement, ButtonProps>(
