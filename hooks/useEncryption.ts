@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useMutation } from "convex/react";
 
@@ -31,7 +31,7 @@ export function useEncryption():
     }
   | "loading" {
   const auth = useAuth();
-  const isInitialized = useRef(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const patchSession = useMutation(api.auth.patchSession);
 
   useEffect(() => {
@@ -43,9 +43,9 @@ export function useEncryption():
       }
       await patchSession({
         publicKey: await exportKey(loadedKeyPair.publicKey),
-      });
-      isInitialized.current = true;
-    }; // TODO need a better way to update session keys after sign in
+      }); // TODO need a better way to update session keys after sign in, this is too frequent
+      setIsInitialized(true);
+    };
     createIfNotExists().catch(console.error);
   }, [auth, patchSession]);
 
@@ -57,7 +57,7 @@ export function useEncryption():
     [],
   );
 
-  return !isInitialized.current ? "loading" : encryption;
+  return isInitialized ? encryption : "loading";
 }
 
 async function loadKeyPairX() {
