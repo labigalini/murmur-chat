@@ -9,7 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-import { SmileIcon } from "../icons";
+import { FaceIcon } from "../icons";
 
 interface ChatEmojiPickerProps {
   onChange: (value: string) => void;
@@ -19,7 +19,7 @@ export const ChatEmojiPicker = ({ onChange }: ChatEmojiPickerProps) => {
   return (
     <Popover>
       <PopoverTrigger>
-        <SmileIcon className="h-5 w-5 text-muted-foreground transition hover:text-foreground" />
+        <FaceIcon className="h-5 w-5 text-muted-foreground transition hover:text-foreground" />
       </PopoverTrigger>
       <PopoverContent className="w-full">
         <Picker

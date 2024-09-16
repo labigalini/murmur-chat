@@ -11,19 +11,17 @@ import {
   DashIcon,
   DesktopIcon,
   DotFilledIcon,
+  DotsHorizontalIcon,
   DragHandleDots2Icon,
   HamburgerMenuIcon,
+  InfoCircledIcon,
   MagnifyingGlassIcon,
   MoonIcon,
+  PaperPlaneIcon,
   SunIcon,
+  FaceIcon,
+  Pencil2Icon
 } from "@radix-ui/react-icons";
-import {
-  InfoIcon,
-  MoreHorizontalIcon,
-  SendHorizontalIcon,
-  SmileIcon,
-  SquarePenIcon,
-} from "lucide-react";
 
 export {
   BellIcon,
@@ -36,14 +34,14 @@ export {
   DashIcon,
   DesktopIcon,
   DotFilledIcon,
+  DotsHorizontalIcon,
   DragHandleDots2Icon,
   HamburgerMenuIcon,
-  InfoIcon,
+  InfoCircledIcon,
   MagnifyingGlassIcon,
   MoonIcon,
-  MoreHorizontalIcon,
-  SendHorizontalIcon,
-  SmileIcon,
-  SquarePenIcon,
+  PaperPlaneIcon,
+  FaceIcon,
+  Pencil2Icon,
   SunIcon,
 };

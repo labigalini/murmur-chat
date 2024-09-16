@@ -4,7 +4,7 @@ import { useChatContext } from "./chat-context";
 import { ChatEmojiPicker } from "./chat-emoji-picker";
 import { ChatInput } from "./chat-input";
 
-import { SendHorizontalIcon } from "../icons";
+import { PaperPlaneIcon } from "../icons";
 import { Button } from "../ui/button";
 
 export default function ChatBottombar() {
@@ -72,7 +72,7 @@ export default function ChatBottombar() {
             size="icon"
             disabled={!message.trim()}
           >
-            <SendHorizontalIcon size={22} className="text-muted-foreground" />
+            <PaperPlaneIcon className="h-5 w-5 text-muted-foreground" />
           </Button>
         </div>
       </div>

@@ -26,7 +26,7 @@ import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
 import { ChatCreateDialog } from "./chat-create-dialog";
 
-import { MoreHorizontalIcon, SquarePenIcon } from "../icons";
+import { DotsHorizontalIcon, Pencil2Icon } from "../icons";
 
 interface ChatSidebarProps {
   isCollapsed: boolean;
@@ -161,7 +161,7 @@ function ChatSidebarTopbar({
                   "h-16 w-16",
                 )}
               >
-                <MoreHorizontalIcon size={20} />
+                <DotsHorizontalIcon className="h-5 w-5" />
               </Link>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
@@ -173,7 +173,7 @@ function ChatSidebarTopbar({
                   onClick={() => setOpenCreateDialog(true)}
                   className="flex w-full items-center gap-2"
                 >
-                  <SquarePenIcon size={20} />
+                  <Pencil2Icon className="h-5 w-5" />
                   Create new chat
                 </Link>
               </DropdownMenuItem>
@@ -192,7 +192,7 @@ function ChatSidebarTopbar({
               "h-9 w-9",
             )}
           >
-            <SquarePenIcon size={20} />
+            <Pencil2Icon className="h-5 w-5" />
           </Link>
         )}
       </div>
