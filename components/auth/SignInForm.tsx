@@ -46,7 +46,7 @@ export function SignInForm() {
             Enter the 8-digit code we sent to your email address.
           </p>
           <form
-            className="flex flex-col"
+            className="mt-2 flex flex-col items-center gap-5"
             onSubmit={(event) => {
               event.preventDefault();
               setSubmitting(true);
@@ -60,11 +60,9 @@ export function SignInForm() {
               });
             }}
           >
-            <div className="my-4">
-              <CodeInput />
-            </div>
+            <CodeInput />
             <input name="email" value={step.email} type="hidden" />
-            <Button type="submit" disabled={submitting}>
+            <Button type="submit" disabled={submitting} className="w-full">
               Continue
             </Button>
             <Button

@@ -40,7 +40,7 @@ export default function LoginPage() {
       </Authenticated>
       <Unauthenticated>
         <SignInForm />
-        <div className="mx-auto mt-8 max-w-[384px] border-t pt-6 text-center">
+        <div className="mx-auto mt-5 max-w-[384px] border-t pt-6 text-center">
           <Link
             href="/"
             className={buttonVariants({
