@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import Link from "next/link";
 
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -133,7 +133,7 @@ function ChatSidebarTopbar({
   return (
     <div
       data-collapsed={isCollapsed}
-      className="flex items-center justify-between pb-5 pl-3 pr-2 pt-2 data-[collapsed=true]:justify-center data-[collapsed=true]:py-0"
+      className="flex items-center justify-between pb-3 pl-3 pr-2 pt-1 data-[collapsed=true]:justify-center data-[collapsed=true]:py-0"
     >
       {!isCollapsed && (
         <div className="flex items-center gap-2 text-2xl">
@@ -151,49 +151,45 @@ function ChatSidebarTopbar({
         {isCollapsed && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Link
-                href="#"
-                className={cn(
-                  buttonVariants({
-                    variant: "ghost",
-                    size: "icon",
-                  }),
-                  "h-16 w-16",
-                )}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-16 w-16"
               >
-                <DotsHorizontalIcon className="h-5 w-5" />
-              </Link>
+                <DotsHorizontalIcon className="h-6 w-6" />
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
-              <DropdownMenuLabel>Chats ({chatCount})</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                <p className="text-lg">Chats ({chatCount})</p>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <Link
-                  href="#"
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setOpenCreateDialog(true)}
-                  className="flex w-full items-center gap-2"
+                  className="flex w-full gap-4"
                 >
-                  <Pencil2Icon className="h-5 w-5" />
                   Create new chat
-                </Link>
+                  <Pencil2Icon className="h-4 w-4" />
+                </Button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
         {!isCollapsed && (
-          <Link
-            href="#"
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => setOpenCreateDialog(true)}
-            className={cn(
-              buttonVariants({
-                variant: "ghost",
-                size: "icon",
-              }),
-              "h-9 w-9",
-            )}
+            className="h-12 w-12"
           >
-            <Pencil2Icon className="h-5 w-5" />
-          </Link>
+            <Pencil2Icon className="h-6 w-6" />
+          </Button>
         )}
       </div>
     </div>
