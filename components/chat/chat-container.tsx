@@ -8,6 +8,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 
+import { Optional } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 import {
@@ -19,17 +20,19 @@ import {
 import { ChatMain } from "./chat-main";
 import { ChatSidebar } from "./chat-sidebar";
 
-type ChatLayoutProps = ChatState & {
-  defaultLayout?: number[];
-  defaultCollapsed?: boolean;
-  navCollapsedSize?: number;
-  handlers: ChatHandlers;
-};
+type ChatLayoutProps = Omit<ChatState, "urlPrefix"> &
+  Optional<Pick<ChatState, "urlPrefix">> & {
+    defaultLayout?: number[];
+    defaultCollapsed?: boolean;
+    navCollapsedSize?: number;
+    handlers: ChatHandlers;
+  };
 
 export function ChatContainer({
   chatList,
   chat,
   messages,
+  urlPrefix = "/",
   defaultLayout = [320, 480],
   defaultCollapsed = false,
   navCollapsedSize = 8,
@@ -58,10 +61,10 @@ export function ChatContainer({
   const chatContext = useMemo(
     () =>
       ({
-        state: { chatList, chat, messages },
+        state: { chatList, chat, messages, urlPrefix },
         ...handlers,
       }) satisfies ChatContextType,
-    [chatList, chat, messages, handlers],
+    [chatList, chat, messages, urlPrefix, handlers],
   );
 
   return (

@@ -12,4 +12,3 @@ export default function Page({ params }: { params: { chatId?: string } }) {
 
   return <ChatBoard defaultLayout={defaultLayout} selectedChatId={chatId} />;
 }
- 

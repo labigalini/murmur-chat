@@ -6,6 +6,7 @@ export type ChatState = {
   chatList: "loading" | Chat[];
   chat: "loading" | Chat | null;
   messages: "loading" | Message[];
+  urlPrefix: string;
 };
 
 export type ChatHandlers = {

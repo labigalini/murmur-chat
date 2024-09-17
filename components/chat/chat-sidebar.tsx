@@ -34,7 +34,7 @@ interface ChatSidebarProps {
 
 export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
   const {
-    state: { chatList, chat: selectedChat },
+    state: { chatList, chat: selectedChat, urlPrefix },
     onSelectChat,
   } = useChatContext();
 
@@ -53,17 +53,18 @@ export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
           className="grid data-[collapsed=true]:justify-center"
         >
           {chatList.map((chat) => {
-            const variant =
-              selectedChat?._id === chat._id
-                ? "grey"
-                : ("ghost" as "grey" | "ghost");
+            const isSelected = selectedChat?._id === chat._id;
+            const variant = isSelected ? "grey" : ("ghost" as "grey" | "ghost");
             return isCollapsed ? (
               <TooltipProvider key={chat._id}>
                 <Tooltip key={chat._id} delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Link
-                      href={chat._id}
-                      onClick={() => onSelectChat(chat)}
+                      href={urlPrefix + chat._id}
+                      onClick={(e) => {
+                        if (!isSelected) onSelectChat(chat);
+                        e.preventDefault();
+                      }}
                       className={cn(
                         buttonVariants({
                           variant,
@@ -89,8 +90,11 @@ export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
             ) : (
               <Link
                 key={chat._id}
-                href={chat._id}
-                onClick={() => onSelectChat(chat)}
+                href={urlPrefix + chat._id}
+                onClick={(e) => {
+                  if (!isSelected) onSelectChat(chat);
+                  e.preventDefault();
+                }}
                 className={cn(
                   buttonVariants({
                     variant: variant,

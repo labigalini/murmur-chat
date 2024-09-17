@@ -12,6 +12,8 @@ import { Id } from "@/convex/_generated/dataModel";
 
 import { skipIfUnset } from "@/lib/utils";
 
+import { useHistoryState } from "@/app/_context/HistoryStateProvider";
+
 import { useEncryption, useQuery } from "@/hooks";
 
 type ChatBoardProps = {
@@ -24,6 +26,7 @@ export default function ChatBoard({
   defaultLayout,
 }: ChatBoardProps) {
   const encryption = useEncryption();
+  const { pushState } = useHistoryState();
 
   const createChat = useMutation(api.chats.create);
   const sendMessage = useMutation(api.messages.create);
@@ -80,9 +83,10 @@ export default function ChatBoard({
 
   const handleSelectChat = useCallback(
     (newSelection: Chat) => {
+      pushState(newSelection._id);
       setSelectedChat(newSelection);
     },
-    [setSelectedChat],
+    [pushState],
   );
 
   const handleCreateChat = useCallback(
