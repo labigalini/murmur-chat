@@ -62,7 +62,7 @@ export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
                 <Tooltip key={chat._id} delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Link
-                      href="#"
+                      href={chat._id}
                       onClick={() => onSelectChat(chat)}
                       className={cn(
                         buttonVariants({
@@ -89,7 +89,7 @@ export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
             ) : (
               <Link
                 key={chat._id}
-                href="#"
+                href={chat._id}
                 onClick={() => onSelectChat(chat)}
                 className={cn(
                   buttonVariants({

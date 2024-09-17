@@ -15,10 +15,14 @@ import { skipIfUnset } from "@/lib/utils";
 import { useEncryption, useQuery } from "@/hooks";
 
 type ChatBoardProps = {
+  selectedChatId?: string;
   defaultLayout?: number[];
 };
 
-export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
+export default function ChatBoard({
+  selectedChatId,
+  defaultLayout,
+}: ChatBoardProps) {
   const encryption = useEncryption();
 
   const createChat = useMutation(api.chats.create);
@@ -39,10 +43,11 @@ export default function ChatBoard({ defaultLayout }: ChatBoardProps) {
 
   // initialize active chat selection
   useEffect(() => {
-    if (chats !== "loading" && (!chats.length || selectedChat === "loading")) {
-      setSelectedChat(chats[0] ?? null);
-    }
-  }, [chats, selectedChat, setSelectedChat]);
+    if (chats === "loading") return;
+    setSelectedChat(
+      chats.find((c) => c._id === selectedChatId) ?? chats[0] ?? null,
+    );
+  }, [chats, selectedChatId, setSelectedChat]);
 
   // decrypt messages
   useEffect(() => {
