@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <ConvexServerProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body className={inter.className}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <ConvexClientProvider>
