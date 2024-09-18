@@ -9,71 +9,83 @@ import { CodeInput } from "./CodeInput";
 import { SignInWithEmailCode } from "./SignInWithEmailCode";
 import { SignInWithOAuth } from "./SignInWithOAuth";
 
-export function SignInForm() {
+import { Separator } from "../ui/separator";
+
+const SignInStep = ({
+  onCodeSent,
+}: {
+  onCodeSent: (email: string) => void;
+}) => (
+  <>
+    <Separator label="Sign in with" className="my-3" />
+    <SignInWithOAuth />
+    <Separator label="Or continue with" className="my-3" />
+    <SignInWithEmailCode handleCodeSent={onCodeSent} />
+  </>
+);
+
+const CodeVerificationStep = ({
+  email,
+  onCancel,
+}: {
+  email: string;
+  onCancel: () => void;
+}) => {
   const { signIn } = useAuthActions();
-  const [step, setStep] = useState<"signIn" | { email: string }>("signIn");
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmitting(true);
+    const formData = new FormData(event.currentTarget);
+    signIn("resend-otp", formData).catch(() => {
+      toast({
+        title: "Code could not be verified, try again",
+        variant: "destructive",
+      });
+      setSubmitting(false);
+    });
+  };
+
   return (
-    <div className="mx-auto mb-2 flex max-w-[384px] flex-col gap-6 text-center">
+    <>
+      <h2 className="text-2xl font-semibold tracking-tight">
+        Check your email
+      </h2>
+      <Separator />
+      <p className="text-sm text-muted-foreground">
+        Enter the 8-digit code we sent to your email address.
+      </p>
+      <form
+        className="flex flex-col items-center gap-6"
+        onSubmit={handleSubmit}
+      >
+        <CodeInput />
+        <input name="email" value={email} type="hidden" />
+        <Button type="submit" disabled={submitting} className="w-full">
+          Continue
+        </Button>
+        <Button type="button" variant="link" onClick={onCancel}>
+          Cancel
+        </Button>
+      </form>
+    </>
+  );
+};
+
+export function SignInForm() {
+  const [step, setStep] = useState<"signIn" | { email: string }>("signIn");
+
+  return (
+    <div className="mx-auto flex flex-col gap-6 text-center">
       {step === "signIn" ? (
-        <>
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2">Sign in with</span>
-            </div>
-          </div>
-          <SignInWithOAuth />
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2">Or continue with</span>
-            </div>
-          </div>
-          <SignInWithEmailCode handleCodeSent={(email) => setStep({ email })} />
-        </>
+        <SignInStep onCodeSent={(email) => setStep({ email })} />
       ) : (
-        <>
-          <h2 className="text-2xl font-semibold tracking-tight">
-            Check your email
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Enter the 8-digit code we sent to your email address.
-          </p>
-          <form
-            className="mt-2 flex flex-col items-center gap-5"
-            onSubmit={(event) => {
-              event.preventDefault();
-              setSubmitting(true);
-              const formData = new FormData(event.currentTarget);
-              signIn("resend-otp", formData).catch(() => {
-                toast({
-                  title: "Code could not be verified, try again",
-                  variant: "destructive",
-                });
-                setSubmitting(false);
-              });
-            }}
-          >
-            <CodeInput />
-            <input name="email" value={step.email} type="hidden" />
-            <Button type="submit" disabled={submitting} className="w-full">
-              Continue
-            </Button>
-            <Button
-              type="button"
-              variant="link"
-              onClick={() => setStep("signIn")}
-            >
-              Cancel
-            </Button>
-          </form>
-        </>
+        <CodeVerificationStep
+          email={step.email}
+          onCancel={() => setStep("signIn")}
+        />
       )}
     </div>
   );

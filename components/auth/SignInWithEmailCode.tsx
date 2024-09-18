@@ -20,7 +20,7 @@ export function SignInWithEmailCode({
   const [submitting, setSubmitting] = useState(false);
   return (
     <form
-      className="flex flex-col"
+      className="mb-4 flex flex-col gap-5"
       onSubmit={(event) => {
         event.preventDefault();
         setSubmitting(true);
@@ -40,7 +40,6 @@ export function SignInWithEmailCode({
       <Input
         name="email"
         id="email"
-        className="mb-4"
         autoComplete="email"
         placeholder="Your email"
         aria-label="Email to receive one time login code"

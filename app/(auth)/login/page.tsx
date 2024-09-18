@@ -14,6 +14,7 @@ import {
 
 import { SignInForm } from "@/components/auth/SignInForm";
 import { buttonVariants } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,7 +32,7 @@ export default function LoginPage() {
   }, [isAuthenticated, isLoading, redirectUrl, router]);
 
   return (
-    <>
+    <div className="max-w-[384px]">
       <AuthLoading>
         <div>Verifying authentication, hang on tight...</div>
       </AuthLoading>
@@ -40,11 +41,12 @@ export default function LoginPage() {
       </Authenticated>
       <Unauthenticated>
         <SignInForm />
-        <div className="mx-auto mt-5 max-w-[384px] border-t pt-6 text-center">
+        <Separator className="my-4" />
+        <div className="mx-auto text-center">
           <Link
             href="/"
             className={buttonVariants({
-              variant: "ghost",
+              variant: "link",
               className: "text-sm",
             })}
           >
@@ -52,6 +54,6 @@ export default function LoginPage() {
           </Link>
         </div>
       </Unauthenticated>
-    </>
+    </div>
   );
 }
