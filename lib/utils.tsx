@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 
 // forward refs
 export function fr<T = HTMLElement, P = React.HTMLAttributes<T>>(
-  component: ForwardRefRenderFunction<T, P>,
+  component: ForwardRefRenderFunction<T, React.PropsWithoutRef<P>>,
 ) {
   const wrapped = forwardRef(component);
   wrapped.displayName = component.name;
