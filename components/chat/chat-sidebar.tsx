@@ -106,7 +106,7 @@ export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
                 )}
               >
                 <ChatAvatar name={chat.name} avatar={chat.image} />
-                <div className="max-w-28 flex min-w-0 flex-col">
+                <div className="flex min-w-0 max-w-28 flex-col">
                   <span className="min-w-0 truncate">{chat.name}</span>
                   {/* TODO need to show the unread message counter */}
                   {/* {link.messages.length > 0 && (
