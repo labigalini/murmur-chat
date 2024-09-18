@@ -53,20 +53,17 @@ export const list = query({
                 .search("searchable", normalizeStringForSearch(search))
                 .eq("chatId", chatId),
             );
-    return await query
-      .filter((q) => q.eq(q.field("deletionTime"), undefined))
-      .paginate(paginationOpts)
-      .map(async (member) => {
-        const user = await member.edge("user");
-        return {
-          _id: member._id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          initials: user.name?.[0],
-          roleId: member.roleId,
-        };
-      });
+    return await query.paginate(paginationOpts).map(async (member) => {
+      const user = await member.edge("user");
+      return {
+        _id: member._id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        initials: user.name?.[0],
+        roleId: member.roleId,
+      };
+    });
   },
 });
 
@@ -103,7 +100,6 @@ async function checkAnotherAdminExists(ctx: QueryCtx, member: Ent<"members">) {
     .edge("members")
     .filter((q) =>
       q.and(
-        q.eq(q.field("deletionTime"), undefined),
         q.eq(q.field("roleId"), adminRole._id),
         q.neq(q.field("_id"), member._id),
       ),

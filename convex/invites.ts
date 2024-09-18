@@ -75,7 +75,6 @@ export const accept = mutation({
       .unique();
     if (existingMember !== null) {
       await existingMember.patch({
-        deletionTime: undefined,
         roleId: invite.roleId,
       });
     } else {

@@ -10,30 +10,15 @@ import { v } from "convex/values";
 
 import { vPermission, vRole } from "./permissions";
 
-// Example: 7 day soft deletion period for chats
-const CHAT_DELETION_DELAY_MS = 7 * 24 * 60 * 60 * 1000;
-
 const schema = defineEntSchema(
   {
     ...defineEntsFromTables(authTables),
 
-    authSessions: defineEnt({
-      // override to extend
-      userId: v.id("user"),
-      expirationTime: v.number(),
-      publicKey: v.optional(v.string()),
-    })
-      .edges("messages", {
-        ref: "recipientSessionId",
-      })
-      .edge("user"),
+    authSessions: defineEntFromTable(authTables.authSessions) // override to add field
+      .field("publicKey", v.optional(v.string())),
 
-    users: defineEntFromTable(authTables.users) // override to extend
-      .edges("members", {
-        ref: true,
-        deletion: "soft",
-      })
-      .edges("authSessions", { ref: true })
+    users: defineEntFromTable(authTables.users) // override to add edges
+      .edges("members", { ref: true })
       .edges("invites", { ref: "inviterUserId" }),
 
     chats: defineEnt({
@@ -42,8 +27,7 @@ const schema = defineEntSchema(
     })
       .edges("messages", { ref: true })
       .edges("members", { ref: true })
-      .edges("invites", { ref: true })
-      .deletion("scheduled", { delayMs: CHAT_DELETION_DELAY_MS }),
+      .edges("invites", { ref: true }),
 
     members: defineEnt({
       searchable: v.string(),
@@ -56,8 +40,7 @@ const schema = defineEntSchema(
         searchField: "searchable",
         filterFields: ["chatId"],
       })
-      .edges("messages", { ref: true })
-      .deletion("soft"),
+      .edges("messages", { ref: true }),
 
     invites: defineEnt({})
       .field("email", v.string(), { unique: true })
@@ -79,10 +62,10 @@ const schema = defineEntSchema(
 
     messages: defineEnt({
       text: v.string(),
+      recipientSessionId: v.id("authSessions"),
     })
       .edge("chat")
       .edge("member")
-      .edge("authSession", { field: "recipientSessionId" })
       .index("recipient", ["chatId", "recipientSessionId"]),
   },
   { schemaValidation: false },

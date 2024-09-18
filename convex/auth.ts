@@ -54,7 +54,7 @@ export const patchSession = mutation({
   },
   handler: async (ctx, { publicKey }) => {
     const sessionId = await getAuthSessionId(ctx);
-    if (sessionId === null) {
+    if (!sessionId) {
       return;
     }
     await ctx.table("authSessions").getX(sessionId).patch({ publicKey });

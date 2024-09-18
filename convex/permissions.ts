@@ -35,7 +35,6 @@ export async function viewerWithPermission(
     .unique();
   if (
     member === null ||
-    member.deletionTime !== undefined ||
     !(await member
       .edge("role")
       .edge("permissions")
