@@ -13,14 +13,14 @@ import {
   DotFilledIcon,
   DotsHorizontalIcon,
   DragHandleDots2Icon,
+  FaceIcon,
   HamburgerMenuIcon,
   InfoCircledIcon,
   MagnifyingGlassIcon,
   MoonIcon,
   PaperPlaneIcon,
+  Pencil2Icon,
   SunIcon,
-  FaceIcon,
-  Pencil2Icon
 } from "@radix-ui/react-icons";
 
 export {
