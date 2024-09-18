@@ -38,7 +38,7 @@ export function se<
  * @template TResult - The type of the result returned by the provided function.
  *
  * @param {TInput} param - The input parameter to be processed, which may be "loading", `null`, or `undefined`.
- * @param {(param: TCleanInput) => TResult} argsFunc - The function to process the cleaned input parameter.
+ * @param {(param: TValidInput) => TResult} argsFunc - The function to process the cleaned input parameter.
  * @returns {TResult | "skip"} - Returns the result of the provided function if the input is valid, otherwise returns "skip".
  *
  * @example
