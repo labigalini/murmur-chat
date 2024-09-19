@@ -1,5 +1,7 @@
 "use client";
 
+import { useTheme } from "next-themes";
+
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
@@ -16,6 +18,7 @@ interface ChatEmojiPickerProps {
 }
 
 export const ChatEmojiPicker = ({ onChange }: ChatEmojiPickerProps) => {
+  const { theme } = useTheme();
   return (
     <Popover>
       <PopoverTrigger>
@@ -24,7 +27,7 @@ export const ChatEmojiPicker = ({ onChange }: ChatEmojiPickerProps) => {
       <PopoverContent className="w-full">
         <Picker
           emojiSize={18}
-          theme="light"
+          theme={theme}
           data={data}
           maxFrequentRows={1}
           onEmojiSelect={(emoji: { native: string }) => onChange(emoji.native)}
