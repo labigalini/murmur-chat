@@ -6,6 +6,9 @@ import { mutation, query } from "./functions";
 import { hasInvite } from "./invites";
 
 export const { auth, signIn, signOut, store } = convexAuth({
+  jwt: {
+    durationMs: 2629746000, // REMOVEME 1 month, temp solution to jwt not refreshing on background
+  },
   providers: [ResendOTP],
   callbacks: {
     async createOrUpdateUser(
