@@ -62,10 +62,11 @@ async function getChatSessions(ctx: QueryCtx, chat: Ent<"chats">) {
   const chatUsers = (
     await Promise.all(chatMembers.map((m) => m.edge("user")))
   ).flat();
-  const userSessions = await ctx.table("authSessions").getMany(
-    "userId",
-    chatUsers.map((u) => u._id),
-  );
+  const userSessions = await ctx
+    .table("authSessions")
+    .filter((q) =>
+      q.or(...chatUsers.map(({ _id }) => q.eq(q.field("userId"), _id))),
+    );
   const sessions = userSessions
     .filter((session): session is ValidSession<typeof session> => {
       return !!session && !!session.publicKey;
