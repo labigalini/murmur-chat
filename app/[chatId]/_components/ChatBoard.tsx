@@ -35,6 +35,12 @@ export default function ChatBoard({
   const [selectedChat, setSelectedChat] = useState<"loading" | Chat | null>(
     "loading",
   );
+  const selectedChatMembers = useQuery(
+    api.members.list,
+    skipIfUnset(selectedChat, (c) => ({
+      chatId: c._id as Id<"chats">,
+    })),
+  );
   const selectedChatMessages = useQuery(
     api.messages.list,
     skipIfUnset(selectedChat, (c) => ({
@@ -98,19 +104,19 @@ export default function ChatBoard({
 
   const handleSendMessage = useCallback(
     async (chat: Chat, message: string) => {
-      if (encryption === "loading" || chats === "loading") {
+      if (encryption === "loading" || selectedChatMembers === "loading") {
         return;
       }
 
       const { encrypt } = encryption;
 
       const encryptedMessages = await Promise.all(
-        chats
-          .find((c) => c._id === chat._id) // TODO fix this, I should be able to infer selectedChat... or maybe state by id
-          ?.sessions.map(async (recipient) => ({
+        selectedChatMembers
+          .flatMap((m) => m.sessions)
+          .map(async (recipient) => ({
             text: await encrypt(message, recipient.publicKey),
             recipientSessionId: recipient._id,
-          })) ?? [],
+          })),
       );
 
       await sendMessage({
@@ -118,13 +124,14 @@ export default function ChatBoard({
         messages: encryptedMessages,
       });
     },
-    [chats, encryption, sendMessage],
+    [encryption, selectedChatMembers, sendMessage],
   );
 
   return (
     <ChatContainer
       chatList={chats}
       chat={selectedChat}
+      members={selectedChatMembers}
       messages={decryptedMessages}
       defaultLayout={defaultLayout}
       handlers={{

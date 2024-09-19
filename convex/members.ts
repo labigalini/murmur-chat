@@ -1,4 +1,3 @@
-import { paginationOptsValidator } from "convex/server";
 import { ConvexError, v } from "convex/values";
 
 import { Id } from "./_generated/dataModel";
@@ -9,7 +8,8 @@ import {
   viewerHasPermissionX,
 } from "./permissions";
 import { Ent, MutationCtx, QueryCtx } from "./types";
-import { emptyPage, normalizeStringForSearch } from "./utils";
+import { getUserSessions, getUsername } from "./users";
+import { normalizeStringForSearch } from "./utils";
 
 export const viewerPermissions = query({
   args: {
@@ -33,35 +33,35 @@ export const viewerPermissions = query({
 export const list = query({
   args: {
     chatId: v.id("chats"),
-    search: v.string(),
-    paginationOpts: paginationOptsValidator,
+    search: v.optional(v.string()),
   },
-  async handler(ctx, { chatId, search, paginationOpts }) {
+  async handler(ctx, { chatId, search }) {
     if (
       ctx.viewer === null ||
       !(await viewerHasPermission(ctx, chatId, "Read Members"))
     ) {
-      return emptyPage();
+      return [];
     }
-    const query =
-      search === ""
-        ? ctx.table("chats").getX(chatId).edge("members")
-        : ctx
-            .table("members")
-            .search("searchable", (q) =>
-              q
-                .search("searchable", normalizeStringForSearch(search))
-                .eq("chatId", chatId),
-            );
-    return await query.paginate(paginationOpts).map(async (member) => {
+    const query = search
+      ? ctx
+          .table("members")
+          .search("searchable", (q) =>
+            q
+              .search("searchable", normalizeStringForSearch(search))
+              .eq("chatId", chatId),
+          )
+      : ctx.table("chats").getX(chatId).edge("members");
+    return await query.map(async (member) => {
       const user = await member.edge("user");
+      const sessions = await getUserSessions(ctx, user);
+      const username = getUsername(user);
       return {
         _id: member._id,
-        name: user.name,
+        name: username,
         email: user.email,
         image: user.image,
-        initials: user.name?.[0],
         roleId: member.roleId,
+        sessions,
       };
     });
   },

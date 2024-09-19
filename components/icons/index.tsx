@@ -36,12 +36,12 @@ export {
   DotFilledIcon,
   DotsHorizontalIcon,
   DragHandleDots2Icon,
+  FaceIcon,
   HamburgerMenuIcon,
   InfoCircledIcon,
   MagnifyingGlassIcon,
   MoonIcon,
   PaperPlaneIcon,
-  FaceIcon,
   Pencil2Icon,
   SunIcon,
 };

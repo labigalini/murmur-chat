@@ -2,7 +2,12 @@ export type Chat = {
   _id: string;
   name: string;
   image?: string;
-  lastMessageTime?: Date;
+};
+
+export type Member = {
+  _id: string;
+  name: string;
+  image?: string;
 };
 
 export type Message = {
@@ -16,11 +21,4 @@ export type Message = {
     image?: string;
   };
   isViewer: boolean;
-};
-
-export type User = {
-  id: number;
-  image?: string;
-  messages: Message[];
-  name: string;
 };

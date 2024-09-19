@@ -1,11 +1,12 @@
 import { createContext, useContext } from "react";
 
-import { Chat, Message } from "./chat-types";
+import { Chat, Member, Message } from "./chat-types";
 
 export type ChatState = {
   chatList: "loading" | Chat[];
   chat: "loading" | Chat | null;
   messages: "loading" | Message[];
+  members: "loading" | Member[];
   urlPrefix: string;
 };
 

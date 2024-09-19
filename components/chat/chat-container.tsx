@@ -29,14 +29,12 @@ type ChatLayoutProps = Omit<ChatState, "urlPrefix"> &
   };
 
 export function ChatContainer({
-  chatList,
-  chat,
-  messages,
   urlPrefix = "/",
   defaultLayout = [320, 480],
   defaultCollapsed = false,
   navCollapsedSize = 8,
   handlers,
+  ...initialState
 }: ChatLayoutProps) {
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const [isMobile, setIsMobile] = useState(false);
@@ -61,10 +59,10 @@ export function ChatContainer({
   const chatContext = useMemo(
     () =>
       ({
-        state: { chatList, chat, messages, urlPrefix },
+        state: { ...initialState, urlPrefix },
         ...handlers,
       }) satisfies ChatContextType,
-    [chatList, chat, messages, urlPrefix, handlers],
+    [initialState, urlPrefix, handlers],
   );
 
   return (

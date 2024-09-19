@@ -14,17 +14,14 @@ import ChatTopbar from "./chat-topbar";
 
 export function ChatMain() {
   const {
-    state: { chat, messages },
+    state: { messages },
   } = useChatContext();
-
-  if (chat === "loading") return "Loading selected chat";
-  else if (!chat) return "No chat selected";
 
   if (messages === "loading") return "Loading messages";
 
   return (
     <div className="flex h-full w-full flex-col justify-between">
-      <ChatTopbar name={chat.name} image={chat.image} />
+      <ChatTopbar />
       <ChatMessageList>
         <AnimatePresence>
           {messages.map((message, index) => {
