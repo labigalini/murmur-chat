@@ -39,10 +39,8 @@ export function UserMenu({ name, avatar }: UserMenuProps) {
             <ThemeToggle />
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Link href="/logout" className="w-full">
-              Sign out
-            </Link>
+          <DropdownMenuItem asChild>
+            <Link href="/logout">Sign out</Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
