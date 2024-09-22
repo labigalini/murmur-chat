@@ -106,8 +106,17 @@ export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
                 )}
               >
                 <ChatAvatar name={chat.name} avatar={chat.image} />
-                <div className="flex min-w-0 max-w-28 flex-col">
-                  <span className="min-w-0 truncate">{chat.name}</span>
+                <div className="flex min-w-0 flex-col">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className={`min-w-0 truncate`}>{chat.name}</span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{chat.name}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   {/* TODO need to show the unread message counter */}
                   {/* {link.messages.length > 0 && (
                   <span className="text-zinc-300 text-xs truncate min-w-0">
