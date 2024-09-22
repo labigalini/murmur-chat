@@ -8,7 +8,11 @@ import { useChatContext } from "./chat-context";
 import { InfoCircledIcon } from "../icons";
 import { buttonVariants } from "../ui/button";
 
-export default function ChatTopbar() {
+interface ChatTopbarProps {
+  openSidebar: (title: string, content: React.ReactNode) => void;
+}
+
+const ChatTopbar: React.FC<ChatTopbarProps> = ({ openSidebar }) => {
   const {
     state: { chat, members },
   } = useChatContext();
@@ -31,8 +35,13 @@ export default function ChatTopbar() {
         <Link
           href="#"
           onClick={() =>
-            alert(
-              `Members: ${members.length}\n\n${members.map((m) => m.name).join("\n")}`,
+            openSidebar(
+              "Chat Settings",
+              <p>
+                Members: {members.length}
+                <br />
+                {members.map((m) => m.name).join(", ")}
+              </p>,
             )
           }
           className={cn(
@@ -43,6 +52,28 @@ export default function ChatTopbar() {
           <InfoCircledIcon className="h-6 w-6" />
         </Link>
       </div>
+      {/* 
+      <button
+        onClick={() => openSidebar("Chat Settings", <ChatSettings />)}
+        className="rounded-full p-2 hover:bg-gray-200"
+      >
+        Settings
+      </button>
+      <button
+        onClick={() => openSidebar("Chat Info", <ChatInfo />)}
+        className="rounded-full p-2 hover:bg-gray-200"
+      >
+        Info
+      </button>
+      <button
+        onClick={() => openSidebar("Chat Test", <p>test</p>)}
+        className="rounded-full p-2 hover:bg-gray-200"
+      >
+        Test
+      </button> 
+      */}
     </div>
   );
-}
+};
+
+export default ChatTopbar;
