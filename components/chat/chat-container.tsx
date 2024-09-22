@@ -11,14 +11,16 @@ import {
 import { Optional } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
+import ChatBottombar from "./chat-bottombar";
 import {
   ChatContextType,
   ChatHandlers,
   ChatProvider,
   ChatState,
 } from "./chat-context";
-import { ChatMain } from "./chat-main";
-import { ChatSidebar } from "./chat-sidebar";
+import { ChatList } from "./chat-list";
+import { ChatMessageList } from "./chat-message-list";
+import ChatTopbar from "./chat-topbar";
 
 type ChatLayoutProps = Omit<ChatState, "urlPrefix"> &
   Optional<Pick<ChatState, "urlPrefix">> & {
@@ -99,11 +101,15 @@ export function ChatContainer({
               "min-w-[75px] transition-all duration-300 ease-in-out",
           )}
         >
-          <ChatSidebar isCollapsed={isCollapsed || isMobile} />
+          <ChatList isCollapsed={isCollapsed || isMobile} />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
-          <ChatMain />
+          <div className="flex h-full w-full flex-col justify-between">
+            <ChatTopbar />
+            <ChatMessageList />
+            <ChatBottombar />
+          </div>
         </ResizablePanel>
       </ResizablePanelGroup>
     </ChatProvider>

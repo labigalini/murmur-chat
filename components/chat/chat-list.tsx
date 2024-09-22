@@ -32,7 +32,7 @@ interface ChatSidebarProps {
   isCollapsed: boolean;
 }
 
-export function ChatSidebar({ isCollapsed }: ChatSidebarProps) {
+export function ChatList({ isCollapsed }: ChatSidebarProps) {
   const {
     state: { chatList, chat: selectedChat, urlPrefix },
     onSelectChat,
