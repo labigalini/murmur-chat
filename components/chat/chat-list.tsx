@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
 import { ChatCreateDialog } from "./chat-create-dialog";
+import { ChatTitle } from "./chat-title";
 
 import { DotsHorizontalIcon, Pencil2Icon } from "../icons";
 
@@ -75,7 +76,7 @@ export function ChatList({ isCollapsed }: ChatSidebarProps) {
                           "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white",
                       )}
                     >
-                      <ChatAvatar name={chat.name} avatar={chat.image} />{" "}
+                      <ChatAvatar name={chat.name} avatar={chat.image} />
                       <span className="sr-only">{chat.name}</span>
                     </Link>
                   </TooltipTrigger>
@@ -110,7 +111,7 @@ export function ChatList({ isCollapsed }: ChatSidebarProps) {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <span className={`min-w-0 truncate`}>{chat.name}</span>
+                        <span className="min-w-0 truncate">{chat.name}</span>
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>{chat.name}</p>
@@ -148,12 +149,7 @@ function ChatSidebarTopbar({
       data-collapsed={isCollapsed}
       className="flex items-center justify-between pb-3 pl-3 pr-2 pt-1 data-[collapsed=true]:justify-center data-[collapsed=true]:py-0"
     >
-      {!isCollapsed && (
-        <div className="flex items-center gap-2 text-2xl">
-          <p className="font-medium">Chats</p>
-          <span className="text-zinc-300">({chatCount})</span>
-        </div>
-      )}
+      {!isCollapsed && <ChatTitle title="Chats" count={chatCount} size="2xl" />}
 
       <ChatCreateDialog
         open={openCreateDialog}
