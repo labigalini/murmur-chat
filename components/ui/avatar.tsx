@@ -20,12 +20,14 @@ function first2(str: string) {
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
->(({ className, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root> & {
+    size?: number;
+  }
+>(({ className, size = 9, ...props }, ref) => (
   <AvatarPrimitive.Root
     ref={ref}
     className={cn(
-      "relative flex h-9 w-9 shrink-0 overflow-hidden rounded-full",
+      `relative flex h-${size} w-${size} shrink-0 overflow-hidden rounded-full`,
       className,
     )}
     {...props}
