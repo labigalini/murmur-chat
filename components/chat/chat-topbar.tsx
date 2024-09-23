@@ -4,12 +4,14 @@ import { cn } from "@/lib/utils";
 
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
+import { ChatSidebarMembers } from "./chat-sidebar-members";
+import { ChatTitle } from "./chat-title";
 
 import { InfoCircledIcon } from "../icons";
 import { buttonVariants } from "../ui/button";
 
 interface ChatTopbarProps {
-  openSidebar: (title: string, content: React.ReactNode) => void;
+  openSidebar: (title: React.ReactNode, content: React.ReactNode) => void;
 }
 
 const ChatTopbar: React.FC<ChatTopbarProps> = ({ openSidebar }) => {
@@ -36,12 +38,8 @@ const ChatTopbar: React.FC<ChatTopbarProps> = ({ openSidebar }) => {
           href="#"
           onClick={() =>
             openSidebar(
-              "Chat Settings",
-              <p>
-                Members: {members.length}
-                <br />
-                {members.map((m) => m.name).join(", ")}
-              </p>,
+              <ChatTitle title="Members" count={members.length} size="xl" />,
+              <ChatSidebarMembers />,
             )
           }
           className={cn(
@@ -52,26 +50,6 @@ const ChatTopbar: React.FC<ChatTopbarProps> = ({ openSidebar }) => {
           <InfoCircledIcon className="h-6 w-6" />
         </Link>
       </div>
-      {/* 
-      <button
-        onClick={() => openSidebar("Chat Settings", <ChatSettings />)}
-        className="rounded-full p-2 hover:bg-gray-200"
-      >
-        Settings
-      </button>
-      <button
-        onClick={() => openSidebar("Chat Info", <ChatInfo />)}
-        className="rounded-full p-2 hover:bg-gray-200"
-      >
-        Info
-      </button>
-      <button
-        onClick={() => openSidebar("Chat Test", <p>test</p>)}
-        className="rounded-full p-2 hover:bg-gray-200"
-      >
-        Test
-      </button> 
-      */}
     </div>
   );
 };
