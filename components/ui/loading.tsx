@@ -5,7 +5,7 @@ import { Skeleton } from "./skeleton";
 type LoadingProps<TProps, TValidProps> = {
   fallback?: ReactNode;
   component: (props: TValidProps) => ReactNode;
-  props: TProps;
+  props?: TProps;
 };
 
 export function Loading<
@@ -16,7 +16,9 @@ export function Loading<
 >({ fallback, component, props }: LoadingProps<TProps, TValidProps>) {
   const [showLoading, setShowLoading] = useState(false);
   const isLoading = useMemo(
-    () => Object.values(props).some((p) => p === "loading" || p === undefined),
+    () =>
+      props &&
+      Object.values(props).some((p) => p === "loading" || p === undefined),
     [props],
   );
 

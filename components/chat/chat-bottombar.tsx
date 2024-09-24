@@ -6,10 +6,12 @@ import { ChatInput } from "./chat-input";
 
 import { PaperPlaneIcon } from "../icons";
 import { Button } from "../ui/button";
+import { Loading } from "../ui/loading";
+import { Skeleton } from "../ui/skeleton";
 
 export default function ChatBottombar() {
   const {
-    state: { chat },
+    state: { chat, messages },
     onSendMessage,
   } = useChatContext();
 
@@ -65,15 +67,25 @@ export default function ChatBottombar() {
           />
         </div>
         <div className="absolute bottom-[.4rem] right-2">
-          <Button
-            className="h-9 w-9 shrink-0"
-            onClick={handleSend}
-            variant="ghost"
-            size="icon"
-            disabled={!message.trim()}
-          >
-            <PaperPlaneIcon size="5" className="text-muted-foreground" />
-          </Button>
+          <Loading
+            fallback={
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center">
+                <Skeleton size="6" />
+              </div>
+            }
+            component={() => (
+              <Button
+                className="h-9 w-9 shrink-0"
+                onClick={handleSend}
+                variant="ghost"
+                size="icon"
+                disabled={!message.trim()}
+              >
+                <PaperPlaneIcon size="5" className="text-muted-foreground" />
+              </Button>
+            )}
+            props={{ chat, messages }}
+          />
         </div>
       </div>
     </div>
