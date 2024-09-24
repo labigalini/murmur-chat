@@ -166,7 +166,7 @@ function ChatSidebarTopbar({
                 size="icon"
                 className="h-16 w-16"
               >
-                <DotsHorizontalIcon className="h-6 w-6" />
+                <DotsHorizontalIcon size="6" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
@@ -183,7 +183,7 @@ function ChatSidebarTopbar({
                   className="flex w-full gap-4"
                 >
                   Create new chat
-                  <Pencil2Icon className="h-4 w-4" />
+                  <Pencil2Icon />
                 </Button>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -197,7 +197,7 @@ function ChatSidebarTopbar({
             onClick={() => setOpenCreateDialog(true)}
             className="h-12 w-12"
           >
-            <Pencil2Icon className="h-6 w-6" />
+            <Pencil2Icon size="6" />
           </Button>
         )}
       </div>

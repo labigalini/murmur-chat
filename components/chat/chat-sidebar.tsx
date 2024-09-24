@@ -15,7 +15,7 @@ const ChatSidebar = () => {
       <div className="mb-4 flex items-center justify-between">
         <>{title}</>
         <Button variant="ghost" size="icon" onClick={close}>
-          <Cross2Icon className="h-5 w-5" />
+          <Cross2Icon size="5" />
         </Button>
       </div>
       <div className="overflow-y-auto">

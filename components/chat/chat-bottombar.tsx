@@ -72,7 +72,7 @@ export default function ChatBottombar() {
             size="icon"
             disabled={!message.trim()}
           >
-            <PaperPlaneIcon className="h-5 w-5 text-muted-foreground" />
+            <PaperPlaneIcon size="5" className="text-muted-foreground" />
           </Button>
         </div>
       </div>

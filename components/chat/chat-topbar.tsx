@@ -35,7 +35,7 @@ const ChatTopbar = () => {
             openSidebar(<ChatSidebarMembersTitle />, <ChatSidebarMembers />)
           }
         >
-          <InfoCircledIcon className="h-6 w-6" />
+          <InfoCircledIcon size="6" />
         </Button>
       </div>
     </div>

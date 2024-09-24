@@ -22,7 +22,10 @@ export const ChatEmojiPicker = ({ onChange }: ChatEmojiPickerProps) => {
   return (
     <Popover>
       <PopoverTrigger>
-        <FaceIcon className="h-5 w-5 text-muted-foreground transition hover:text-foreground" />
+        <FaceIcon
+          size="5"
+          className="text-muted-foreground transition hover:text-foreground"
+        />
       </PopoverTrigger>
       <PopoverContent className="w-full">
         <Picker
