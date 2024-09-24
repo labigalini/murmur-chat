@@ -29,7 +29,6 @@ import { ChatTitle } from "./chat-title";
 import { Chat } from "./chat-types";
 
 import { DotsHorizontalIcon, Pencil2Icon } from "../icons";
-import { Loading } from "../ui/loading";
 
 interface ChatListProps {
   isCollapsed: boolean;
@@ -78,6 +77,7 @@ function ChatListTopbar({
   chatCount: number | "loading";
 }) {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  const isLoading = chatCount === "loading";
 
   return (
     <div
@@ -85,12 +85,7 @@ function ChatListTopbar({
       className="flex items-center justify-between pb-3 pl-3 pr-2 pt-1 data-[collapsed=true]:justify-center data-[collapsed=true]:py-0"
     >
       {!isCollapsed && (
-        <Loading
-          component={({ chatCount }) => (
-            <ChatTitle title="Chats" count={chatCount} size="2xl" />
-          )}
-          props={{ chatCount }}
-        />
+        <ChatTitle title="Chats" count={chatCount} className="text-2xl" />
       )}
       <div>
         <ChatCreateDialog
@@ -111,7 +106,11 @@ function ChatListTopbar({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
               <DropdownMenuLabel>
-                <p className="text-lg">Chats ({chatCount})</p>
+                <ChatTitle
+                  title="Chats"
+                  count={chatCount}
+                  className="text-lg"
+                />
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
@@ -121,6 +120,7 @@ function ChatListTopbar({
                   size="icon"
                   onClick={() => setOpenCreateDialog(true)}
                   className="flex w-full gap-4"
+                  disabled={isLoading}
                 >
                   Create new chat
                   <Pencil2Icon />
@@ -136,6 +136,7 @@ function ChatListTopbar({
             size="icon"
             onClick={() => setOpenCreateDialog(true)}
             className="h-12 w-12"
+            disabled={isLoading}
           >
             <Pencil2Icon size="6" />
           </Button>

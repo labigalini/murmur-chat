@@ -17,7 +17,7 @@ function Skeleton({ className, ...props }: SkeletonProps) {
   return (
     <div
       className={cn(
-        "animate-pulse rounded-md bg-primary/10",
+        "inline-flex animate-pulse rounded-md bg-primary/10",
         isIconProps && size && `h-${size} w-${size} rounded-full`,
         isTextProps && width && `w-${width} h-4`,
         className,

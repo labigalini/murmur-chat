@@ -1,10 +1,12 @@
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ComponentProps, ReactNode, useEffect, useMemo, useState } from "react";
 
 import { Skeleton } from "./skeleton";
 
-type LoadingProps<TProps, TValidProps> = {
-  fallback?: ReactNode;
-  component: (props: TValidProps) => ReactNode;
+type LoadingProps<TProps, TValidProps> = (
+  | ComponentProps<typeof Skeleton>
+  | { fallback?: ReactNode }
+) & {
+  component: ReactNode | ((props: TValidProps) => ReactNode);
   props?: TProps;
 };
 
@@ -13,13 +15,19 @@ export function Loading<
   TValidProps extends {
     [K in keyof TProps]: Exclude<TProps[K], "loading">;
   },
->({ fallback, component, props }: LoadingProps<TProps, TValidProps>) {
+>({
+  component,
+  props: componentProps,
+  ...skeletonProps
+}: LoadingProps<TProps, TValidProps>) {
   const [showLoading, setShowLoading] = useState(false);
   const isLoading = useMemo(
     () =>
-      props &&
-      Object.values(props).some((p) => p === "loading" || p === undefined),
-    [props],
+      componentProps &&
+      Object.values(componentProps).some(
+        (p) => p === "loading" || p === undefined,
+      ),
+    [componentProps],
   );
 
   useEffect(() => {
@@ -34,8 +42,20 @@ export function Loading<
   }, [isLoading, showLoading]);
 
   if (isLoading || showLoading) {
-    return <>{fallback ?? <Skeleton width="32" />}</>;
+    return (
+      <>
+        {"fallback" in skeletonProps ? (
+          skeletonProps.fallback
+        ) : (
+          <Skeleton width="32" {...skeletonProps} />
+        )}
+      </>
+    );
   }
 
-  return <>{component(props as unknown as TValidProps)}</>;
+  if (typeof component === "function") {
+    return <>{component(componentProps as TValidProps)}</>;
+  }
+
+  return <>{component}</>;
 }

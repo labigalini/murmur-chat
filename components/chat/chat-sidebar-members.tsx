@@ -9,7 +9,9 @@ const ChatSidebarMembersTitle = () => {
 
   if (members === "loading") return "Loading members title";
 
-  return <ChatTitle title="Members" count={members.length} size="xl" />;
+  return (
+    <ChatTitle title="Members" count={members.length} className="text-xl" />
+  );
 };
 
 const ChatSidebarMembers = () => {
