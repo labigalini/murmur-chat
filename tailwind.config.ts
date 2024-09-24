@@ -2,6 +2,7 @@ import type { Config } from "tailwindcss";
 import TailwindCSSAnimatePlugin from "tailwindcss-animate";
 
 const config = {
+  safelist: [{ pattern: /^h-\d+$/ }, { pattern: /^w-\d+$/ }],
   darkMode: ["class"],
   content: ["./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}"],
   prefix: "",
