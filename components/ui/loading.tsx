@@ -1,10 +1,10 @@
-import React from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 
 import { Skeleton } from "./skeleton";
 
 type LoadingProps<TProps, TValidProps> = {
-  fallback?: React.ReactNode;
-  component: (props: TValidProps) => React.ReactNode;
+  fallback?: ReactNode;
+  component: (props: TValidProps) => ReactNode;
   props: TProps;
 };
 
@@ -14,11 +14,24 @@ export function Loading<
     [K in keyof TProps]: Exclude<TProps[K], "loading">;
   },
 >({ fallback, component, props }: LoadingProps<TProps, TValidProps>) {
-  const isLoading = Object.values(props).some(
-    (p) => p === "loading" || p === undefined,
+  const [showLoading, setShowLoading] = useState(false);
+  const isLoading = useMemo(
+    () => Object.values(props).some((p) => p === "loading" || p === undefined),
+    [props],
   );
 
-  if (isLoading) {
+  useEffect(() => {
+    if (isLoading) {
+      setShowLoading(true);
+    } else if (showLoading) {
+      const timer = setTimeout(() => {
+        setShowLoading(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, showLoading]);
+
+  if (isLoading || showLoading) {
     return <>{fallback ?? <Skeleton width="32" />}</>;
   }
 

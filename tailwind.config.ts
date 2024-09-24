@@ -75,7 +75,7 @@ const config = {
       },
       animation: {
         wave: "wave 1.5s linear infinite", // custom animation
-        pulse: "pulse 0.8s cubic-bezier(0.4, 0, 0.6, 1) infinite", // Adjust the timing and curve
+        pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite", // Adjust the timing and curve
       },
       backgroundImage: {
         "gradient-wave":

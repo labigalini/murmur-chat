@@ -1,14 +1,11 @@
 import { cn } from "@/lib/utils";
 
-type SkeletonPropsIcon = React.HTMLAttributes<HTMLDivElement> & {
-  size?: string | number;
-};
+type SkeletonPropsIcon = { size?: string | number };
 
-type SkeletonPropsText = React.HTMLAttributes<HTMLDivElement> & {
-  width?: string | number;
-};
+type SkeletonPropsText = { width?: string | number };
 
-type SkeletonProps = SkeletonPropsIcon | SkeletonPropsText;
+type SkeletonProps = React.HTMLAttributes<HTMLDivElement> &
+  (SkeletonPropsIcon | SkeletonPropsText);
 
 function Skeleton({ className, ...props }: SkeletonProps) {
   const isIconProps = "size" in props;
@@ -21,7 +18,7 @@ function Skeleton({ className, ...props }: SkeletonProps) {
     <div
       className={cn(
         "animate-pulse rounded-md bg-primary/10",
-        isIconProps && size && `h-${size} w-${size}`,
+        isIconProps && size && `h-${size} w-${size} rounded-full`,
         isTextProps && width && `w-${width} h-4`,
         className,
       )}
