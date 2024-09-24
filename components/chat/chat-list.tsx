@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { ComponentProps, useState } from "react";
 
 import Link from "next/link";
 
@@ -26,121 +26,56 @@ import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
 import { ChatCreateDialog } from "./chat-create-dialog";
 import { ChatTitle } from "./chat-title";
+import { Chat } from "./chat-types";
 
 import { DotsHorizontalIcon, Pencil2Icon } from "../icons";
+import { Loading } from "../ui/loading";
 
-interface ChatSidebarProps {
+interface ChatListProps {
   isCollapsed: boolean;
 }
 
-export function ChatList({ isCollapsed }: ChatSidebarProps) {
+export function ChatList({ isCollapsed }: ChatListProps) {
   const {
     state: { chatList, chat: selectedChat, urlPrefix },
     onSelectChat,
   } = useChatContext();
 
-  if (chatList === "loading" || selectedChat === "loading")
-    return "Loading chat list";
-
   return (
     <div className="group relative flex h-full flex-col bg-muted/10 p-2 dark:bg-muted/20">
-      <ChatSidebarTopbar
+      <ChatListTopbar
         isCollapsed={isCollapsed}
-        chatCount={chatList.length}
+        chatCount={chatList === "loading" ? "loading" : chatList.length}
       />
       <div className="h-full overflow-y-auto px-2">
         <nav
           data-collapsed={isCollapsed}
           className="grid data-[collapsed=true]:justify-center"
         >
-          {chatList.map((chat) => {
-            const isSelected = selectedChat?._id === chat._id;
-            const variant = isSelected ? "grey" : ("ghost" as "grey" | "ghost");
-            return isCollapsed ? (
-              <TooltipProvider key={chat._id}>
-                <Tooltip key={chat._id} delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={urlPrefix + chat._id}
-                      onClick={(e) => {
-                        if (!isSelected) onSelectChat(chat);
-                        e.preventDefault();
-                      }}
-                      className={cn(
-                        buttonVariants({
-                          variant,
-                          size: "icon",
-                        }),
-                        "h-16 w-16",
-                        variant === "grey" &&
-                          "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white",
-                      )}
-                    >
-                      <ChatAvatar name={chat.name} avatar={chat.image} />
-                      <span className="sr-only">{chat.name}</span>
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="right"
-                    className="flex items-center gap-4"
-                  >
-                    {chat.name}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ) : (
-              <Link
+          {chatList !== "loading" &&
+            selectedChat !== "loading" &&
+            chatList.map((chat) => (
+              <ChatListLink
                 key={chat._id}
-                href={urlPrefix + chat._id}
-                onClick={(e) => {
-                  if (!isSelected) onSelectChat(chat);
-                  e.preventDefault();
-                }}
-                className={cn(
-                  buttonVariants({
-                    variant: variant,
-                    size: "xl",
-                  }),
-                  variant === "grey" &&
-                    "shrink dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
-                  "min-w-0 justify-start gap-4",
-                )}
-              >
-                <ChatAvatar name={chat.name} avatar={chat.image} />
-                <div className="flex min-w-0 flex-col">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span className="min-w-0 truncate">{chat.name}</span>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{chat.name}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  {/* TODO need to show the unread message counter */}
-                  {/* {link.messages.length > 0 && (
-                  <span className="text-zinc-300 text-xs truncate min-w-0">
-                    {link.messages[link.messages.length - 1].name.split(" ")[0]}
-                    : {link.messages[link.messages.length - 1].message}
-                  </span>
-                )} */}
-                </div>
-              </Link>
-            );
-          })}
+                chat={chat}
+                urlPrefix={urlPrefix}
+                isSelected={selectedChat?._id === chat._id}
+                onSelectChat={onSelectChat}
+                isCollapsed={isCollapsed}
+              />
+            ))}
         </nav>
       </div>
     </div>
   );
 }
 
-function ChatSidebarTopbar({
+function ChatListTopbar({
   isCollapsed,
   chatCount,
 }: {
   isCollapsed: boolean;
-  chatCount: number;
+  chatCount: number | "loading";
 }) {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
@@ -149,14 +84,19 @@ function ChatSidebarTopbar({
       data-collapsed={isCollapsed}
       className="flex items-center justify-between pb-3 pl-3 pr-2 pt-1 data-[collapsed=true]:justify-center data-[collapsed=true]:py-0"
     >
-      {!isCollapsed && <ChatTitle title="Chats" count={chatCount} size="2xl" />}
-
-      <ChatCreateDialog
-        open={openCreateDialog}
-        onOpenChange={setOpenCreateDialog}
-      />
-
+      {!isCollapsed && (
+        <Loading
+          component={({ chatCount }) => (
+            <ChatTitle title="Chats" count={chatCount} size="2xl" />
+          )}
+          props={{ chatCount }}
+        />
+      )}
       <div>
+        <ChatCreateDialog
+          open={openCreateDialog}
+          onOpenChange={setOpenCreateDialog}
+        />
         {isCollapsed && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -202,5 +142,63 @@ function ChatSidebarTopbar({
         )}
       </div>
     </div>
+  );
+}
+
+function ChatListLink({
+  chat,
+  urlPrefix,
+  isSelected,
+  onSelectChat,
+  isCollapsed,
+  ...props
+}: Omit<ComponentProps<typeof Link>, "href"> & {
+  chat: Chat;
+  urlPrefix: string;
+  isSelected: boolean;
+  isCollapsed: boolean;
+  onSelectChat: (_chat: Chat) => void;
+}) {
+  return (
+    <TooltipProvider key={chat._id}>
+      <Tooltip key={chat._id} delayDuration={0}>
+        <TooltipTrigger asChild>
+          <Link
+            href={urlPrefix + chat._id}
+            onClick={(e) => {
+              if (!isSelected) onSelectChat(chat);
+              e.preventDefault();
+            }}
+            className={cn(
+              buttonVariants({
+                variant: isSelected ? "grey" : "ghost",
+                size: isCollapsed ? "icon" : "xl",
+              }),
+              isCollapsed ? "h-16 w-16" : "min-w-0 justify-start gap-4",
+              isSelected &&
+                "shrink dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
+            )}
+            {...props}
+          >
+            <ChatAvatar name={chat.name} avatar={chat.image} />
+            <div className="flex min-w-0 flex-col">
+              <span className={isCollapsed ? "sr-only" : "min-w-0 truncate"}>
+                {chat.name}
+              </span>
+              {/* TODO need to show the unread message counter */}
+              {/* {link.messages.length > 0 && (
+          <span className="text-zinc-300 text-xs truncate min-w-0">
+            {link.messages[link.messages.length - 1].name.split(" ")[0]}
+            : {link.messages[link.messages.length - 1].message}
+          </span>
+        )} */}
+            </div>
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent side="right" className="flex items-center gap-4">
+          {chat.name}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
