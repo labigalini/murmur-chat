@@ -7,6 +7,8 @@ import {
 
 import { InfoCircledIcon } from "../icons";
 import { Button } from "../ui/button";
+import { Loading } from "../ui/loading";
+import { Skeleton } from "../ui/skeleton";
 
 const ChatTopbar = () => {
   const {
@@ -14,16 +16,27 @@ const ChatTopbar = () => {
     sidebar: { open: openSidebar },
   } = useChatContext();
 
-  if (chat === "loading") return "Loading selected chat";
-  else if (!chat) return "No chat selected";
+  if (!chat) return "No chat selected";
+
+  const isLoading = chat === "loading";
 
   return (
     <div className="flex h-20 w-full items-center justify-between border-b p-4">
       <div className="flex items-center gap-4">
-        <ChatAvatar name={chat.name} avatar={chat.image} />
-        <div className="flex flex-col">
-          <span className="font-medium">{chat.name}</span>
-        </div>
+        <Loading
+          fallback={<Skeleton size="9" className="rounded-full" />}
+          component={({ chat }) => (
+            <ChatAvatar name={chat.name} avatar={chat.image} />
+          )}
+          props={{ chat }}
+        />
+        <Loading
+          fallback={<Skeleton width="32" />}
+          component={({ chat }) => (
+            <span className="font-medium">{chat.name}</span>
+          )}
+          props={{ chat }}
+        />
       </div>
 
       <div className="flex gap-1">
@@ -34,6 +47,7 @@ const ChatTopbar = () => {
           onClick={() =>
             openSidebar(<ChatSidebarMembersTitle />, <ChatSidebarMembers />)
           }
+          disabled={isLoading}
         >
           <InfoCircledIcon size="6" />
         </Button>
