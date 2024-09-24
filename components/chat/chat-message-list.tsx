@@ -17,7 +17,7 @@ export function ChatMessageList() {
   if (messages === "loading") return "Loading messages";
 
   return (
-    <div className="flex h-full w-full flex-col-reverse gap-6 overflow-y-auto p-4">
+    <div className="flex h-full w-full flex-col-reverse gap-6 overflow-y-auto overflow-x-hidden p-4">
       <AnimatePresence>
         {messages.map((message, index) => {
           const variant = message.isViewer ? "sent" : "received";

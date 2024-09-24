@@ -11,22 +11,25 @@ import { cn } from "@/lib/utils";
 import ChatMessageLoading from "./chat-message-loading";
 
 // ChatBubble
-const chatBubbleVariant = cva("flex gap-2 max-w-[60%] items-end relative", {
-  variants: {
-    variant: {
-      received: "self-start",
-      sent: "self-end flex-row-reverse",
+const chatBubbleVariant = cva(
+  "flex gap-2 items-end relative md:max-w-[80%] lg:max-w-[70%]",
+  {
+    variants: {
+      variant: {
+        received: "self-start",
+        sent: "self-end flex-row-reverse",
+      },
+      layout: {
+        default: "",
+        ai: "max-w-full w-full items-center",
+      },
     },
-    layout: {
-      default: "",
-      ai: "max-w-full w-full items-center",
+    defaultVariants: {
+      variant: "received",
+      layout: "default",
     },
   },
-  defaultVariants: {
-    variant: "received",
-    layout: "default",
-  },
-});
+);
 
 interface ChatBubbleProps
   extends React.HTMLAttributes<HTMLDivElement>,
