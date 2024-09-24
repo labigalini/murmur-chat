@@ -1,12 +1,23 @@
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
+import { ChatTitle } from "./chat-title";
+
+const ChatSidebarMembersTitle = () => {
+  const {
+    state: { members },
+  } = useChatContext();
+
+  if (members === "loading") return "Loading members title";
+
+  return <ChatTitle title="Members" count={members.length} size="xl" />;
+};
 
 const ChatSidebarMembers = () => {
   const {
     state: { members },
   } = useChatContext();
 
-  if (members === "loading") return "Loading members";
+  if (members === "loading") return "Loading members content";
 
   return (
     <div className="flex flex-col gap-2">
@@ -23,4 +34,4 @@ const ChatSidebarMembers = () => {
   );
 };
 
-export { ChatSidebarMembers };
+export { ChatSidebarMembers, ChatSidebarMembersTitle };

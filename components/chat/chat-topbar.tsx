@@ -1,28 +1,21 @@
-import Link from "next/link";
-
-import { cn } from "@/lib/utils";
-
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
-import { ChatSidebarMembers } from "./chat-sidebar-members";
-import { ChatTitle } from "./chat-title";
+import {
+  ChatSidebarMembers,
+  ChatSidebarMembersTitle,
+} from "./chat-sidebar-members";
 
 import { InfoCircledIcon } from "../icons";
-import { buttonVariants } from "../ui/button";
+import { Button } from "../ui/button";
 
-interface ChatTopbarProps {
-  openSidebar: (title: React.ReactNode, content: React.ReactNode) => void;
-}
-
-const ChatTopbar: React.FC<ChatTopbarProps> = ({ openSidebar }) => {
+const ChatTopbar = () => {
   const {
-    state: { chat, members },
+    state: { chat },
+    sidebar: { open: openSidebar },
   } = useChatContext();
 
   if (chat === "loading") return "Loading selected chat";
   else if (!chat) return "No chat selected";
-
-  if (members === "loading") return "Loading members";
 
   return (
     <div className="flex h-20 w-full items-center justify-between border-b p-4">
@@ -34,21 +27,16 @@ const ChatTopbar: React.FC<ChatTopbarProps> = ({ openSidebar }) => {
       </div>
 
       <div className="flex gap-1">
-        <Link
-          href="#"
+        <Button
+          size="icon"
+          variant="link"
+          className="h-9 w-9"
           onClick={() =>
-            openSidebar(
-              <ChatTitle title="Members" count={members.length} size="xl" />,
-              <ChatSidebarMembers />,
-            )
+            openSidebar(<ChatSidebarMembersTitle />, <ChatSidebarMembers />)
           }
-          className={cn(
-            buttonVariants({ variant: "ghost", size: "icon" }),
-            "h-9 w-9",
-          )}
         >
           <InfoCircledIcon className="h-6 w-6" />
-        </Link>
+        </Button>
       </div>
     </div>
   );

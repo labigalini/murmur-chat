@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   ResizableHandle,
@@ -41,16 +41,6 @@ export function ChatContainer({
 }: ChatLayoutProps) {
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const [isMobile, setIsMobile] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [sidebarContent, setSidebarContent] = useState<{
-    title: string;
-    content: ReactNode;
-  }>({ title: "", content: null });
-
-  const openSidebar = (title: string, content: ReactNode) => {
-    setSidebarContent({ title, content });
-    setIsSidebarOpen(true);
-  };
 
   useEffect(() => {
     const checkScreenWidth = () => {
@@ -118,17 +108,11 @@ export function ChatContainer({
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
           <div className="flex h-full flex-row">
             <div className="flex h-full w-full flex-col justify-between">
-              <ChatTopbar openSidebar={openSidebar} />
+              <ChatTopbar />
               <ChatMessageList />
               <ChatBottombar />
             </div>
-            <ChatSidebar
-              isOpen={isSidebarOpen}
-              onClose={() => setIsSidebarOpen(false)}
-              title={sidebarContent.title}
-            >
-              {sidebarContent.content}
-            </ChatSidebar>
+            <ChatSidebar />
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
