@@ -6,6 +6,7 @@ type LoadingProps<TProps, TValidProps> = (
   | ComponentProps<typeof Skeleton>
   | { fallback?: ReactNode }
 ) & {
+  useDelay?: boolean | number;
   component: ReactNode | ((props: TValidProps) => ReactNode);
   props?: TProps;
 };
@@ -13,9 +14,10 @@ type LoadingProps<TProps, TValidProps> = (
 export function Loading<
   TProps extends {},
   TValidProps extends {
-    [K in keyof TProps]: Exclude<TProps[K], "loading">;
+    [K in keyof TProps]: Exclude<TProps[K], "loading" | undefined | null>;
   },
 >({
+  useDelay,
   component,
   props: componentProps,
   ...skeletonProps
@@ -25,7 +27,7 @@ export function Loading<
     () =>
       componentProps &&
       Object.values(componentProps).some(
-        (p) => p === "loading" || p === undefined,
+        (p) => p === "loading" || p === undefined || p === null,
       ),
     [componentProps],
   );
@@ -33,24 +35,32 @@ export function Loading<
   useEffect(() => {
     if (isLoading) {
       setShowLoading(true);
-    } else if (showLoading) {
-      const timer = setTimeout(() => {
+      return;
+    }
+
+    if (showLoading) {
+      if (useDelay !== false) {
+        const delay = typeof useDelay === "number" ? useDelay : 300;
+        const timer = setTimeout(() => {
+          setShowLoading(false);
+        }, delay);
+        return () => clearTimeout(timer);
+      } else {
         setShowLoading(false);
-      }, 1000);
-      return () => clearTimeout(timer);
+      }
+      return;
     }
   }, [isLoading, showLoading]);
 
   if (isLoading || showLoading) {
-    return (
-      <>
-        {"fallback" in skeletonProps ? (
-          skeletonProps.fallback
-        ) : (
-          <Skeleton width="32" {...skeletonProps} />
-        )}
-      </>
-    );
+    if ("fallback" in skeletonProps) return skeletonProps.fallback;
+
+    const defaultProps =
+      "size" in skeletonProps || "width" in skeletonProps
+        ? {}
+        : { width: "32" };
+
+    return <Skeleton {...defaultProps} {...skeletonProps} />;
   }
 
   if (typeof component === "function") {
