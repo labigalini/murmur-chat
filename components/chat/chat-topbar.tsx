@@ -7,8 +7,7 @@ import {
 
 import { InfoCircledIcon } from "../icons";
 import { Button } from "../ui/button";
-import { Loading } from "../ui/loading";
-import { Skeleton } from "../ui/skeleton";
+import { Hesitate } from "../ui/hesitate";
 
 const ChatTopbar = () => {
   const {
@@ -23,15 +22,14 @@ const ChatTopbar = () => {
   return (
     <div className="flex h-20 w-full items-center justify-between border-b p-4">
       <div className="flex items-center gap-4">
-        <Loading
-          fallback={<Skeleton size="9" />}
+        <Hesitate
+          size="9"
           component={({ chat }) => (
             <ChatAvatar name={chat.name} avatar={chat.image} />
           )}
           props={{ chat }}
         />
-        <Loading
-          fallback={<Skeleton width="32" />}
+        <Hesitate
           component={({ chat }) => (
             <span className="font-medium">{chat.name}</span>
           )}

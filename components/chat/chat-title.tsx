@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { cn, fr } from "@/lib/utils";
 
-import { Loading } from "../ui/loading";
+import { Hesitate } from "../ui/hesitate";
 
 interface ChatTitleProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -20,7 +20,7 @@ const ChatTitle = fr<HTMLDivElement, ChatTitleProps>(
         <p className="font-medium">{title}</p>
         {count != null && (
           <span className="text-zinc-500 dark:text-zinc-300">
-            ( <Loading width={8} component={count} props={{ count }} /> )
+            ( <Hesitate width={8} component={count} props={{ count }} /> )
           </span>
         )}
       </div>

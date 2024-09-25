@@ -2,16 +2,18 @@ import { ComponentProps, ReactNode, useEffect, useMemo, useState } from "react";
 
 import { Skeleton } from "./skeleton";
 
-type LoadingProps<TProps, TValidProps> = (
+const SKELETON_PROP = "skeleton";
+
+type HesitateProps<TProps, TValidProps> = (
   | ComponentProps<typeof Skeleton>
-  | { fallback?: ReactNode }
+  | { [SKELETON_PROP]?: ReactNode }
 ) & {
   useDelay?: boolean | number;
   component: ReactNode | ((props: TValidProps) => ReactNode);
   props?: TProps;
 };
 
-export function Loading<
+export function Hesitate<
   TProps extends {},
   TValidProps extends {
     [K in keyof TProps]: Exclude<TProps[K], "loading" | undefined | null>;
@@ -21,8 +23,8 @@ export function Loading<
   component,
   props: componentProps,
   ...skeletonProps
-}: LoadingProps<TProps, TValidProps>) {
-  const [showLoading, setShowLoading] = useState(false);
+}: HesitateProps<TProps, TValidProps>) {
+  const [showSkeleton, setShowSkeleton] = useState(false);
   const isLoading = useMemo(
     () =>
       componentProps &&
@@ -34,26 +36,26 @@ export function Loading<
 
   useEffect(() => {
     if (isLoading) {
-      setShowLoading(true);
+      setShowSkeleton(true);
       return;
     }
 
-    if (showLoading) {
+    if (showSkeleton) {
       if (useDelay !== false) {
         const delay = typeof useDelay === "number" ? useDelay : 300;
         const timer = setTimeout(() => {
-          setShowLoading(false);
+          setShowSkeleton(false);
         }, delay);
         return () => clearTimeout(timer);
       } else {
-        setShowLoading(false);
+        setShowSkeleton(false);
       }
       return;
     }
-  }, [isLoading, showLoading]);
+  }, [isLoading, showSkeleton]);
 
-  if (isLoading || showLoading) {
-    if ("fallback" in skeletonProps) return skeletonProps.fallback;
+  if (isLoading || showSkeleton) {
+    if (SKELETON_PROP in skeletonProps) return skeletonProps[SKELETON_PROP];
 
     const defaultProps =
       "size" in skeletonProps || "width" in skeletonProps

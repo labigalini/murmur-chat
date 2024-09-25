@@ -6,7 +6,7 @@ import { ChatInput } from "./chat-input";
 
 import { PaperPlaneIcon } from "../icons";
 import { Button } from "../ui/button";
-import { Loading } from "../ui/loading";
+import { Hesitate } from "../ui/hesitate";
 import { Skeleton } from "../ui/skeleton";
 
 export default function ChatBottombar() {
@@ -67,8 +67,8 @@ export default function ChatBottombar() {
           />
         </div>
         <div className="absolute bottom-[.4rem] right-2">
-          <Loading
-            fallback={
+          <Hesitate
+            skeleton={
               <div className="flex h-9 w-9 shrink-0 items-center justify-center">
                 <Skeleton size="6" />
               </div>
