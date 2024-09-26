@@ -19,7 +19,7 @@ function Skeleton({ className, ...props }: SkeletonProps) {
       className={cn(
         "inline-flex animate-pulse rounded-md bg-primary/10",
         isIconProps && size && `h-${size} w-${size} rounded-full`,
-        isTextProps && width && `w-${width} h-4`,
+        isTextProps && width && `w-${width} h-[0.5lh]`,
         className,
       )}
       {...restProps}
