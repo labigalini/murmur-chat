@@ -43,16 +43,13 @@ export function ChatList({ isCollapsed }: ChatListProps) {
   } = useChatContext();
 
   return (
-    <div className="group relative flex h-full flex-col bg-muted/10 p-2 dark:bg-muted/20">
+    <div className="group relative flex h-full flex-col bg-muted/20 p-2">
       <ChatListTopbar
         isCollapsed={isCollapsed}
         chatCount={chatList === "loading" ? "loading" : chatList.length}
       />
       <div className={cn("h-full overflow-y-auto", !isCollapsed && "px-2")}>
-        <nav
-          data-collapsed={isCollapsed}
-          className="grid data-[collapsed=true]:justify-center"
-        >
+        <nav className={cn("grid gap-1", isCollapsed && "justify-center")}>
           <Suspense
             className="h-16 w-full min-w-16"
             loading={<ChatListSkeleton isCollapsed={isCollapsed} />}
@@ -171,7 +168,7 @@ function ChatListLink({
 }) {
   return (
     <TooltipProvider key={chat._id}>
-      <Tooltip key={chat._id} delayDuration={0}>
+      <Tooltip key={chat._id} delayDuration={isCollapsed ? 0 : 1000}>
         <TooltipTrigger asChild>
           <Link
             href={urlPrefix + chat._id}
@@ -185,29 +182,17 @@ function ChatListLink({
                 size: isCollapsed ? "icon" : "xl",
               }),
               isCollapsed ? "h-16 w-16" : "min-w-0 justify-start gap-4",
-              isSelected &&
-                "shrink dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
+              isSelected && "bg-muted",
             )}
             {...props}
           >
             <ChatAvatar name={chat.name} avatar={chat.image} />
-            <div className="flex min-w-0 flex-col">
-              <span className={isCollapsed ? "sr-only" : "min-w-0 truncate"}>
-                {chat.name}
-              </span>
-              {/* TODO need to show the unread message counter or status
-              {link.messages.length > 0 && (
-                <span className="text-zinc-300 text-xs truncate min-w-0">
-                  {link.messages[link.messages.length - 1].name.split(" ")[0]}
-                  : {link.messages[link.messages.length - 1].message}
-                </span>
-              )} */}
-            </div>
+            <span className={isCollapsed ? "sr-only" : "min-w-0 truncate"}>
+              {chat.name}
+            </span>
           </Link>
         </TooltipTrigger>
-        <TooltipContent side="right" className="flex items-center gap-4">
-          {chat.name}
-        </TooltipContent>
+        <TooltipContent side="right">{chat.name}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
