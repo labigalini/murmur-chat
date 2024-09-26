@@ -9,8 +9,8 @@ import {
 } from "./chat-bubble";
 import { useChatContext } from "./chat-context";
 
-import { Hesitate } from "../ui/hesitate";
 import { Skeleton } from "../ui/skeleton";
+import { Suspense } from "../ui/suspense";
 
 export function ChatMessageList() {
   const {
@@ -20,7 +20,7 @@ export function ChatMessageList() {
   return (
     <div className="flex h-full w-full flex-col-reverse gap-6 overflow-y-auto overflow-x-hidden p-4">
       <AnimatePresence>
-        <Hesitate
+        <Suspense
           skeleton={<ChatBubbleSkeleton />}
           component={({ messages }) =>
             messages.map((message, index) => {

@@ -6,8 +6,8 @@ import { AuthLoading, Authenticated, Unauthenticated } from "convex/react";
 
 import { UserMenu } from "@/components/auth/UserMenu";
 import { buttonVariants } from "@/components/ui/button";
-import { Hesitate } from "@/components/ui/hesitate";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Suspense } from "@/components/ui/suspense";
 
 import { api } from "@/convex/_generated/api";
 
@@ -22,7 +22,7 @@ export function ProfileButton() {
         <Skeleton className="h-9 w-9 rounded-full" />
       </AuthLoading>
       <Authenticated>
-        <Hesitate
+        <Suspense
           size={9}
           component={({ user }) => (
             <UserMenu name={user.name} avatar={user.image} />

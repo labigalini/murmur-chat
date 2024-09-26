@@ -5,7 +5,7 @@ import { NotFoundSkeleton, Skeleton } from "./skeleton";
 const SKELETON_PROP = "skeleton";
 const FALLBACK_PROP = "fallback";
 
-type HesitateProps<TProps, TValidProps> = (
+type SuspenseProps<TProps, TValidProps> = (
   | ComponentProps<typeof Skeleton>
   | { [SKELETON_PROP]?: ReactNode }
 ) & {
@@ -15,7 +15,7 @@ type HesitateProps<TProps, TValidProps> = (
   useDelay?: boolean | number;
 };
 
-export function Hesitate<
+export function Suspense<
   TProps extends {},
   TValidProps extends {
     [K in keyof TProps]: Exclude<TProps[K], "loading" | undefined | null>;
@@ -25,7 +25,7 @@ export function Hesitate<
   component,
   props: componentProps,
   ...props
-}: HesitateProps<TProps, TValidProps>) {
+}: SuspenseProps<TProps, TValidProps>) {
   const [showSkeleton, setShowSkeleton] = useState(false);
   const isAnyLoading = useMemo(
     () =>

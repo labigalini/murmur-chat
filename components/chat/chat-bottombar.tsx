@@ -6,8 +6,8 @@ import { ChatInput } from "./chat-input";
 
 import { PaperPlaneIcon } from "../icons";
 import { Button } from "../ui/button";
-import { Hesitate } from "../ui/hesitate";
 import { Skeleton } from "../ui/skeleton";
+import { Suspense } from "../ui/suspense";
 
 export default function ChatBottombar() {
   const {
@@ -67,7 +67,7 @@ export default function ChatBottombar() {
           />
         </div>
         <div className="absolute bottom-[.4rem] right-2">
-          <Hesitate
+          <Suspense
             skeleton={
               <div className="flex h-9 w-9 shrink-0 items-center justify-center">
                 <Skeleton size="6" />

@@ -7,7 +7,7 @@ import {
 
 import { InfoCircledIcon } from "../icons";
 import { Button } from "../ui/button";
-import { Hesitate } from "../ui/hesitate";
+import { Suspense } from "../ui/suspense";
 
 const ChatTopbar = () => {
   const {
@@ -22,14 +22,14 @@ const ChatTopbar = () => {
   return (
     <div className="flex h-20 w-full items-center justify-between border-b p-4">
       <div className="flex items-center gap-4">
-        <Hesitate
+        <Suspense
           size="9"
           component={({ chat }) => (
             <ChatAvatar name={chat.name} avatar={chat.image} />
           )}
           props={{ chat }}
         />
-        <Hesitate
+        <Suspense
           component={({ chat }) => (
             <span className="font-medium">{chat.name}</span>
           )}
