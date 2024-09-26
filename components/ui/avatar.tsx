@@ -42,7 +42,7 @@ const AvatarImage = React.forwardRef<
   let src = initialSrc;
   if (!src && props.alt) {
     src = `https://avatar.vercel.sh/${djb2(props.alt)}.svg?text=${first2(props.alt)}`;
-  }
+  } // TODO replace vercel image with a background gradient
   return (
     <AvatarPrimitive.Image
       ref={ref}

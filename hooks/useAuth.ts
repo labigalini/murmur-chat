@@ -16,14 +16,12 @@ export function useAuth() {
 
   const auth = useMemo(
     () => ({
-      isAuthenticated,
-      user: user === "loading" ? null : user,
-      session: session === "loading" ? null : session,
+      isAuthenticated: isLoading ? "loading" : isAuthenticated,
+      user,
+      session,
     }),
-    [isAuthenticated, user, session],
+    [isLoading, isAuthenticated, user, session],
   );
 
-  return isLoading || user === "loading" || session === "loading"
-    ? "loading"
-    : auth;
+  return auth;
 }

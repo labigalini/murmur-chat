@@ -11,6 +11,7 @@ import { Skeleton } from "./skeleton";
 
 type SuspenseProps<TFallbackProps, TComponentProps, TComponentValidProps> = {
   useDelay?: boolean | number;
+  skipFallbackOnEmpty?: boolean;
 } & {
   fallback?: ComponentType<TFallbackProps>;
   fallbackProps?: TFallbackProps;
@@ -29,7 +30,8 @@ export function Suspense<
     >;
   },
 >({
-  useDelay,
+  useDelay = true,
+  skipFallbackOnEmpty = false,
   fallback: Fallback,
   fallbackProps,
   component: Component,
@@ -72,6 +74,7 @@ export function Suspense<
   }, [isAnyLoading, showLoading]);
 
   if (isAnyLoading || showLoading || isAnyEmpty) {
+    if (isAnyEmpty && skipFallbackOnEmpty) return;
     const FallbackComponent = Fallback ?? Skeleton;
     return (
       <FallbackComponent
