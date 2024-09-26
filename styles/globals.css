@@ -80,22 +80,18 @@
 }
 
 .crossed-out {
-  @apply border;
-  @apply border-primary/50;
   background-image: linear-gradient(
       to top left,
       transparent 0%,
-      transparent calc(50% - 0.8px),
-      hsl(var(--primary) / 50%) 50%,
-      transparent calc(50% + 0.8px),
-      transparent 100%
+      hsl(var(--primary) / 30%) 50%,
+      transparent calc(50%),
+      hsl(var(--primary) / 10%) 100%
     ),
     linear-gradient(
       to top right,
       transparent 0%,
-      transparent calc(50% - 0.8px),
-      hsl(var(--primary) / 50%) 50%,
-      transparent calc(50% + 0.8px),
-      transparent 100%
+      hsl(var(--primary) / 30%) 50%,
+      transparent calc(50%),
+      hsl(var(--primary) / 10%) 100%
     );
 }

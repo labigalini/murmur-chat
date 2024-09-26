@@ -6,7 +6,6 @@ import { ChatInput } from "./chat-input";
 
 import { PaperPlaneIcon } from "../icons";
 import { Button } from "../ui/button";
-import { Skeleton } from "../ui/skeleton";
 import { Suspense } from "../ui/suspense";
 
 export default function ChatBottombar() {
@@ -68,11 +67,7 @@ export default function ChatBottombar() {
         </div>
         <div className="absolute bottom-[.4rem] right-2">
           <Suspense
-            skeleton={
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center">
-                <Skeleton size="6" />
-              </div>
-            }
+            className="mr-1 mt-1 h-6 w-6"
             component={() => (
               <Button
                 className="h-9 w-9 shrink-0"

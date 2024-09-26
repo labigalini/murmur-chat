@@ -21,7 +21,8 @@ export function ChatMessageList() {
     <div className="flex h-full w-full flex-col-reverse gap-6 overflow-y-auto overflow-x-hidden p-4">
       <AnimatePresence>
         <Suspense
-          skeleton={<ChatBubbleSkeleton />}
+          className="h-full w-full"
+          loading={<ChatBubbleSkeleton />}
           component={({ messages }) =>
             messages.map((message, index) => {
               const variant = message.isViewer ? "sent" : "received";

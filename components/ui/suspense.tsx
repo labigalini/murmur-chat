@@ -2,12 +2,12 @@ import { ComponentProps, ReactNode, useEffect, useMemo, useState } from "react";
 
 import { NotFoundSkeleton, Skeleton } from "./skeleton";
 
-const SKELETON_PROP = "skeleton";
+const LOADING_PROP = "loading";
 const FALLBACK_PROP = "fallback";
 
 type SuspenseProps<TProps, TValidProps> = (
   | ComponentProps<typeof Skeleton>
-  | { [SKELETON_PROP]?: ReactNode }
+  | { [LOADING_PROP]?: ReactNode }
 ) & {
   [FALLBACK_PROP]?: ReactNode;
   component: ReactNode | ((props: TValidProps) => ReactNode);
@@ -62,7 +62,7 @@ export function Suspense<
   }, [isAnyLoading, showSkeleton]);
 
   if (isAnyLoading || showSkeleton) {
-    if (SKELETON_PROP in props) return props[SKELETON_PROP];
+    if (LOADING_PROP in props) return props[LOADING_PROP];
     return <Skeleton {...getSkeletonDefaultProps(props)} {...props} />;
   }
 

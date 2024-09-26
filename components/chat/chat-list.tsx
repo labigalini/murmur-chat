@@ -54,7 +54,8 @@ export function ChatList({ isCollapsed }: ChatListProps) {
           className="grid data-[collapsed=true]:justify-center"
         >
           <Suspense
-            skeleton={<ChatListSkeleton isCollapsed={isCollapsed} />}
+            className="h-16 w-full min-w-16"
+            loading={<ChatListSkeleton isCollapsed={isCollapsed} />}
             component={({ chatList, selectedChat }) =>
               chatList.map((chat) => (
                 <ChatListLink
