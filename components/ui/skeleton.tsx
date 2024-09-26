@@ -1,23 +1,42 @@
+import { Slot } from "@radix-ui/react-slot";
+import { VariantProps, cva } from "class-variance-authority";
+
 import { cn } from "@/lib/utils";
 
-type SkeletonPropsIcon = { size?: string | number };
+const skeletonVariants = cva("", {
+  variants: {
+    variant: {
+      loading: "animate-pulse",
+      empty: "crossed-out animate-none",
+    },
+  },
+  defaultVariants: {
+    variant: "loading",
+  },
+});
 
-type SkeletonPropsText = { width?: string | number };
-
+type SkeletonPropsIcon = { size?: string | number; width?: never };
+type SkeletonPropsText = { width?: string | number; icon?: never };
 type SkeletonProps = React.HTMLAttributes<HTMLDivElement> &
-  (SkeletonPropsIcon | SkeletonPropsText);
+  VariantProps<typeof skeletonVariants> &
+  (SkeletonPropsIcon | SkeletonPropsText) & {
+    asChild?: boolean;
+  };
 
-function Skeleton({ className, ...props }: SkeletonProps) {
+function Skeleton({ className, variant, asChild, ...props }: SkeletonProps) {
   const isIconProps = "size" in props;
   const isTextProps = "width" in props;
 
   const { size, width, ...restProps } = props as SkeletonPropsIcon &
     SkeletonPropsText;
 
+  const Comp = asChild ? Slot : "div";
+
   return (
-    <div
+    <Comp
       className={cn(
-        "inline-flex shrink-0 animate-pulse rounded-md bg-primary/10",
+        skeletonVariants({ variant }),
+        "inline-flex shrink-0 rounded-md bg-primary/10",
         isIconProps && size && `h-${size} w-${size} rounded-full`,
         isTextProps && width && `w-${width} h-[0.5lh]`,
         className,
@@ -27,13 +46,4 @@ function Skeleton({ className, ...props }: SkeletonProps) {
   );
 }
 
-function NotFoundSkeleton({ className, ...props }: SkeletonProps) {
-  return (
-    <Skeleton
-      className={cn("crossed-out animate-none", className)}
-      {...props}
-    />
-  );
-}
-
-export { NotFoundSkeleton, Skeleton };
+export { Skeleton };

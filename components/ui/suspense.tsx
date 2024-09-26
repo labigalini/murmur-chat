@@ -63,12 +63,24 @@ export function Suspense<
 
   if (isAnyLoading || showSkeleton) {
     if (LOADING_PROP in props) return props[LOADING_PROP];
-    return <Skeleton {...getSkeletonDefaultProps(props)} {...props} />;
+    return (
+      <Skeleton
+        variant="loading"
+        {...getSkeletonDefaultProps(props)}
+        {...props}
+      />
+    );
   }
 
   if (isAnyEmpty) {
     if (FALLBACK_PROP in props) return props[FALLBACK_PROP];
-    return <NotFoundSkeleton {...getSkeletonDefaultProps(props)} {...props} />;
+    return (
+      <Skeleton
+        variant="empty"
+        {...getSkeletonDefaultProps(props)}
+        {...props}
+      />
+    );
   }
 
   if (typeof component !== "function") return component;
