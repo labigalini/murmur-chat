@@ -23,17 +23,18 @@ const ChatTopbar = () => {
     <div className="flex h-20 w-full items-center justify-between border-b p-4">
       <div className="flex items-center gap-4">
         <Suspense
-          size="9"
+          fallbackProps={{ size: 9, layout: "icon" }}
           component={({ chat }) => (
             <ChatAvatar name={chat.name} avatar={chat.image} />
           )}
-          props={{ chat }}
+          componentProps={{ chat }}
         />
         <Suspense
+          fallbackProps={{ size: 32 }}
           component={({ chat }) => (
             <span className="font-medium">{chat.name}</span>
           )}
-          props={{ chat }}
+          componentProps={{ chat }}
         />
       </div>
 

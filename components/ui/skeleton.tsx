@@ -9,41 +9,44 @@ const skeletonVariants = cva("", {
       loading: "animate-pulse",
       empty: "crossed-out animate-none",
     },
+    layout: {
+      icon: "rounded-full",
+      text: "rounded-md h-[0.75lh]",
+      none: "bg-transparent",
+    },
   },
   defaultVariants: {
     variant: "loading",
+    layout: "text",
   },
 });
 
-type SkeletonPropsIcon = { size?: string | number; width?: never };
-type SkeletonPropsText = { width?: string | number; icon?: never };
 type SkeletonProps = React.HTMLAttributes<HTMLDivElement> &
-  VariantProps<typeof skeletonVariants> &
-  (SkeletonPropsIcon | SkeletonPropsText) & {
+  VariantProps<typeof skeletonVariants> & {
+    size?: string | number;
     asChild?: boolean;
   };
 
-function Skeleton({ className, variant, asChild, ...props }: SkeletonProps) {
-  const isIconProps = "size" in props;
-  const isTextProps = "width" in props;
-
-  const { size, width, ...restProps } = props as SkeletonPropsIcon &
-    SkeletonPropsText;
-
-  const Comp = asChild ? Slot : "div";
-
+function Skeleton({
+  className,
+  variant,
+  layout,
+  size,
+  asChild,
+  ...props
+}: SkeletonProps) {
+  const SkeletonComp = asChild ? Slot : "div";
   return (
-    <Comp
+    <SkeletonComp
       className={cn(
-        skeletonVariants({ variant }),
-        "inline-flex shrink-0 rounded-md bg-primary/10",
-        isIconProps && size && `h-${size} w-${size} rounded-full`,
-        isTextProps && width && `w-${width} h-[0.5lh]`,
+        "inline-flex shrink-0 bg-primary/10",
+        size != null && `w-${size} h-${size}`,
+        skeletonVariants({ variant, layout: asChild ? "none" : layout }),
         className,
       )}
-      {...restProps}
+      {...props}
     />
   );
 }
 
-export { Skeleton };
+export { Skeleton, skeletonVariants };

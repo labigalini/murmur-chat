@@ -51,8 +51,8 @@ export function ChatList({ isCollapsed }: ChatListProps) {
       <div className={cn("h-full overflow-y-auto", !isCollapsed && "px-2")}>
         <nav className={cn("grid gap-1", isCollapsed && "justify-center")}>
           <Suspense
-            className="h-16 w-full min-w-16"
-            loading={<ChatListSkeleton isCollapsed={isCollapsed} />}
+            fallback={ChatListSkeleton}
+            fallbackProps={{ isCollapsed }}
             component={({ chatList, selectedChat }) =>
               chatList.map((chat) => (
                 <ChatListLink
@@ -65,7 +65,7 @@ export function ChatList({ isCollapsed }: ChatListProps) {
                 />
               ))
             }
-            props={{ chatList, selectedChat }}
+            componentProps={{ chatList, selectedChat }}
           />
         </nav>
       </div>
@@ -198,7 +198,10 @@ function ChatListLink({
   );
 }
 
-function ChatListSkeleton({ isCollapsed }: { isCollapsed: boolean }) {
+function ChatListSkeleton({
+  isCollapsed,
+  ...props
+}: { isCollapsed: boolean } & ComponentProps<typeof Skeleton>) {
   return Array.from({ length: 6 }).map((_, index) => (
     <div
       key={index}
@@ -210,8 +213,12 @@ function ChatListSkeleton({ isCollapsed }: { isCollapsed: boolean }) {
         isCollapsed ? "h-16 w-16" : "justify-start gap-4",
       )}
     >
-      <Skeleton size="9" />
-      <Skeleton width="full" className={isCollapsed ? "sr-only" : "shrink"} />
+      <Skeleton size="9" layout="icon" {...props} />
+      <Skeleton
+        size="full"
+        className={isCollapsed ? "sr-only" : "shrink"}
+        {...props}
+      />
     </div>
   ));
 }

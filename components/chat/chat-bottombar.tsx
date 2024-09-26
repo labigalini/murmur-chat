@@ -67,7 +67,7 @@ export default function ChatBottombar() {
         </div>
         <div className="absolute bottom-[.4rem] right-2">
           <Suspense
-            className="mr-1 mt-1 h-6 w-6"
+            fallbackProps={{ size: 6, layout: "icon", className: "mr-1 mt-1" }}
             component={() => (
               <Button
                 className="h-9 w-9 shrink-0"
@@ -79,7 +79,7 @@ export default function ChatBottombar() {
                 <PaperPlaneIcon size="5" className="text-muted-foreground" />
               </Button>
             )}
-            props={{ chat, messages }}
+            componentProps={{ chat, messages }}
           />
         </div>
       </div>

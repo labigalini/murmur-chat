@@ -1,3 +1,5 @@
+import { ComponentProps } from "react";
+
 import { AnimatePresence, motion } from "framer-motion";
 
 import ChatAvatar from "./chat-avatar";
@@ -21,8 +23,7 @@ export function ChatMessageList() {
     <div className="flex h-full w-full flex-col-reverse gap-6 overflow-y-auto overflow-x-hidden p-4">
       <AnimatePresence>
         <Suspense
-          className="h-full w-full"
-          loading={<ChatBubbleSkeleton />}
+          fallback={ChatBubbleSkeleton}
           component={({ messages }) =>
             messages.map((message, index) => {
               const variant = message.isViewer ? "sent" : "received";
@@ -56,7 +57,7 @@ export function ChatMessageList() {
               );
             })
           }
-          props={{ messages }}
+          componentProps={{ messages }}
         />
       </AnimatePresence>
     </div>
@@ -100,13 +101,13 @@ function MotionDiv({
   );
 }
 
-function ChatBubbleSkeleton() {
+function ChatBubbleSkeleton(props: ComponentProps<typeof Skeleton>) {
   return (["sent", "received"] satisfies ("sent" | "received")[]).map(
     (variant) => (
       <MotionDiv key={variant} className="flex flex-col gap-2 p-4">
         <ChatBubble variant={variant}>
-          <Skeleton size="9" />
-          <Skeleton className="bg-transparent">
+          <Skeleton size="9" layout="icon" {...props} />
+          <Skeleton asChild {...props}>
             <ChatBubbleMessage
               variant={variant}
               className="h-24 w-32 bg-primary/10"

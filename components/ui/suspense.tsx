@@ -1,32 +1,42 @@
-import { ComponentProps, ReactNode, useEffect, useMemo, useState } from "react";
+import {
+  ComponentProps,
+  ComponentType,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
-import { NotFoundSkeleton, Skeleton } from "./skeleton";
+import { Skeleton } from "./skeleton";
 
-const LOADING_PROP = "loading";
-const FALLBACK_PROP = "fallback";
-
-type SuspenseProps<TProps, TValidProps> = (
-  | ComponentProps<typeof Skeleton>
-  | { [LOADING_PROP]?: ReactNode }
-) & {
-  [FALLBACK_PROP]?: ReactNode;
-  component: ReactNode | ((props: TValidProps) => ReactNode);
-  props?: TProps;
+type SuspenseProps<TFallbackProps, TComponentProps, TComponentValidProps> = {
   useDelay?: boolean | number;
+} & {
+  fallback?: ComponentType<TFallbackProps>;
+  fallbackProps?: TFallbackProps;
+} & {
+  component: ReactNode | ((props: TComponentValidProps) => ReactNode);
+  componentProps?: TComponentProps;
 };
 
 export function Suspense<
-  TProps extends {},
-  TValidProps extends {
-    [K in keyof TProps]: Exclude<TProps[K], "loading" | undefined | null>;
+  TFallbackProps extends ComponentProps<typeof Skeleton>,
+  TComponentProps extends {},
+  TComponentValidProps extends {
+    [K in keyof TComponentProps]: Exclude<
+      TComponentProps[K],
+      "loading" | undefined | null
+    >;
   },
 >({
   useDelay,
-  component,
-  props: componentProps,
+  fallback: Fallback,
+  fallbackProps,
+  component: Component,
+  componentProps,
   ...props
-}: SuspenseProps<TProps, TValidProps>) {
-  const [showSkeleton, setShowSkeleton] = useState(false);
+}: SuspenseProps<TFallbackProps, TComponentProps, TComponentValidProps>) {
+  const [showLoading, setShowLoading] = useState(false);
   const isAnyLoading = useMemo(
     () =>
       componentProps &&
@@ -43,50 +53,34 @@ export function Suspense<
 
   useEffect(() => {
     if (isAnyLoading) {
-      setShowSkeleton(true);
+      setShowLoading(true);
       return;
     }
 
-    if (showSkeleton) {
+    if (showLoading) {
       if (useDelay !== false) {
         const delay = typeof useDelay === "number" ? useDelay : 300;
         const timer = setTimeout(() => {
-          setShowSkeleton(false);
+          setShowLoading(false);
         }, delay);
         return () => clearTimeout(timer);
       } else {
-        setShowSkeleton(false);
+        setShowLoading(false);
       }
       return;
     }
-  }, [isAnyLoading, showSkeleton]);
+  }, [isAnyLoading, showLoading]);
 
-  if (isAnyLoading || showSkeleton) {
-    if (LOADING_PROP in props) return props[LOADING_PROP];
+  if (isAnyLoading || showLoading || isAnyEmpty) {
+    const FallbackComponent = Fallback ?? Skeleton;
     return (
-      <Skeleton
-        variant="loading"
-        {...getSkeletonDefaultProps(props)}
-        {...props}
+      <FallbackComponent
+        variant={isAnyEmpty ? "empty" : "loading"}
+        {...(fallbackProps as TFallbackProps)}
       />
     );
   }
 
-  if (isAnyEmpty) {
-    if (FALLBACK_PROP in props) return props[FALLBACK_PROP];
-    return (
-      <Skeleton
-        variant="empty"
-        {...getSkeletonDefaultProps(props)}
-        {...props}
-      />
-    );
-  }
-
-  if (typeof component !== "function") return component;
-  return component(componentProps as TValidProps);
-}
-
-function getSkeletonDefaultProps(props: {}) {
-  return "size" in props || "width" in props ? {} : { width: "32" };
+  if (typeof Component !== "function") return Component;
+  return Component(componentProps as TComponentValidProps);
 }

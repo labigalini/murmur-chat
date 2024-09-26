@@ -13,14 +13,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Skeleton } from "@/components/ui/skeleton";
 
 import { api } from "@/convex/_generated/api";
 
 import { handleFailure } from "@/lib/handleFailure";
 
 export function Notifications() {
-  const invites = useQuery(api.invites.list);
+  const invites = useQuery(api.invites.list); // FIXME use hooks for loading status
   const acceptInvite = useMutation(api.invites.accept);
   const noInvites = (invites ?? []).length === 0;
   return (
@@ -55,7 +54,7 @@ export function Notifications() {
             </DropdownMenuItem>
             {i < invites.length - 1 ? <DropdownMenuSeparator /> : null}
           </Fragment>
-        )) ?? <Skeleton className="h-9 w-9" />}
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

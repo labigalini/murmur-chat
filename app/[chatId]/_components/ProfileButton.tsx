@@ -19,15 +19,15 @@ export function ProfileButton() {
   return (
     <>
       <AuthLoading>
-        <Skeleton className="h-9 w-9 rounded-full" />
+        <Skeleton size="9" layout="icon" />
       </AuthLoading>
       <Authenticated>
         <Suspense
-          size={9}
+          fallbackProps={{ size: 9, layout: "icon" }}
           component={({ user }) => (
             <UserMenu name={user.name} avatar={user.image} />
           )}
-          props={{ user }}
+          componentProps={{ user }}
         />
       </Authenticated>
       <Unauthenticated>

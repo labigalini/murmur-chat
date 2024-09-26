@@ -6,7 +6,7 @@ import { Suspense } from "../ui/suspense";
 
 interface ChatTitleProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
-  count?: number | "loading";
+  count: number | "loading";
 }
 
 const ChatTitle = fr<HTMLDivElement, ChatTitleProps>(
@@ -14,15 +14,19 @@ const ChatTitle = fr<HTMLDivElement, ChatTitleProps>(
     return (
       <div
         ref={ref}
-        className={cn(`flex items-center gap-2 text-base`, className)}
+        className={cn(`flex gap-2 text-base`, className)}
         {...props}
       >
-        <p className="font-medium">{title}</p>
-        {count != null && (
-          <span className="text-zinc-500 dark:text-zinc-300">
-            ( <Suspense width={8} component={count} props={{ count }} /> )
-          </span>
-        )}
+        <span className="font-medium">{title}</span>
+        <div className="flex items-center gap-1 text-zinc-500 dark:text-zinc-300">
+          <span>(</span>
+          <Suspense
+            fallbackProps={{ size: 8 }}
+            component={({ count }) => <span>{count}</span>}
+            componentProps={{ count }}
+          />
+          <span>)</span>
+        </div>
       </div>
     );
   },
