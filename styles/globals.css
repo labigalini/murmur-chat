@@ -78,3 +78,24 @@
 .bg-gradient {
   background: var(--bg-gradient-color);
 }
+
+.crossed-out {
+  @apply border;
+  @apply border-primary/50;
+  background-image: linear-gradient(
+      to top left,
+      transparent 0%,
+      transparent calc(50% - 0.8px),
+      hsl(var(--primary) / 50%) 50%,
+      transparent calc(50% + 0.8px),
+      transparent 100%
+    ),
+    linear-gradient(
+      to top right,
+      transparent 0%,
+      transparent calc(50% - 0.8px),
+      hsl(var(--primary) / 50%) 50%,
+      transparent calc(50% + 0.8px),
+      transparent 100%
+    );
+}

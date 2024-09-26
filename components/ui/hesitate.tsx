@@ -1,16 +1,18 @@
 import { ComponentProps, ReactNode, useEffect, useMemo, useState } from "react";
 
-import { Skeleton } from "./skeleton";
+import { NotFoundSkeleton, Skeleton } from "./skeleton";
 
 const SKELETON_PROP = "skeleton";
+const FALLBACK_PROP = "fallback";
 
 type HesitateProps<TProps, TValidProps> = (
   | ComponentProps<typeof Skeleton>
   | { [SKELETON_PROP]?: ReactNode }
 ) & {
-  useDelay?: boolean | number;
+  [FALLBACK_PROP]?: ReactNode;
   component: ReactNode | ((props: TValidProps) => ReactNode);
   props?: TProps;
+  useDelay?: boolean | number;
 };
 
 export function Hesitate<
@@ -22,20 +24,25 @@ export function Hesitate<
   useDelay,
   component,
   props: componentProps,
-  ...skeletonProps
+  ...props
 }: HesitateProps<TProps, TValidProps>) {
   const [showSkeleton, setShowSkeleton] = useState(false);
-  const isLoading = useMemo(
+  const isAnyLoading = useMemo(
     () =>
       componentProps &&
       Object.values(componentProps).some(
-        (p) => p === "loading" || p === undefined || p === null,
+        (p) => p === "loading" || p === undefined,
       ),
+    [componentProps],
+  );
+  const isAnyEmpty = useMemo(
+    () =>
+      componentProps && Object.values(componentProps).some((p) => p === null),
     [componentProps],
   );
 
   useEffect(() => {
-    if (isLoading) {
+    if (isAnyLoading) {
       setShowSkeleton(true);
       return;
     }
@@ -52,17 +59,24 @@ export function Hesitate<
       }
       return;
     }
-  }, [isLoading, showSkeleton]);
+  }, [isAnyLoading, showSkeleton]);
 
-  if (isLoading || showSkeleton) {
-    if (SKELETON_PROP in skeletonProps) return skeletonProps[SKELETON_PROP];
+  if (isAnyLoading || showSkeleton) {
+    if (SKELETON_PROP in props) return props[SKELETON_PROP];
 
     const defaultProps =
-      "size" in skeletonProps || "width" in skeletonProps
-        ? {}
-        : { width: "32" };
+      "size" in props || "width" in props ? {} : { width: "32" };
 
-    return <Skeleton {...defaultProps} {...skeletonProps} />;
+    return <Skeleton {...defaultProps} {...props} />;
+  }
+
+  if (isAnyEmpty) {
+    if (FALLBACK_PROP in props) return props[FALLBACK_PROP];
+
+    const defaultProps =
+      "size" in props || "width" in props ? {} : { width: "32" };
+
+    return <NotFoundSkeleton {...defaultProps} {...props} />;
   }
 
   if (typeof component === "function") {

@@ -27,4 +27,13 @@ function Skeleton({ className, ...props }: SkeletonProps) {
   );
 }
 
-export { Skeleton };
+function NotFoundSkeleton({ className, ...props }: SkeletonProps) {
+  return (
+    <Skeleton
+      className={cn("crossed-out animate-none", className)}
+      {...props}
+    />
+  );
+}
+
+export { NotFoundSkeleton, Skeleton };
