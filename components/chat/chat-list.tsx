@@ -29,6 +29,8 @@ import { ChatTitle } from "./chat-title";
 import { Chat } from "./chat-types";
 
 import { DotsHorizontalIcon, Pencil2Icon } from "../icons";
+import { Skeleton } from "../ui/skeleton";
+import { Suspense } from "../ui/suspense";
 
 interface ChatListProps {
   isCollapsed: boolean;
@@ -46,23 +48,27 @@ export function ChatList({ isCollapsed }: ChatListProps) {
         isCollapsed={isCollapsed}
         chatCount={chatList === "loading" ? "loading" : chatList.length}
       />
-      <div className="h-full overflow-y-auto px-2">
+      <div className={cn("h-full overflow-y-auto", !isCollapsed && "px-2")}>
         <nav
           data-collapsed={isCollapsed}
           className="grid data-[collapsed=true]:justify-center"
         >
-          {chatList !== "loading" &&
-            selectedChat !== "loading" &&
-            chatList.map((chat) => (
-              <ChatListLink
-                key={chat._id}
-                chat={chat}
-                urlPrefix={urlPrefix}
-                isSelected={selectedChat?._id === chat._id}
-                onSelectChat={onSelectChat}
-                isCollapsed={isCollapsed}
-              />
-            ))}
+          <Suspense
+            skeleton={<ChatListSkeleton isCollapsed={isCollapsed} />}
+            component={({ chatList, selectedChat }) =>
+              chatList.map((chat) => (
+                <ChatListLink
+                  key={chat._id}
+                  chat={chat}
+                  urlPrefix={urlPrefix}
+                  isSelected={selectedChat?._id === chat._id}
+                  onSelectChat={onSelectChat}
+                  isCollapsed={isCollapsed}
+                />
+              ))
+            }
+            props={{ chatList, selectedChat }}
+          />
         </nav>
       </div>
     </div>
@@ -81,8 +87,10 @@ function ChatListTopbar({
 
   return (
     <div
-      data-collapsed={isCollapsed}
-      className="flex items-center justify-between pb-3 pl-3 pr-2 pt-1 data-[collapsed=true]:justify-center data-[collapsed=true]:py-0"
+      className={cn(
+        "flex items-center justify-between",
+        isCollapsed ? "justify-center" : "px-4 pb-3 pt-1",
+      )}
     >
       {!isCollapsed && (
         <ChatTitle title="Chats" count={chatCount} className="text-2xl" />
@@ -186,13 +194,13 @@ function ChatListLink({
               <span className={isCollapsed ? "sr-only" : "min-w-0 truncate"}>
                 {chat.name}
               </span>
-              {/* TODO need to show the unread message counter */}
-              {/* {link.messages.length > 0 && (
-          <span className="text-zinc-300 text-xs truncate min-w-0">
-            {link.messages[link.messages.length - 1].name.split(" ")[0]}
-            : {link.messages[link.messages.length - 1].message}
-          </span>
-        )} */}
+              {/* TODO need to show the unread message counter or status
+              {link.messages.length > 0 && (
+                <span className="text-zinc-300 text-xs truncate min-w-0">
+                  {link.messages[link.messages.length - 1].name.split(" ")[0]}
+                  : {link.messages[link.messages.length - 1].message}
+                </span>
+              )} */}
             </div>
           </Link>
         </TooltipTrigger>
@@ -202,4 +210,22 @@ function ChatListLink({
       </Tooltip>
     </TooltipProvider>
   );
+}
+
+function ChatListSkeleton({ isCollapsed }: { isCollapsed: boolean }) {
+  return Array.from({ length: 6 }).map((_, index) => (
+    <div
+      key={index}
+      className={cn(
+        buttonVariants({
+          variant: "ghost",
+          size: isCollapsed ? "icon" : "xl",
+        }),
+        isCollapsed ? "h-16 w-16" : "justify-start gap-4",
+      )}
+    >
+      <Skeleton size="9" />
+      <Skeleton width="full" className={isCollapsed ? "sr-only" : "shrink"} />
+    </div>
+  ));
 }
