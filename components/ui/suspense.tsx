@@ -63,25 +63,18 @@ export function Suspense<
 
   if (isAnyLoading || showSkeleton) {
     if (SKELETON_PROP in props) return props[SKELETON_PROP];
-
-    const defaultProps =
-      "size" in props || "width" in props ? {} : { width: "32" };
-
-    return <Skeleton {...defaultProps} {...props} />;
+    return <Skeleton {...getSkeletonDefaultProps(props)} {...props} />;
   }
 
   if (isAnyEmpty) {
     if (FALLBACK_PROP in props) return props[FALLBACK_PROP];
-
-    const defaultProps =
-      "size" in props || "width" in props ? {} : { width: "32" };
-
-    return <NotFoundSkeleton {...defaultProps} {...props} />;
+    return <NotFoundSkeleton {...getSkeletonDefaultProps(props)} {...props} />;
   }
 
-  if (typeof component === "function") {
-    return <>{component(componentProps as TValidProps)}</>;
-  }
+  if (typeof component !== "function") return component;
+  return component(componentProps as TValidProps);
+}
 
-  return <>{component}</>;
+function getSkeletonDefaultProps(props: {}) {
+  return "size" in props || "width" in props ? {} : { width: "32" };
 }
