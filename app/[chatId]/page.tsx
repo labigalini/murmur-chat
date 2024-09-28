@@ -10,5 +10,5 @@ export default function Page({ params }: { params: { chatId?: string } }) {
     ? (JSON.parse(layout.value) as number[])
     : undefined;
 
-  return <ChatBoard defaultLayout={defaultLayout} selectedChatId={chatId} />;
+  return <ChatBoard selectedChatId={chatId} />;
 }

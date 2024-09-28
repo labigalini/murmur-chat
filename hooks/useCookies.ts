@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Cookie = {
   name: string;
@@ -7,6 +7,7 @@ type Cookie = {
 
 // Custom hook to get cookies in the client and return a Map
 export function useCookies() {
+  const [isInitialized, setIsInitialized] = useState(false);
   const [cookiesMap, setCookiesMap] = useState<Map<string, Cookie>>(new Map());
 
   // Function to parse cookies from document.cookie and return a Map
@@ -25,9 +26,29 @@ export function useCookies() {
   };
 
   useEffect(() => {
-    // Set cookies map when component mounts
     setCookiesMap(parseCookies());
+    setIsInitialized(true);
   }, []);
 
-  return cookiesMap;
+  const setCookie = useCallback(
+    (name: string, value: unknown) => {
+      const cookie = cookiesMap.get(name);
+      const stringValue = JSON.stringify(value);
+      if (cookie) cookie.value = stringValue;
+      document.cookie = `${name}=${stringValue}`;
+    },
+    [cookiesMap],
+  );
+
+  const cookies = useMemo(
+    () => ({
+      cookies: isInitialized
+        ? cookiesMap
+        : ("loading" as "loading" | Map<string, Cookie>),
+      setCookie,
+    }),
+    [cookiesMap, isInitialized, setCookie],
+  );
+
+  return cookies;
 }
