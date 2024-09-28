@@ -106,13 +106,18 @@ export function ChatContainer({
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
-          <div className="flex h-full flex-row">
+          <div className="relative flex h-full flex-row">
             <div className="flex h-full w-full flex-col justify-between">
               <ChatTopbar />
               <ChatMessageList />
               <ChatBottombar />
             </div>
-            <ChatSidebar />
+            <ChatSidebar
+              className={cn(
+                isMobile && "absolute right-0",
+                isMobile ? "max-w-[80%]" : "max-w-96",
+              )}
+            />
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>

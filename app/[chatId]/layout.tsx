@@ -25,7 +25,7 @@ export default function ChatLayout({
           </div>
         </div>
 
-        <div className="z-10 h-full w-full max-w-5xl flex-shrink-0 rounded-lg border text-sm lg:flex">
+        <div className="z-10 h-full w-full max-w-5xl flex-shrink-0 overflow-hidden rounded-lg border text-sm lg:flex">
           <main className="h-full w-full">{children}</main>
         </div>
 
