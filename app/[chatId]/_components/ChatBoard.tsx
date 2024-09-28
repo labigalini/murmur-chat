@@ -18,13 +18,9 @@ import { useEncryption, useQuery } from "@/hooks";
 
 type ChatBoardProps = {
   selectedChatId?: string;
-  defaultLayout?: number[];
 };
 
-export default function ChatBoard({
-  selectedChatId,
-  defaultLayout,
-}: ChatBoardProps) {
+export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
   const encryption = useEncryption();
   const { pushState } = useHistoryState();
 
@@ -133,7 +129,6 @@ export default function ChatBoard({
       chat={selectedChat}
       members={selectedChatMembers}
       messages={decryptedMessages}
-      defaultLayout={defaultLayout}
       handlers={{
         onSelectChat: handleSelectChat,
         onCreateChat: (newChatName) => void handleCreateChat(newChatName),
