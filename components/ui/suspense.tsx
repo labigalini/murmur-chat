@@ -11,6 +11,7 @@ import { Skeleton } from "./skeleton";
 
 type SuspenseProps<TFallbackProps, TComponentProps, TComponentValidProps> = {
   useDelay?: boolean | number;
+  isLoading?: boolean;
   skipFallbackOnEmpty?: boolean;
 } & {
   fallback?: ComponentType<TFallbackProps>;
@@ -31,6 +32,7 @@ export function Suspense<
   },
 >({
   useDelay = true,
+  isLoading = false,
   skipFallbackOnEmpty = false,
   fallback: Fallback,
   fallbackProps,
@@ -41,10 +43,11 @@ export function Suspense<
   const [showLoading, setShowLoading] = useState(false);
   const isAnyLoading = useMemo(
     () =>
-      componentProps &&
-      Object.values(componentProps).some(
-        (p) => p === "loading" || p === undefined,
-      ),
+      (componentProps &&
+        Object.values(componentProps).some(
+          (p) => p === "loading" || p === undefined,
+        )) ||
+      isLoading,
     [componentProps],
   );
   const isAnyEmpty = useMemo(
