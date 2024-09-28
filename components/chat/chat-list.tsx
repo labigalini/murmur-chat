@@ -44,10 +44,7 @@ export function ChatList({ isCollapsed }: ChatListProps) {
 
   return (
     <div className="group relative flex h-full flex-col bg-muted/20 p-2">
-      <ChatListTopbar
-        isCollapsed={isCollapsed}
-        chatCount={chatList === "loading" ? "loading" : chatList.length}
-      />
+      <ChatListTopbar isCollapsed={isCollapsed} chatList={chatList} />
       <div className={cn("h-full overflow-y-auto", !isCollapsed && "px-2")}>
         <nav className={cn("grid gap-1", isCollapsed && "justify-center")}>
           <Suspense
@@ -75,13 +72,14 @@ export function ChatList({ isCollapsed }: ChatListProps) {
 
 function ChatListTopbar({
   isCollapsed,
-  chatCount,
+  chatList,
 }: {
   isCollapsed: boolean;
-  chatCount: number | "loading";
+  chatList: Chat[] | "loading";
 }) {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
-  const isLoading = chatCount === "loading";
+  const isLoading = chatList === "loading";
+  const chatCount = isLoading ? "loading" : chatList.length;
 
   return (
     <div

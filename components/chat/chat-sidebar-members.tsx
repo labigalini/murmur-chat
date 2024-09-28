@@ -12,10 +12,12 @@ const ChatSidebarMembersTitle = () => {
     state: { members },
   } = useChatContext();
 
-  if (members === "loading") return "Loading members title";
-
   return (
-    <ChatTitle title="Members" count={members.length} className="text-xl" />
+    <ChatTitle
+      title="Members"
+      count={members === "loading" ? members : members.length}
+      className="text-xl"
+    />
   );
 };
 
