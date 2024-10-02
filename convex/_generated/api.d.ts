@@ -15,6 +15,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as InviteEmail from "../InviteEmail.js";
 import type * as auth_ResendOTP from "../auth/ResendOTP.js";
 import type * as auth from "../auth.js";
 import type * as chats from "../chats.js";
@@ -40,6 +41,7 @@ import type * as utils from "../utils.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  InviteEmail: typeof InviteEmail;
   "auth/ResendOTP": typeof auth_ResendOTP;
   auth: typeof auth;
   chats: typeof chats;

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import { useMutation } from "convex/react";
+import { useAction, useMutation } from "convex/react";
 
 import { ChatContainer } from "@/components/chat/chat-container";
 import { Chat } from "@/components/chat/chat-types";
@@ -25,6 +25,7 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
   const { pushState } = useHistoryState();
 
   const createChat = useMutation(api.chats.create);
+  const createInvite = useAction(api.invites.send);
   const sendMessage = useMutation(api.messages.create);
 
   const chats = useQuery(api.chats.list);
@@ -98,6 +99,16 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
     [createChat],
   );
 
+  const handleCreateInvite = useCallback(
+    async (chat: Chat, inviteEmail: string) => {
+      await createInvite({
+        chatId: chat._id as Id<"chats">,
+        email: inviteEmail,
+      });
+    },
+    [createInvite],
+  );
+
   const handleSendMessage = useCallback(
     async (chat: Chat, message: string) => {
       if (encryption === "loading" || selectedChatMembers === "loading") {
@@ -132,6 +143,8 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
       handlers={{
         onSelectChat: handleSelectChat,
         onCreateChat: (newChatName) => void handleCreateChat(newChatName),
+        onCreateInvite: (chat, inviteEmail) =>
+          void handleCreateInvite(chat, inviteEmail),
         onSendMessage: (chat, message) => void handleSendMessage(chat, message),
       }}
     />

@@ -1,9 +1,12 @@
-import { ComponentProps } from "react";
+import { ComponentProps, useState } from "react";
 
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
+import { ChatInviteDialog } from "./chat-invite-dialog";
 import { ChatTitle } from "./chat-title";
 
+import { PlusCircle } from "../icons";
+import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { Suspense } from "../ui/suspense";
 
@@ -26,6 +29,9 @@ const ChatSidebarMembers = () => {
     state: { members },
   } = useChatContext();
 
+  const [openInviteDialog, setOpenInviteDialog] = useState(false);
+  const isLoading = members === "loading";
+
   return (
     <div className="flex flex-col gap-2">
       <Suspense
@@ -43,6 +49,22 @@ const ChatSidebarMembers = () => {
         }
         componentProps={{ members }}
       />
+      <div className="mt-4">
+        <ChatInviteDialog
+          open={openInviteDialog}
+          onOpenChange={setOpenInviteDialog}
+        />
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => setOpenInviteDialog(true)}
+          className="flex w-full gap-4"
+          disabled={isLoading}
+        >
+          <PlusCircle />
+          Send Invite
+        </Button>
+      </div>
     </div>
   );
 };
