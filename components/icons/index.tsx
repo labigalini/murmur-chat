@@ -22,7 +22,6 @@ import {
   MoonIcon as MoonIconPrimitive,
   PaperPlaneIcon as PaperPlaneIconPrimitive,
   Pencil2Icon as Pencil2IconPrimitive,
-  PlusCircledIcon as PlusCircledIconPrimitive,
   SunIcon as SunIconPrimitive,
 } from "@radix-ui/react-icons";
 import { IconProps as RadixIconProps } from "@radix-ui/react-icons/dist/types";
@@ -75,6 +74,5 @@ export const MagnifyingGlassIcon = createIcon(MagnifyingGlassIconPrimitive);
 export const MoonIcon = createIcon(MoonIconPrimitive);
 export const PaperPlaneIcon = createIcon(PaperPlaneIconPrimitive);
 export const Pencil2Icon = createIcon(Pencil2IconPrimitive);
-export const PlusCircle = createIcon(PlusCircledIconPrimitive);
 export const SunIcon = createIcon(SunIconPrimitive);
 export const UserPlus = createIcon(UserRoundPlusIconPrimitive);

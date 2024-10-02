@@ -5,7 +5,7 @@ import { useChatContext } from "./chat-context";
 import { ChatInviteDialog } from "./chat-invite-dialog";
 import { ChatTitle } from "./chat-title";
 
-import { PlusCircle } from "../icons";
+import { UserPlus } from "../icons";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { Suspense } from "../ui/suspense";
@@ -56,12 +56,12 @@ const ChatSidebarMembers = () => {
         />
         <Button
           type="button"
-          variant="ghost"
-          onClick={() => setOpenInviteDialog(true)}
+          variant="secondary"
           className="flex w-full gap-4"
+          onClick={() => setOpenInviteDialog(true)}
           disabled={isLoading}
         >
-          <PlusCircle />
+          <UserPlus size="4" />
           Send Invite
         </Button>
       </div>

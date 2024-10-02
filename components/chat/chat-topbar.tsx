@@ -1,11 +1,14 @@
+import { useState } from "react";
+
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
+import { ChatInviteDialog } from "./chat-invite-dialog";
 import {
   ChatSidebarMembers,
   ChatSidebarMembersTitle,
 } from "./chat-sidebar-members";
 
-import { InfoCircledIcon } from "../icons";
+import { InfoCircledIcon, UserPlus } from "../icons";
 import { Button } from "../ui/button";
 import { Suspense } from "../ui/suspense";
 
@@ -14,6 +17,8 @@ const ChatTopbar = () => {
     state: { chat },
     sidebar: { open: openSidebar },
   } = useChatContext();
+
+  const [openInviteDialog, setOpenInviteDialog] = useState(false);
 
   if (!chat) return "No chat selected";
 
@@ -38,7 +43,20 @@ const ChatTopbar = () => {
         />
       </div>
 
+      <ChatInviteDialog
+        open={openInviteDialog}
+        onOpenChange={setOpenInviteDialog}
+      />
       <div className="flex gap-1">
+        <Button
+          size="icon"
+          variant="link"
+          className="h-9 w-9"
+          onClick={() => setOpenInviteDialog(true)}
+          disabled={isLoading}
+        >
+          <UserPlus size="6" />
+        </Button>
         <Button
           size="icon"
           variant="link"
