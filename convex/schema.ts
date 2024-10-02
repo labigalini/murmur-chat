@@ -8,7 +8,8 @@ import {
 } from "convex-ents";
 import { v } from "convex/values";
 
-import { vPermission, vRole } from "./permissions";
+import { vPermission } from "./permissions";
+import { vRole } from "./roles";
 
 const schema = defineEntSchema(
   {
@@ -43,10 +44,11 @@ const schema = defineEntSchema(
       .edges("messages", { ref: true }),
 
     invites: defineEnt({})
-      .field("email", v.string(), { unique: true })
+      .field("email", v.string())
       .edge("user", { field: "inviterUserId" })
       .edge("chat")
-      .edge("role"),
+      .edge("role")
+      .index("email", ["email"]),
 
     roles: defineEnt({
       isDefault: v.boolean(),

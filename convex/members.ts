@@ -2,11 +2,8 @@ import { ConvexError, v } from "convex/values";
 
 import { Id } from "./_generated/dataModel";
 import { mutation, query } from "./functions";
-import {
-  getRole,
-  viewerHasPermission,
-  viewerHasPermissionX,
-} from "./permissions";
+import { viewerHasPermission, viewerHasPermissionX } from "./permissions";
+import { getRole } from "./roles";
 import { Ent, MutationCtx, QueryCtx } from "./types";
 import { getUserSessions, getUsername } from "./users";
 import { normalizeStringForSearch } from "./utils";
