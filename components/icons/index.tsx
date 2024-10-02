@@ -25,16 +25,24 @@ import {
   PlusCircledIcon as PlusCircledIconPrimitive,
   SunIcon as SunIconPrimitive,
 } from "@radix-ui/react-icons";
-import { IconProps } from "@radix-ui/react-icons/dist/types";
+import { IconProps as RadixIconProps } from "@radix-ui/react-icons/dist/types";
+import {
+  LucideProps as LucideIconProps,
+  UserRoundPlusIcon as UserRoundPlusIconPrimitive,
+} from "lucide-react";
 
 import { cn, fr } from "@/lib/utils";
 
 const createIcon = (
-  IconPrimitive: React.ForwardRefExoticComponent<
-    IconProps & React.RefAttributes<SVGSVGElement>
-  >,
+  IconPrimitive:
+    | React.ForwardRefExoticComponent<
+        RadixIconProps & React.RefAttributes<SVGSVGElement>
+      >
+    | React.ForwardRefExoticComponent<
+        LucideIconProps & React.RefAttributes<SVGSVGElement>
+      >,
 ) => {
-  return fr<SVGSVGElement, { className?: string; size?: string }>(
+  return fr<SVGSVGElement, { className?: string; size?: string | number }>(
     ({ className, size, ...props }, ref) => {
       return (
         <IconPrimitive
@@ -69,3 +77,4 @@ export const PaperPlaneIcon = createIcon(PaperPlaneIconPrimitive);
 export const Pencil2Icon = createIcon(Pencil2IconPrimitive);
 export const PlusCircle = createIcon(PlusCircledIconPrimitive);
 export const SunIcon = createIcon(SunIconPrimitive);
+export const UserPlus = createIcon(UserRoundPlusIconPrimitive);
