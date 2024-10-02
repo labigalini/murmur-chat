@@ -53,6 +53,7 @@ export function ChatCreateDialog({
     form.handleSubmit(({ name: newChat }) => {
       onCreateChat(newChat);
       onOpenChange(false);
+      form.reset();
     }),
   );
 
