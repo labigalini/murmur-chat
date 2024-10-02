@@ -5,7 +5,7 @@ import { Resend as ResendAPI } from "resend";
 
 export const ResendOTP = Email({
   id: "resend-otp",
-  apiKey: process.env.AUTH_RESEND_KEY,
+  apiKey: process.env.RESEND_API_KEY,
   maxAge: 60 * 15, // 15 minutes
   generateVerificationToken() {
     return generateRandomString(8, alphabet("0-9"));
@@ -14,9 +14,9 @@ export const ResendOTP = Email({
     const resend = new ResendAPI(provider.apiKey);
     const toEmail = process.env.DEV_EMAIL ?? email;
     const { error } = await resend.emails.send({
-      from: process.env.AUTH_EMAIL ?? "My App <onboarding@resend.dev>",
+      from: process.env.AUTH_EMAIL ?? "murmur.chat <onboarding@resend.dev>",
       to: process.env.DEV_EMAIL ?? email,
-      subject: `Sign in to My App`,
+      subject: `Sign in to murmur.chat`,
       text: "Your code is " + token,
     });
     if (error) {

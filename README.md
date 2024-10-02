@@ -51,7 +51,7 @@ npm run dev
 1. Get your API Key by visiting the [Resend Dashboard](https://resend.com/api-keys).
 2. Add to your Convex dev deployment:
    ```sh
-   npx convex env set AUTH_RESEND_KEY re_...
+   npx convex env set RESEND_API_KEY re_...
    ```
 
 ## Stripe
