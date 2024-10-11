@@ -38,7 +38,6 @@ export function Suspense<
   fallbackProps,
   component: Component,
   componentProps,
-  ...props
 }: SuspenseProps<TFallbackProps, TComponentProps, TComponentValidProps>) {
   const [showLoading, setShowLoading] = useState(false);
   const isAnyLoading = useMemo(
