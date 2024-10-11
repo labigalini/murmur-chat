@@ -1,17 +1,24 @@
+import { Id } from "@/convex/_generated/dataModel";
+
 export type Chat = {
-  _id: string;
+  _id: Id<"chats">;
   name: string;
   image?: string;
 };
 
 export type Member = {
-  _id: string;
+  _id: Id<"members">;
   name: string;
   image?: string;
 };
 
+export type Invite = {
+  _id: Id<"invites">;
+  email: string;
+};
+
 export type Message = {
-  _id: string;
+  _id: Id<"messages">;
   _creationTime: number;
   _expirationTime: number;
   text: string;

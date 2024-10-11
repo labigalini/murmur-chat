@@ -1,13 +1,14 @@
 import { ReactNode, createContext, useContext, useMemo, useState } from "react";
 
 import { ChatInviteDialog } from "./chat-invite-dialog";
-import { Chat, Member, Message } from "./chat-types";
+import { Chat, Invite, Member, Message } from "./chat-types";
 
 export type ChatState = {
   chatList: "loading" | Chat[];
   chat: "loading" | Chat | null;
   messages: "loading" | Message[];
   members: "loading" | Member[];
+  invites: "loading" | Invite[];
   urlPrefix: string;
 };
 

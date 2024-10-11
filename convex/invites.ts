@@ -8,7 +8,7 @@ import { Id } from "./_generated/dataModel";
 import { action } from "./_generated/server";
 import { internalMutation, internalQuery, mutation, query } from "./functions";
 import { createMember } from "./members";
-import { viewerHasPermissionX } from "./permissions";
+import { viewerHasPermission, viewerHasPermissionX } from "./permissions";
 import { Ent, QueryCtx } from "./types";
 import { getUsername } from "./users";
 import { getX } from "./utils";
@@ -27,24 +27,46 @@ export const hasInvite = internalQuery({
 });
 
 export const list = query({
-  args: {},
-  async handler(ctx) {
+  args: {
+    chatId: v.optional(v.id("chats")),
+  },
+  async handler(ctx, { chatId }) {
     if (ctx.viewer === null) {
-      return null;
+      return [];
     }
-    const email = ctx.viewerX().email;
-    if (email == null) {
-      return null;
+    if (chatId) {
+      const viewMembers = await viewerHasPermission(
+        ctx,
+        chatId,
+        "Read Members",
+      );
+      if (!viewMembers) {
+        return [];
+      }
+      return await ctx
+        .table("invites", "chatId", (q) => q.eq("chatId", chatId))
+        .map(async (invite) => ({
+          _id: invite._id,
+          email: invite.email,
+          inviter: (await invite.edge("user")).email,
+          chat: (await invite.edge("chat")).name,
+          role: (await invite.edge("role")).name,
+        }));
+    } else {
+      const email = ctx.viewerX().email;
+      if (email == null) {
+        return [];
+      }
+      return await ctx
+        .table("invites", "email", (q) => q.eq("email", email))
+        .map(async (invite) => ({
+          _id: invite._id,
+          email: invite.email,
+          inviter: (await invite.edge("user")).email,
+          chat: (await invite.edge("chat")).name,
+          role: (await invite.edge("role")).name,
+        }));
     }
-    return await ctx
-      .table("invites", "email", (q) => q.eq("email", email))
-      .map(async (invite) => ({
-        _id: invite._id,
-        email: invite.email,
-        inviter: (await invite.edge("user")).email,
-        chat: (await invite.edge("chat")).name,
-        role: (await invite.edge("role")).name,
-      }));
   },
 });
 

@@ -8,7 +8,6 @@ import { ChatContainer } from "@/components/chat/chat-container";
 import { Chat } from "@/components/chat/chat-types";
 
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
 
 import { skipIfUnset } from "@/lib/utils";
 
@@ -34,15 +33,15 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
   );
   const selectedChatMembers = useQuery(
     api.members.list,
-    skipIfUnset(selectedChat, (c) => ({
-      chatId: c._id as Id<"chats">,
-    })),
+    skipIfUnset(selectedChat, (c) => ({ chatId: c._id })),
+  );
+  const selectedChatInvites = useQuery(
+    api.invites.list,
+    skipIfUnset(selectedChat, (c) => ({ chatId: c._id })),
   );
   const selectedChatMessages = useQuery(
     api.messages.list,
-    skipIfUnset(selectedChat, (c) => ({
-      chatId: c._id as Id<"chats">,
-    })),
+    skipIfUnset(selectedChat, (c) => ({ chatId: c._id })),
   );
   const [decryptedMessages, setDecryptedMessages] =
     useState<typeof selectedChatMessages>("loading");
@@ -102,7 +101,7 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
   const handleCreateInvite = useCallback(
     async (chat: Chat, inviteEmail: string) => {
       await createInvite({
-        chatId: chat._id as Id<"chats">,
+        chatId: chat._id,
         email: inviteEmail,
       });
     },
@@ -127,7 +126,7 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
       );
 
       await sendMessage({
-        chatId: chat._id as Id<"chats">,
+        chatId: chat._id,
         messages: encryptedMessages,
       });
     },
@@ -139,6 +138,7 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
       chatList={chats}
       chat={selectedChat}
       members={selectedChatMembers}
+      invites={selectedChatInvites}
       messages={decryptedMessages}
       handlers={{
         onSelectChat: handleSelectChat,

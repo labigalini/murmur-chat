@@ -33,10 +33,8 @@ export const list = query({
     search: v.optional(v.string()),
   },
   async handler(ctx, { chatId, search }) {
-    if (
-      ctx.viewer === null ||
-      !(await viewerHasPermission(ctx, chatId, "Read Members"))
-    ) {
+    const viewMembers = await viewerHasPermission(ctx, chatId, "Read Members");
+    if (ctx.viewer === null || !viewMembers) {
       return [];
     }
     const query = search
