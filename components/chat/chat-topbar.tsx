@@ -1,8 +1,5 @@
-import { useState } from "react";
-
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
-import { ChatInviteDialog } from "./chat-invite-dialog";
 import {
   ChatSidebarMembers,
   ChatSidebarMembersTitle,
@@ -16,9 +13,8 @@ const ChatTopbar = () => {
   const {
     state: { chat },
     sidebar: { open: openSidebar },
+    invite: { open: openInviteDialog },
   } = useChatContext();
-
-  const [openInviteDialog, setOpenInviteDialog] = useState(false);
 
   if (!chat) return "No chat selected";
 
@@ -42,17 +38,12 @@ const ChatTopbar = () => {
           componentProps={{ chat }}
         />
       </div>
-
-      <ChatInviteDialog
-        open={openInviteDialog}
-        onOpenChange={setOpenInviteDialog}
-      />
       <div className="flex gap-1">
         <Button
           size="icon"
           variant="link"
           className="h-9 w-9"
-          onClick={() => setOpenInviteDialog(true)}
+          onClick={openInviteDialog}
           disabled={isLoading}
         >
           <UserPlus size="6" />

@@ -1,5 +1,6 @@
 import { ReactNode, createContext, useContext, useMemo, useState } from "react";
 
+import { ChatInviteDialog } from "./chat-invite-dialog";
 import { Chat, Member, Message } from "./chat-types";
 
 export type ChatState = {
@@ -18,6 +19,12 @@ export type ChatSidebarState = {
   close: () => void;
 };
 
+export type ChatInviteState = {
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
+};
+
 export type ChatHandlers = {
   onSelectChat: (newChatSelection: Chat) => void;
   onCreateChat: (newChatName: string) => void;
@@ -30,11 +37,15 @@ export type ChatContextType = { state: ChatState } & ChatHandlers;
 export const ChatContext = createContext({
   state: {} as ChatState,
   sidebar: {} as ChatSidebarState,
+  invite: {} as ChatInviteState,
   onSelectChat: (_newChatSelection) => {},
   onCreateChat: (_newChatName) => {},
   onCreateInvite: (_chat, _inviteEmail) => {},
   onSendMessage: (_chat, _newMessage) => {},
-} satisfies ChatContextType & { sidebar: ChatSidebarState });
+} satisfies ChatContextType & {
+  sidebar: ChatSidebarState;
+  invite: ChatInviteState;
+});
 
 export const ChatProvider = ({
   value,
@@ -48,7 +59,12 @@ export const ChatProvider = ({
     content: null,
     isOpen: false,
     open: (title, content) =>
-      setSidebar((prev) => ({ ...prev, isOpen: true, title, content })),
+      setSidebar((prev) => ({
+        ...prev,
+        isOpen: true,
+        title,
+        content,
+      })),
     close: () =>
       setSidebar((prev) => ({
         ...prev,
@@ -57,11 +73,27 @@ export const ChatProvider = ({
         content: null,
       })),
   });
+  const [invite, setInvite] = useState<ChatInviteState>({
+    isOpen: false,
+    open: () => setInvite((prev) => ({ ...prev, isOpen: true })),
+    close: () => setInvite((prev) => ({ ...prev, isOpen: false })),
+  });
 
-  const context = useMemo(() => ({ ...value, sidebar }), [sidebar, value]);
+  const context = useMemo(
+    () => ({
+      ...value,
+      sidebar,
+      invite,
+    }),
+    [value, sidebar, invite],
+  );
 
   return (
     <ChatContext.Provider value={context}>
+      <ChatInviteDialog
+        open={invite.isOpen}
+        onOpenChange={(open) => (open ? invite.open() : invite.close())}
+      />
       <>{children}</>
     </ChatContext.Provider>
   );

@@ -1,8 +1,7 @@
-import { ComponentProps, useState } from "react";
+import { ComponentProps } from "react";
 
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
-import { ChatInviteDialog } from "./chat-invite-dialog";
 import { ChatTitle } from "./chat-title";
 
 import { UserPlus } from "../icons";
@@ -27,9 +26,9 @@ const ChatSidebarMembersTitle = () => {
 const ChatSidebarMembers = () => {
   const {
     state: { members },
+    invite: { open: openInviteDialog },
   } = useChatContext();
 
-  const [openInviteDialog, setOpenInviteDialog] = useState(false);
   const isLoading = members === "loading";
 
   return (
@@ -50,15 +49,11 @@ const ChatSidebarMembers = () => {
         componentProps={{ members }}
       />
       <div className="mt-4">
-        <ChatInviteDialog
-          open={openInviteDialog}
-          onOpenChange={setOpenInviteDialog}
-        />
         <Button
           type="button"
           variant="secondary"
           className="flex w-full gap-4"
-          onClick={() => setOpenInviteDialog(true)}
+          onClick={openInviteDialog}
           disabled={isLoading}
         >
           <UserPlus size="4" />
