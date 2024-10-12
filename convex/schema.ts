@@ -45,6 +45,7 @@ const schema = defineEntSchema(
 
     invites: defineEnt({})
       .field("email", v.string())
+      .field("revoked", v.optional(v.boolean()))
       .edge("user", { field: "inviterUserId" })
       .edge("chat")
       .edge("role")

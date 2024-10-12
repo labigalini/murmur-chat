@@ -3,7 +3,7 @@ import { ConvexError, v } from "convex/values";
 import { Resend } from "resend";
 
 import { InviteEmail } from "./InviteEmail";
-import { api, internal } from "./_generated/api";
+import { internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 import { action } from "./_generated/server";
 import { internalMutation, internalQuery, mutation, query } from "./functions";
@@ -38,6 +38,7 @@ export const list = query({
     }
     return await ctx
       .table("invites", "email", (q) => q.eq("email", email))
+      .filter((q) => q.neq(q.field("revoked"), true))
       .map(async (invite) => ({
         _id: invite._id,
         email: invite.email,
@@ -62,6 +63,7 @@ export const listByChat = query({
     }
     return await ctx
       .table("invites", "chatId", (q) => q.eq("chatId", chatId))
+      .filter((q) => q.neq(q.field("revoked"), true))
       .map(async (invite) => ({
         _id: invite._id,
         email: invite.email,
@@ -121,14 +123,23 @@ export const accept = mutation({
   },
 });
 
-export const deleteInvite = mutation({
+export const revoke = mutation({
+  args: {
+    inviteId: v.id("invites"),
+  },
+  async handler(ctx, { inviteId }) {
+    await ctx.table("invites").getX(inviteId).patch({ revoked: true });
+  },
+});
+
+export const remove = internalMutation({
   args: {
     inviteId: v.id("invites"),
   },
   async handler(ctx, { inviteId }) {
     const invite = await ctx.table("invites").getX(inviteId);
     checkViewerWasInvitedX(ctx, invite);
-    await ctx.table("invites").getX(inviteId).delete();
+    await invite.delete();
   },
 });
 
@@ -171,7 +182,7 @@ export const send = action({
     try {
       await sendInviteEmail({ email, inviteId, inviterEmail, chatName });
     } catch (error) {
-      await ctx.runMutation(api.invites.deleteInvite, {
+      await ctx.runMutation(internal.invites.remove, {
         inviteId,
       });
       throw error;

@@ -27,6 +27,7 @@ import {
 import { IconProps as RadixIconProps } from "@radix-ui/react-icons/dist/types";
 import {
   LucideProps as LucideIconProps,
+  Trash2Icon as TrashIconPrimitive,
   UserRoundPlusIcon as UserRoundPlusIconPrimitive,
 } from "lucide-react";
 
@@ -75,4 +76,5 @@ export const MoonIcon = createIcon(MoonIconPrimitive);
 export const PaperPlaneIcon = createIcon(PaperPlaneIconPrimitive);
 export const Pencil2Icon = createIcon(Pencil2IconPrimitive);
 export const SunIcon = createIcon(SunIconPrimitive);
-export const UserPlus = createIcon(UserRoundPlusIconPrimitive);
+export const UserPlusIcon = createIcon(UserRoundPlusIconPrimitive);
+export const TrashIcon = createIcon(TrashIconPrimitive);

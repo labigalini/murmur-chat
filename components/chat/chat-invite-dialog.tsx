@@ -27,19 +27,17 @@ import { Input } from "@/components/ui/input";
 import { handleFailure } from "@/lib/handleFailure";
 
 import { useChatContext } from "./chat-context";
+import { Invite } from "./chat-types";
 
 const FormSchema = z.object({
   email: z.string().min(4, "Team name must be at least 4 characters long."),
 });
 
-type ChatInviteDialogProps = Required<
-  Pick<DialogProps, "open" | "onOpenChange">
->;
+type ChatInviteDialogProps = Required<Pick<DialogProps, "open">> & {
+  onClose: () => void;
+};
 
-export function ChatInviteDialog({
-  open,
-  onOpenChange,
-}: ChatInviteDialogProps) {
+const ChatInviteDialog = ({ open, onClose }: ChatInviteDialogProps) => {
   const {
     state: { chat },
     onCreateInvite,
@@ -56,13 +54,13 @@ export function ChatInviteDialog({
     form.handleSubmit(({ email }) => {
       if (!chat || chat === "loading") return;
       onCreateInvite(chat, email);
-      onOpenChange(false);
+      onClose();
       form.reset();
     }),
   );
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
       <DialogContent>
         <Form {...form}>
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -89,6 +87,9 @@ export function ChatInviteDialog({
               />
             </div>
             <DialogFooter>
+              <Button variant="ghost" onClick={() => onClose()}>
+                Cancel
+              </Button>
               <Button type="submit">Continue</Button>
             </DialogFooter>
           </form>
@@ -96,4 +97,49 @@ export function ChatInviteDialog({
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+type ChatRevokeInviteDialogProps = Required<Pick<DialogProps, "open">> & {
+  onClose: () => void;
+  invite: Invite;
+};
+
+const ChatRevokeInviteDialog = ({
+  open,
+  onClose,
+  invite,
+}: ChatRevokeInviteDialogProps) => {
+  const { onRevokeInvite } = useChatContext();
+
+  const handleRevoke = () => {
+    onRevokeInvite(invite);
+    onClose();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Revoke Invite</DialogTitle>
+          <DialogDescription>
+            <span>Are you sure you want to revoke this invite?</span>
+            <div className="m-4 flex flex-col">
+              <span>Email: {invite.email}</span>
+              <span>Inviter: {invite.inviter}</span>
+            </div>
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="ghost" onClick={() => onClose()}>
+            Cancel
+          </Button>
+          <Button variant="destructive" onClick={handleRevoke}>
+            Revoke Invite
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export { ChatInviteDialog, ChatRevokeInviteDialog };

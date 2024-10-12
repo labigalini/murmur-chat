@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAction, useMutation } from "convex/react";
 
 import { ChatContainer } from "@/components/chat/chat-container";
-import { Chat } from "@/components/chat/chat-types";
+import { Chat, Invite } from "@/components/chat/chat-types";
 
 import { api } from "@/convex/_generated/api";
 
@@ -25,6 +25,7 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
 
   const createChat = useMutation(api.chats.create);
   const createInvite = useAction(api.invites.send);
+  const revokeInvite = useMutation(api.invites.revoke);
   const sendMessage = useMutation(api.messages.create);
 
   const chats = useQuery(api.chats.list);
@@ -108,6 +109,13 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
     [createInvite],
   );
 
+  const handleRevokeInvite = useCallback(
+    async (invite: Invite) => {
+      await revokeInvite({ inviteId: invite._id });
+    },
+    [revokeInvite],
+  );
+
   const handleSendMessage = useCallback(
     async (chat: Chat, message: string) => {
       if (encryption === "loading" || selectedChatMembers === "loading") {
@@ -143,8 +151,8 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
       handlers={{
         onSelectChat: handleSelectChat,
         onCreateChat: (newChatName) => void handleCreateChat(newChatName),
-        onCreateInvite: (chat, inviteEmail) =>
-          void handleCreateInvite(chat, inviteEmail),
+        onCreateInvite: (chat, email) => void handleCreateInvite(chat, email),
+        onRevokeInvite: (invite) => void handleRevokeInvite(invite),
         onSendMessage: (chat, message) => void handleSendMessage(chat, message),
       }}
     />

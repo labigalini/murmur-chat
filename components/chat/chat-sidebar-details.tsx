@@ -6,14 +6,14 @@ import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
 import { ChatTitle } from "./chat-title";
 
-import { UserPlus } from "../icons";
+import { TrashIcon, UserPlusIcon } from "../icons";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { Suspense } from "../ui/suspense";
 
 const ChatSidebarDetails = () => {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <ChatSidebarMembers />
       <ChatSidebarInvites />
     </div>
@@ -36,13 +36,13 @@ const ChatSidebarMembers = () => {
         <Suspense
           fallback={ChatSidebarMembersSkeleton}
           component={({ members }) =>
-            members.map((m) => (
+            members.map((member) => (
               <div
-                key={m._id}
+                key={member._id}
                 className="inline-flex w-full items-center justify-start gap-2"
               >
-                <ChatAvatar name={m.name} avatar={m.image} size={6} />
-                <span>{m.name}</span>
+                <ChatAvatar name={member.name} avatar={member.image} size={6} />
+                <span>{member.name}</span>
               </div>
             ))
           }
@@ -70,7 +70,7 @@ function ChatSidebarMembersSkeleton({
 const ChatSidebarInvites = () => {
   const {
     state: { members, invites },
-    invite: { open: openInviteDialog },
+    invite: { create, revoke },
   } = useChatContext();
 
   const isLoading = isAnyLoading(members, invites);
@@ -86,27 +86,37 @@ const ChatSidebarInvites = () => {
         <Suspense
           fallbackProps={{ size: 32 }}
           component={({ invites }) =>
-            invites.map((i) => (
+            invites.map((invite) => (
               <div
-                key={i._id}
-                className="inline-flex w-full items-center justify-start gap-2"
+                key={invite._id}
+                className="flex items-center justify-between"
               >
-                <span>{i.email}</span>
+                <div className="flex flex-col">
+                  <span>Email: {invite.email}</span>
+                  <span>Inviter: {invite.inviter}</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => revoke(invite)}
+                >
+                  <TrashIcon size="5" />
+                </Button>
               </div>
             ))
           }
           componentProps={{ invites }}
         />
       </div>
-      <div className="w-10/12 self-center">
+      <div className="mt-2 w-10/12 self-center">
         <Button
           type="button"
           variant="secondary"
           className="flex w-full gap-4"
-          onClick={openInviteDialog}
+          onClick={create}
           disabled={isLoading}
         >
-          <UserPlus size="4" />
+          <UserPlusIcon size="4" />
           Send Invite
         </Button>
       </div>

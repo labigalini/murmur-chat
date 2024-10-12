@@ -4,7 +4,7 @@ import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
 import { ChatSidebarDetails } from "./chat-sidebar-details";
 
-import { InfoCircledIcon, UserPlus } from "../icons";
+import { InfoCircledIcon, UserPlusIcon } from "../icons";
 import { Button } from "../ui/button";
 import { Suspense } from "../ui/suspense";
 
@@ -45,7 +45,7 @@ const ChatTopbar = () => {
           onClick={openInviteDialog}
           disabled={isLoading}
         >
-          <UserPlus size="6" />
+          <UserPlusIcon size="6" />
         </Button>
         <Button
           size="icon"
