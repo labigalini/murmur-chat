@@ -1,6 +1,5 @@
 import { ReactNode, createContext, useContext, useMemo, useState } from "react";
 
-import { ChatInviteDialog, ChatRevokeInviteDialog } from "./chat-invite-dialog";
 import { Chat, Invite, Member, Message } from "./chat-types";
 
 export type ChatState = {
@@ -20,11 +19,6 @@ export type ChatSidebarState = {
   close: () => void;
 };
 
-export type ChatInviteState = {
-  create: () => void;
-  revoke: (invite: Invite) => void;
-};
-
 export type ChatHandlers = {
   onSelectChat: (newChatSelection: Chat) => void;
   onCreateChat: (newChatName: string) => void;
@@ -38,7 +32,6 @@ export type ChatContextType = { state: ChatState } & ChatHandlers;
 export const ChatContext = createContext({
   state: {} as ChatState,
   sidebar: {} as ChatSidebarState,
-  invite: {} as ChatInviteState,
   onSelectChat: (_newChatSelection) => {},
   onCreateChat: (_newChatName) => {},
   onCreateInvite: (_chat, _inviteEmail) => {},
@@ -46,7 +39,6 @@ export const ChatContext = createContext({
   onSendMessage: (_chat, _newMessage) => {},
 } satisfies ChatContextType & {
   sidebar: ChatSidebarState;
-  invite: ChatInviteState;
 });
 
 export const ChatProvider = ({
@@ -75,49 +67,17 @@ export const ChatProvider = ({
         content: null,
       })),
   });
-  const [inviteCreateDialog, setInviteCreateDialog] = useState({
-    isOpen: false,
-    open: () => setInviteCreateDialog((prev) => ({ ...prev, isOpen: true })),
-    close: () => setInviteCreateDialog((prev) => ({ ...prev, isOpen: false })),
-  });
-  const [inviteRevokeDialog, setInviteRevokeDialog] = useState({
-    isOpen: false,
-    invite: null as Invite | null,
-    open: (invite: Invite) =>
-      setInviteRevokeDialog((prev) => ({ ...prev, isOpen: true, invite })),
-    close: () =>
-      setInviteRevokeDialog((prev) => ({
-        ...prev,
-        isOpen: false,
-        invite: null,
-      })),
-  });
 
   const context = useMemo(
     () => ({
       ...value,
       sidebar,
-      invite: {
-        create: inviteCreateDialog.open,
-        revoke: inviteRevokeDialog.open,
-      },
     }),
-    [value, sidebar, inviteCreateDialog, inviteRevokeDialog],
+    [value, sidebar],
   );
 
   return (
     <ChatContext.Provider value={context}>
-      <ChatInviteDialog
-        open={inviteCreateDialog.isOpen}
-        onClose={inviteCreateDialog.close}
-      />
-      {inviteRevokeDialog.invite !== null && (
-        <ChatRevokeInviteDialog
-          open={inviteRevokeDialog.isOpen}
-          onClose={inviteRevokeDialog.close}
-          invite={inviteRevokeDialog.invite}
-        />
-      )}
       <>{children}</>
     </ChatContext.Provider>
   );

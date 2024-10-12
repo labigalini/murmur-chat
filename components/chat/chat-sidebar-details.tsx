@@ -1,10 +1,12 @@
-import { ComponentProps } from "react";
+import { ComponentProps, useState } from "react";
 
 import { isAnyLoading } from "@/lib/utils";
 
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
+import { ChatInviteDialog, ChatRevokeInviteDialog } from "./chat-invite-dialog";
 import { ChatTitle } from "./chat-title";
+import { Invite } from "./chat-types";
 
 import { AlertIcon, TrashIcon, UserPlusIcon } from "../icons";
 import { Button } from "../ui/button";
@@ -71,13 +73,37 @@ function ChatSidebarMembersSkeleton({
 const ChatSidebarInvites = () => {
   const {
     state: { members, invites },
-    invite: { create, revoke },
   } = useChatContext();
+
+  const [isCreateInviteOpen, setIsCreateInviteOpen] = useState(false);
+  const [inviteRevokeDialog, setInviteRevokeDialog] = useState({
+    isOpen: false,
+    invite: null as Invite | null,
+    open: (invite: Invite) =>
+      setInviteRevokeDialog((prev) => ({ ...prev, isOpen: true, invite })),
+    close: () =>
+      setInviteRevokeDialog((prev) => ({
+        ...prev,
+        isOpen: false,
+        invite: null,
+      })),
+  });
 
   const isLoading = isAnyLoading(members, invites);
 
   return (
     <>
+      <ChatInviteDialog
+        open={isCreateInviteOpen}
+        onClose={() => setIsCreateInviteOpen(false)}
+      />
+      {inviteRevokeDialog.invite !== null && (
+        <ChatRevokeInviteDialog
+          open={inviteRevokeDialog.isOpen}
+          onClose={inviteRevokeDialog.close}
+          invite={inviteRevokeDialog.invite}
+        />
+      )}
       <ChatTitle
         title="Invites"
         count={invites === "loading" ? invites : invites.length}
@@ -99,7 +125,7 @@ const ChatSidebarInvites = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => revoke(invite)}
+                  onClick={() => inviteRevokeDialog.open(invite)}
                 >
                   <TrashIcon size="5" />
                 </Button>
@@ -114,7 +140,7 @@ const ChatSidebarInvites = () => {
           type="button"
           variant="secondary"
           className="flex w-full gap-4"
-          onClick={create}
+          onClick={() => setIsCreateInviteOpen(true)}
           disabled={isLoading}
         >
           <UserPlusIcon size="4" />
