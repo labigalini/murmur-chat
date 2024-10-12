@@ -7,6 +7,8 @@ import {
   useState,
 } from "react";
 
+import { isAnyEmpty, isAnyLoading } from "@/lib/utils";
+
 import { Skeleton } from "./skeleton";
 
 type SuspenseProps<TFallbackProps, TComponentProps, TComponentValidProps> = {
@@ -32,7 +34,7 @@ export function Suspense<
   },
 >({
   useDelay = true,
-  isLoading = false,
+  isLoading: initialIsLoading = false,
   skipFallbackOnEmpty = false,
   fallback: Fallback,
   fallbackProps,
@@ -40,23 +42,19 @@ export function Suspense<
   componentProps,
 }: SuspenseProps<TFallbackProps, TComponentProps, TComponentValidProps>) {
   const [showLoading, setShowLoading] = useState(false);
-  const isAnyLoading = useMemo(
+  const isLoading = useMemo(
     () =>
-      (componentProps &&
-        Object.values(componentProps).some(
-          (p) => p === "loading" || p === undefined,
-        )) ||
-      isLoading,
-    [componentProps],
+      initialIsLoading ||
+      (componentProps && isAnyLoading(...Object.values(componentProps))),
+    [initialIsLoading, componentProps],
   );
-  const isAnyEmpty = useMemo(
-    () =>
-      componentProps && Object.values(componentProps).some((p) => p === null),
+  const isEmpty = useMemo(
+    () => componentProps && isAnyEmpty(...Object.values(componentProps)),
     [componentProps],
   );
 
   useEffect(() => {
-    if (isAnyLoading) {
+    if (isLoading) {
       setShowLoading(true);
       return;
     }
@@ -73,14 +71,14 @@ export function Suspense<
       }
       return;
     }
-  }, [isAnyLoading, showLoading]);
+  }, [isLoading, showLoading]);
 
-  if (isAnyLoading || showLoading || isAnyEmpty) {
-    if (isAnyEmpty && skipFallbackOnEmpty) return;
+  if (isLoading || showLoading || isEmpty) {
+    if (isEmpty && skipFallbackOnEmpty) return;
     const FallbackComponent = Fallback ?? Skeleton;
     return (
       <FallbackComponent
-        variant={isAnyEmpty ? "empty" : "loading"}
+        variant={isEmpty ? "empty" : "loading"}
         {...(fallbackProps as TFallbackProps)}
       />
     );

@@ -1,5 +1,7 @@
 import { ComponentProps } from "react";
 
+import { isAnyLoading } from "@/lib/utils";
+
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
 import { ChatTitle } from "./chat-title";
@@ -9,36 +11,27 @@ import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { Suspense } from "../ui/suspense";
 
-const ChatSidebarMembersTitle = () => {
-  const {
-    state: { members },
-  } = useChatContext();
-
+const ChatSidebarDetails = () => {
   return (
-    <ChatTitle
-      title="Members"
-      count={members === "loading" ? members : members.length}
-      className="text-xl"
-    />
+    <div className="flex flex-col gap-6">
+      <ChatSidebarMembers />
+      <ChatSidebarInvites />
+    </div>
   );
 };
 
 const ChatSidebarMembers = () => {
   const {
-    state: { members, invites },
-    invite: { open: openInviteDialog },
+    state: { members },
   } = useChatContext();
 
-  const isLoading = members === "loading";
-
   return (
-    <div className="flex flex-col gap-6">
-      {/* TODO remove the title from the sidebar, keep content only and the X to close
-       <ChatTitle
+    <>
+      <ChatTitle
         title="Members"
         count={members === "loading" ? members : members.length}
-        className="text-xl"
-      /> */}
+        className="text-lg"
+      />
       <div className="flex flex-col gap-2">
         <Suspense
           fallback={ChatSidebarMembersSkeleton}
@@ -56,10 +49,38 @@ const ChatSidebarMembers = () => {
           componentProps={{ members }}
         />
       </div>
+    </>
+  );
+};
+
+function ChatSidebarMembersSkeleton({
+  ...props
+}: ComponentProps<typeof Skeleton>) {
+  return Array.from({ length: 6 }).map((_, index) => (
+    <div
+      key={index}
+      className="inline-flex w-full items-center justify-start gap-2"
+    >
+      <Skeleton size="6" layout="icon" {...props} />
+      <Skeleton size="32" className={"shrink"} {...props} />
+    </div>
+  ));
+}
+
+const ChatSidebarInvites = () => {
+  const {
+    state: { members, invites },
+    invite: { open: openInviteDialog },
+  } = useChatContext();
+
+  const isLoading = isAnyLoading(members, invites);
+
+  return (
+    <>
       <ChatTitle
         title="Invites"
         count={invites === "loading" ? invites : invites.length}
-        className="text-xl"
+        className="text-lg"
       />
       <div className="flex flex-col gap-2">
         <Suspense
@@ -89,22 +110,8 @@ const ChatSidebarMembers = () => {
           Send Invite
         </Button>
       </div>
-    </div>
+    </>
   );
 };
 
-function ChatSidebarMembersSkeleton({
-  ...props
-}: ComponentProps<typeof Skeleton>) {
-  return Array.from({ length: 6 }).map((_, index) => (
-    <div
-      key={index}
-      className="inline-flex w-full items-center justify-start gap-2"
-    >
-      <Skeleton size="6" layout="icon" {...props} />
-      <Skeleton size="32" className={"shrink"} {...props} />
-    </div>
-  ));
-}
-
-export { ChatSidebarMembers, ChatSidebarMembersTitle };
+export { ChatSidebarDetails };

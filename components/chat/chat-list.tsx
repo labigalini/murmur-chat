@@ -20,7 +20,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { cn } from "@/lib/utils";
+import { cn, isAnyLoading } from "@/lib/utils";
 
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
@@ -78,7 +78,7 @@ function ChatListTopbar({
   chatList: Chat[] | "loading";
 }) {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
-  const isLoading = chatList === "loading";
+  const isLoading = isAnyLoading(chatList);
   const chatCount = isLoading ? "loading" : chatList.length;
 
   return (

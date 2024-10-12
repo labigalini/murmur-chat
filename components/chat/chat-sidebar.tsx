@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 
 import { useChatContext } from "./chat-context";
+import { ChatTitle } from "./chat-title";
 
 import { Cross2Icon } from "../icons";
 import { Button } from "../ui/button";
@@ -20,7 +21,11 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ className, ...props }) => {
       {...props}
     >
       <div className="mb-4 flex items-center justify-between">
-        <>{title}</>
+        {typeof title === "string" ? (
+          <ChatTitle title={title} className="text-xl" />
+        ) : (
+          title
+        )}
         <Button variant="ghost" size="icon" onClick={close}>
           <Cross2Icon size="5" />
         </Button>

@@ -53,3 +53,34 @@ export function skipIfUnset<
   if (param === "loading" || param == null) return "skip";
   return argsFunc(param as TValidInput);
 }
+
+/**
+ * Checks if any of the provided parameters is "loading" or undefined.
+ *
+ * @param {...unknown[]} params - Any number of parameters to check.
+ * @returns {boolean} - Returns true if any parameter is "loading" or undefined, false otherwise.
+ *
+ * @example
+ * const isLoading = isAnyLoading("data", null, "loading", undefined); // Returns true
+ * const isLoading = isAnyLoading("data", null, undefined); // Returns true
+ * * const isLoading = isAnyLoading("data", null); // Returns false
+ */
+export function isAnyLoading(...params: unknown[]): boolean {
+  if (params == null) return false;
+  return params.some((p) => p === "loading" || p === undefined);
+}
+
+/**
+ * Checks if any of the provided parameters is null.
+ *
+ * @param {...unknown[]} params - Any number of parameters to check.
+ * @returns {boolean} - Returns true if any parameter is null, false otherwise.
+ *
+ * @example
+ * const isEmpty = isAnyEmpty("data", null, "value"); // Returns true
+ * const isEmpty = isAnyEmpty("data", undefined, "value"); // Returns false
+ * const isEmpty = isAnyEmpty("data", "value"); // Returns false
+ */
+export function isAnyEmpty(...params: unknown[]): boolean {
+  return params.some((p) => p === null);
+}

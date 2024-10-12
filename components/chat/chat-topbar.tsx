@@ -1,9 +1,8 @@
+import { isAnyLoading } from "@/lib/utils";
+
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
-import {
-  ChatSidebarMembers,
-  ChatSidebarMembersTitle,
-} from "./chat-sidebar-members";
+import { ChatSidebarDetails } from "./chat-sidebar-details";
 
 import { InfoCircledIcon, UserPlus } from "../icons";
 import { Button } from "../ui/button";
@@ -18,7 +17,7 @@ const ChatTopbar = () => {
 
   if (!chat) return "No chat selected";
 
-  const isLoading = chat === "loading";
+  const isLoading = isAnyLoading(chat);
 
   return (
     <div className="flex h-20 w-full items-center justify-between border-b p-4">
@@ -52,9 +51,7 @@ const ChatTopbar = () => {
           size="icon"
           variant="link"
           className="h-9 w-9"
-          onClick={() =>
-            openSidebar(<ChatSidebarMembersTitle />, <ChatSidebarMembers />)
-          }
+          onClick={() => openSidebar("Chat Details", <ChatSidebarDetails />)}
           disabled={isLoading}
         >
           <InfoCircledIcon size="6" />
