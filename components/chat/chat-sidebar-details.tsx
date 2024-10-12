@@ -6,7 +6,7 @@ import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
 import { ChatTitle } from "./chat-title";
 
-import { TrashIcon, UserPlusIcon } from "../icons";
+import { AlertIcon, TrashIcon, UserPlusIcon } from "../icons";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { Suspense } from "../ui/suspense";
@@ -16,6 +16,7 @@ const ChatSidebarDetails = () => {
     <div className="flex flex-col gap-4">
       <ChatSidebarMembers />
       <ChatSidebarInvites />
+      <ChatSidebarDangerZone />
     </div>
   );
 };
@@ -118,6 +119,27 @@ const ChatSidebarInvites = () => {
         >
           <UserPlusIcon size="4" />
           Send Invite
+        </Button>
+      </div>
+    </>
+  );
+};
+
+const ChatSidebarDangerZone = () => {
+  //const { deleteChat } = useChatContext();
+
+  return (
+    <>
+      <ChatTitle title="Danger Zone" className="text-lg" />
+      <div className="mt-2 w-10/12 self-center">
+        <Button
+          type="button"
+          variant="destructive"
+          className="flex w-full gap-4"
+          // onClick={deleteChat}
+        >
+          <AlertIcon size="5" />
+          Delete this chat
         </Button>
       </div>
     </>

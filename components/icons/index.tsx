@@ -26,6 +26,7 @@ import {
 } from "@radix-ui/react-icons";
 import { IconProps as RadixIconProps } from "@radix-ui/react-icons/dist/types";
 import {
+  AlertTriangleIcon as AlertTriangleIconPrimitive,
   LucideProps as LucideIconProps,
   Trash2Icon as TrashIconPrimitive,
   UserRoundPlusIcon as UserRoundPlusIconPrimitive,
@@ -78,3 +79,4 @@ export const Pencil2Icon = createIcon(Pencil2IconPrimitive);
 export const SunIcon = createIcon(SunIconPrimitive);
 export const UserPlusIcon = createIcon(UserRoundPlusIconPrimitive);
 export const TrashIcon = createIcon(TrashIconPrimitive);
+export const AlertIcon = createIcon(AlertTriangleIconPrimitive);
