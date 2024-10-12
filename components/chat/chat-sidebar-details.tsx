@@ -1,4 +1,4 @@
-import { ComponentProps, useState } from "react";
+import { ComponentProps, useCallback, useState } from "react";
 
 import { isAnyLoading } from "@/lib/utils";
 
@@ -152,7 +152,17 @@ const ChatSidebarInvites = () => {
 };
 
 const ChatSidebarDangerZone = () => {
-  //const { deleteChat } = useChatContext();
+  const {
+    state: { chat },
+    sidebar: { close: closeSidebar },
+    onDeleteChat,
+  } = useChatContext();
+
+  const handleDeleteChat = useCallback(() => {
+    if (chat == null || chat === "loading") return;
+    onDeleteChat(chat);
+    closeSidebar();
+  }, [chat, closeSidebar, onDeleteChat]);
 
   return (
     <>
@@ -162,7 +172,7 @@ const ChatSidebarDangerZone = () => {
           type="button"
           variant="destructive"
           className="flex w-full gap-4"
-          // onClick={deleteChat}
+          onClick={handleDeleteChat}
         >
           <AlertIcon size="5" />
           Delete this chat

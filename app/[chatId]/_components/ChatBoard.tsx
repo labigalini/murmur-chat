@@ -24,6 +24,7 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
   const { pushState } = useHistoryState();
 
   const createChat = useMutation(api.chats.create);
+  const deleteChat = useMutation(api.chats.remove);
   const createInvite = useAction(api.invites.send);
   const revokeInvite = useMutation(api.invites.revoke);
   const sendMessage = useMutation(api.messages.create);
@@ -46,14 +47,6 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
   );
   const [decryptedMessages, setDecryptedMessages] =
     useState<typeof selectedChatMessages>("loading");
-
-  // initialize active chat selection
-  useEffect(() => {
-    if (chats === "loading") return;
-    setSelectedChat(
-      chats.find((c) => c._id === selectedChatId) ?? chats[0] ?? null,
-    );
-  }, [chats, selectedChatId, setSelectedChat]);
 
   // decrypt messages
   useEffect(() => {
@@ -99,6 +92,14 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
     [createChat],
   );
 
+  const handleDeleteChat = useCallback(
+    async (chat: Chat) => {
+      setSelectedChat("loading");
+      await deleteChat({ chatId: chat._id });
+    },
+    [deleteChat],
+  );
+
   const handleCreateInvite = useCallback(
     async (chat: Chat, inviteEmail: string) => {
       await createInvite({
@@ -141,6 +142,14 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
     [encryption, selectedChatMembers, sendMessage],
   );
 
+  // initialize active chat selection
+  useEffect(() => {
+    if (chats === "loading") return;
+    handleSelectChat(
+      chats.find((c) => c._id === selectedChatId) ?? chats[0] ?? null,
+    );
+  }, [chats, handleSelectChat, selectedChatId]);
+
   return (
     <ChatContainer
       chatList={chats}
@@ -151,6 +160,7 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
       handlers={{
         onSelectChat: handleSelectChat,
         onCreateChat: (newChatName) => void handleCreateChat(newChatName),
+        onDeleteChat: (chat) => void handleDeleteChat(chat),
         onCreateInvite: (chat, email) => void handleCreateInvite(chat, email),
         onRevokeInvite: (invite) => void handleRevokeInvite(invite),
         onSendMessage: (chat, message) => void handleSendMessage(chat, message),

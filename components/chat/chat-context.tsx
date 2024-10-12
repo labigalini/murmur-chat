@@ -22,6 +22,7 @@ export type ChatSidebarState = {
 export type ChatHandlers = {
   onSelectChat: (newChatSelection: Chat) => void;
   onCreateChat: (newChatName: string) => void;
+  onDeleteChat: (chat: Chat) => void;
   onCreateInvite: (chat: Chat, inviteEmail: string) => void;
   onRevokeInvite: (invite: Invite) => void;
   onSendMessage: (chat: Chat, newMessage: string) => void;
@@ -34,6 +35,7 @@ export const ChatContext = createContext({
   sidebar: {} as ChatSidebarState,
   onSelectChat: (_newChatSelection) => {},
   onCreateChat: (_newChatName) => {},
+  onDeleteChat: (_chat) => {},
   onCreateInvite: (_chat, _inviteEmail) => {},
   onRevokeInvite: (_invite) => {},
   onSendMessage: (_chat, _newMessage) => {},

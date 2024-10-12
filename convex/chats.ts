@@ -40,7 +40,7 @@ export const create = mutation({
   },
 });
 
-export const deleteChat = mutation({
+export const remove = mutation({
   args: {
     chatId: v.id("chats"),
   },
