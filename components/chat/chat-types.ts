@@ -15,6 +15,8 @@ export type Member = {
 export type Invite = {
   _id: Id<"invites">;
   email: string;
+  inviter: string;
+  role: string;
 };
 
 export type Message = {

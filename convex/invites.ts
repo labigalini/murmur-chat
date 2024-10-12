@@ -27,46 +27,48 @@ export const hasInvite = internalQuery({
 });
 
 export const list = query({
+  async handler(ctx) {
+    if (ctx.viewer === null) {
+      return [];
+    }
+
+    const email = ctx.viewerX().email;
+    if (email == null) {
+      return [];
+    }
+    return await ctx
+      .table("invites", "email", (q) => q.eq("email", email))
+      .map(async (invite) => ({
+        _id: invite._id,
+        email: invite.email,
+        inviter: getUsername(await invite.edge("user")),
+        chat: (await invite.edge("chat")).name,
+        role: (await invite.edge("role")).name,
+      }));
+  },
+});
+
+export const listByChat = query({
   args: {
-    chatId: v.optional(v.id("chats")),
+    chatId: v.id("chats"),
   },
   async handler(ctx, { chatId }) {
     if (ctx.viewer === null) {
       return [];
     }
-    if (chatId) {
-      const viewMembers = await viewerHasPermission(
-        ctx,
-        chatId,
-        "Read Members",
-      );
-      if (!viewMembers) {
-        return [];
-      }
-      return await ctx
-        .table("invites", "chatId", (q) => q.eq("chatId", chatId))
-        .map(async (invite) => ({
-          _id: invite._id,
-          email: invite.email,
-          inviter: (await invite.edge("user")).email,
-          chat: (await invite.edge("chat")).name,
-          role: (await invite.edge("role")).name,
-        }));
-    } else {
-      const email = ctx.viewerX().email;
-      if (email == null) {
-        return [];
-      }
-      return await ctx
-        .table("invites", "email", (q) => q.eq("email", email))
-        .map(async (invite) => ({
-          _id: invite._id,
-          email: invite.email,
-          inviter: (await invite.edge("user")).email,
-          chat: (await invite.edge("chat")).name,
-          role: (await invite.edge("role")).name,
-        }));
+    const viewMembers = await viewerHasPermission(ctx, chatId, "Read Members");
+    if (!viewMembers) {
+      return [];
     }
+    return await ctx
+      .table("invites", "chatId", (q) => q.eq("chatId", chatId))
+      .map(async (invite) => ({
+        _id: invite._id,
+        email: invite.email,
+        inviter: getUsername(await invite.edge("user")),
+        chat: (await invite.edge("chat")).name,
+        role: (await invite.edge("role")).name,
+      }));
   },
 });
 

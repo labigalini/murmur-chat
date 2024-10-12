@@ -36,7 +36,7 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
     skipIfUnset(selectedChat, (c) => ({ chatId: c._id })),
   );
   const selectedChatInvites = useQuery(
-    api.invites.list,
+    api.invites.listByChat,
     skipIfUnset(selectedChat, (c) => ({ chatId: c._id })),
   );
   const selectedChatMessages = useQuery(

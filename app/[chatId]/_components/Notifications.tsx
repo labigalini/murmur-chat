@@ -22,7 +22,7 @@ import { handleFailure } from "@/lib/handleFailure";
 import { useQuery } from "@/hooks";
 
 export function Notifications() {
-  const invites = useQuery(api.invites.list, {});
+  const invites = useQuery(api.invites.list);
   const acceptInvite = useMutation(api.invites.accept);
   return (
     <Suspense
