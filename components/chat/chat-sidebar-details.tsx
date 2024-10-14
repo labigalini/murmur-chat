@@ -4,12 +4,23 @@ import { isAnyLoading } from "@/lib/utils";
 
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
-import { ChatInviteDialog, ChatRevokeInviteDialog } from "./chat-invite-dialog";
+import { ChatInviteDialog } from "./chat-invite-dialog";
 import { ChatTitle } from "./chat-title";
 import { Invite } from "./chat-types";
 
 import { AlertIcon, TrashIcon, UserPlusIcon } from "../icons";
-import { Button } from "../ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
+import { Button, buttonVariants } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { Suspense } from "../ui/suspense";
 
@@ -59,7 +70,7 @@ const ChatSidebarMembers = () => {
 function ChatSidebarMembersSkeleton({
   ...props
 }: ComponentProps<typeof Skeleton>) {
-  return Array.from({ length: 6 }).map((_, index) => (
+  return Array.from({ length: 3 }).map((_, index) => (
     <div
       key={index}
       className="inline-flex w-full items-center justify-start gap-2"
@@ -73,21 +84,14 @@ function ChatSidebarMembersSkeleton({
 const ChatSidebarInvites = () => {
   const {
     state: { members, invites },
+    onRevokeInvite,
   } = useChatContext();
 
   const [isCreateInviteOpen, setIsCreateInviteOpen] = useState(false);
-  const [inviteRevokeDialog, setInviteRevokeDialog] = useState({
-    isOpen: false,
-    invite: null as Invite | null,
-    open: (invite: Invite) =>
-      setInviteRevokeDialog((prev) => ({ ...prev, isOpen: true, invite })),
-    close: () =>
-      setInviteRevokeDialog((prev) => ({
-        ...prev,
-        isOpen: false,
-        invite: null,
-      })),
-  });
+
+  const handleRevoke = (invite: Invite) => {
+    onRevokeInvite(invite);
+  };
 
   const isLoading = isAnyLoading(members, invites);
 
@@ -97,13 +101,6 @@ const ChatSidebarInvites = () => {
         open={isCreateInviteOpen}
         onClose={() => setIsCreateInviteOpen(false)}
       />
-      {inviteRevokeDialog.invite !== null && (
-        <ChatRevokeInviteDialog
-          open={inviteRevokeDialog.isOpen}
-          onClose={inviteRevokeDialog.close}
-          invite={inviteRevokeDialog.invite}
-        />
-      )}
       <ChatTitle
         title="Invites"
         count={invites === "loading" ? invites : invites.length}
@@ -111,7 +108,7 @@ const ChatSidebarInvites = () => {
       />
       <div className="flex flex-col gap-2">
         <Suspense
-          fallbackProps={{ size: 32 }}
+          fallback={ChatSidebarInvitesSkeleton}
           component={({ invites }) =>
             invites.map((invite) => (
               <div
@@ -122,13 +119,37 @@ const ChatSidebarInvites = () => {
                   <span>Email: {invite.email}</span>
                   <span>Inviter: {invite.inviter}</span>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => inviteRevokeDialog.open(invite)}
-                >
-                  <TrashIcon size="5" />
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <TrashIcon size="5" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        revoke this invite.
+                        <div className="m-4 flex flex-col">
+                          <span>Email: {invite.email}</span>
+                          <span>Inviter: {invite.inviter}</span>
+                        </div>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        className={buttonVariants({ variant: "destructive" })}
+                        onClick={() => handleRevoke(invite)}
+                      >
+                        Revoke Invite
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             ))
           }
@@ -151,6 +172,19 @@ const ChatSidebarInvites = () => {
   );
 };
 
+function ChatSidebarInvitesSkeleton({
+  ...props
+}: ComponentProps<typeof Skeleton>) {
+  return Array.from({ length: 3 }).map((_, index) => (
+    <div
+      key={index}
+      className="inline-flex w-full items-center justify-start gap-2"
+    >
+      <Skeleton className={"h-8 w-48 shrink"} {...props} />
+    </div>
+  ));
+}
+
 const ChatSidebarDangerZone = () => {
   const {
     state: { chat },
@@ -159,24 +193,50 @@ const ChatSidebarDangerZone = () => {
   } = useChatContext();
 
   const handleDeleteChat = useCallback(() => {
-    if (chat == null || chat === "loading") return;
+    if (chat === null || chat === "loading") return;
     onDeleteChat(chat);
     closeSidebar();
   }, [chat, closeSidebar, onDeleteChat]);
+
+  if (chat === null || chat === "loading") return;
 
   return (
     <>
       <ChatTitle title="Danger Zone" className="text-lg" />
       <div className="mt-2 w-10/12 self-center">
-        <Button
-          type="button"
-          variant="destructive"
-          className="flex w-full gap-4"
-          onClick={handleDeleteChat}
-        >
-          <AlertIcon size="5" />
-          Delete this chat
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              type="button"
+              variant="destructive"
+              className="flex w-full gap-4"
+            >
+              <AlertIcon size="5" />
+              Delete this chat
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the
+                chat and remove all associated data.
+                <div className="m-4 flex flex-col">
+                  <span>Chat: {chat.name}</span>
+                </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                className={buttonVariants({ variant: "destructive" })}
+                onClick={handleDeleteChat}
+              >
+                Delete Chat
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </>
   );

@@ -27,7 +27,6 @@ import { Input } from "@/components/ui/input";
 import { handleFailure } from "@/lib/handleFailure";
 
 import { useChatContext } from "./chat-context";
-import { Invite } from "./chat-types";
 
 const FormSchema = z.object({
   email: z.string().min(4, "Team name must be at least 4 characters long."),
@@ -99,47 +98,4 @@ const ChatInviteDialog = ({ open, onClose }: ChatInviteDialogProps) => {
   );
 };
 
-type ChatRevokeInviteDialogProps = Required<Pick<DialogProps, "open">> & {
-  onClose: () => void;
-  invite: Invite;
-};
-
-const ChatRevokeInviteDialog = ({
-  open,
-  onClose,
-  invite,
-}: ChatRevokeInviteDialogProps) => {
-  const { onRevokeInvite } = useChatContext();
-
-  const handleRevoke = () => {
-    onRevokeInvite(invite);
-    onClose();
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Revoke Invite</DialogTitle>
-          <DialogDescription>
-            <span>Are you sure you want to revoke this invite?</span>
-            <div className="m-4 flex flex-col">
-              <span>Email: {invite.email}</span>
-              <span>Inviter: {invite.inviter}</span>
-            </div>
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="ghost" onClick={() => onClose()}>
-            Cancel
-          </Button>
-          <Button variant="destructive" onClick={handleRevoke}>
-            Revoke Invite
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
-export { ChatInviteDialog, ChatRevokeInviteDialog };
+export { ChatInviteDialog };
