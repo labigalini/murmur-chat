@@ -13,6 +13,7 @@ import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
+  AlertDialogConfirmation,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -221,11 +222,9 @@ const ChatSidebarDangerZone = () => {
               <AlertDialogDescription>
                 This action cannot be undone. This will permanently delete the
                 chat and remove all associated data.
-                <div className="m-4 flex flex-col">
-                  <span>Chat: {chat.name}</span>
-                </div>
               </AlertDialogDescription>
             </AlertDialogHeader>
+            <AlertDialogConfirmation value={chat.name} />
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
