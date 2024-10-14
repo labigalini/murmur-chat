@@ -55,7 +55,8 @@ export const list = query({
         name: username,
         email: user.email,
         image: user.image,
-        roleId: member.roleId,
+        role: (await member.edge("role")).name,
+        // permissions: (await member.edge("role")).edge("permissions"), This seems to break convex...
         sessions,
       };
     });

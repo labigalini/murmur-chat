@@ -1,4 +1,5 @@
 import { Id } from "@/convex/_generated/dataModel";
+import { Role } from "@/convex/roles";
 
 export type Chat = {
   _id: Id<"chats">;
@@ -10,13 +11,15 @@ export type Member = {
   _id: Id<"members">;
   name: string;
   image?: string;
+  role: Role;
 };
 
 export type Invite = {
   _id: Id<"invites">;
   email: string;
   inviter: string;
-  role: string;
+  role: Role;
+  // permissions: Permission[];
 };
 
 export type Message = {

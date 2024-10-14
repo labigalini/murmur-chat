@@ -58,6 +58,7 @@ const ChatSidebarMembers = () => {
               >
                 <ChatAvatar name={member.name} avatar={member.image} size={6} />
                 <span>{member.name}</span>
+                {member.role === "Admin" && <span>({member.role})</span>}
               </div>
             ))
           }
