@@ -15,7 +15,7 @@ export function djb2(str: string) {
 }
 
 function first2(str: string) {
-  return (str[0] ?? "?") + (str[1] ?? "");
+  return ((str[0] ?? "?") + (str[1] ?? "")).toLowerCase();
 }
 
 const Avatar = React.forwardRef<
