@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 
 import "@/styles/globals.css";
 
+import { CommandMenu } from "@/components/ui/command-menu";
 import { Toaster } from "@/components/ui/toaster";
 
 import { ConvexClientProvider } from "./_context/ConvexClientProvider";
@@ -39,6 +40,7 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <ConvexClientProvider>
               <>{children}</>
+              <CommandMenu />
               <Toaster />
             </ConvexClientProvider>
           </ThemeProvider>

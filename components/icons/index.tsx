@@ -28,6 +28,7 @@ import { IconProps as RadixIconProps } from "@radix-ui/react-icons/dist/types";
 import {
   AlertTriangleIcon as AlertTriangleIconPrimitive,
   LucideProps as LucideIconProps,
+  SearchIcon as SearchIconPrimitive,
   Trash2Icon as TrashIconPrimitive,
   UserRoundPlusIcon as UserRoundPlusIconPrimitive,
 } from "lucide-react";
@@ -80,3 +81,4 @@ export const SunIcon = createIcon(SunIconPrimitive);
 export const UserPlusIcon = createIcon(UserRoundPlusIconPrimitive);
 export const TrashIcon = createIcon(TrashIconPrimitive);
 export const AlertIcon = createIcon(AlertTriangleIconPrimitive);
+export const SearchIcon = createIcon(SearchIconPrimitive);

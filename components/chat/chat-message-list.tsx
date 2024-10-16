@@ -109,8 +109,8 @@ function MotionDiv({
 function ChatBubbleSkeleton(props: ComponentProps<typeof Skeleton>) {
   return (
     ["sent", "received", "sent", "sent"] satisfies ("sent" | "received")[]
-  ).map((variant) => (
-    <MotionDiv key={variant} className="flex flex-col">
+  ).map((variant, index) => (
+    <MotionDiv key={variant + index} className="flex flex-col">
       <ChatBubble variant={variant}>
         <Skeleton size="9" layout="icon" {...props} />
         <Skeleton asChild {...props}>

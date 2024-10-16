@@ -12,6 +12,6 @@ export default function Page({
   const { chatId } = params;
   const invite = searchParams[INVITE_PARAM];
   console.log({ invite });
-  // TODO open dialog to accept 
+  // TODO open dialog to accept
   return <ChatBoard selectedChatId={chatId} />;
 }

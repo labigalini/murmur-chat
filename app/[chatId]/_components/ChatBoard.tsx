@@ -11,7 +11,10 @@ import { api } from "@/convex/_generated/api";
 
 import { skipIfUnset } from "@/lib/utils";
 
-import { useHistoryState } from "@/app/_context/HistoryStateProvider";
+import {
+  HistoryStateProvider,
+  useHistoryState,
+} from "@/app/_context/HistoryStateProvider";
 
 import { useEncryption, useQuery } from "@/hooks";
 
@@ -19,7 +22,15 @@ type ChatBoardProps = {
   selectedChatId?: string;
 };
 
-export default function ChatBoard({
+export default function ChatBoard(props: ChatBoardProps) {
+  return (
+    <HistoryStateProvider>
+      <ChatContainerWrapper {...props} />
+    </HistoryStateProvider>
+  );
+}
+
+function ChatContainerWrapper({
   selectedChatId: initialSelectedChatId,
 }: ChatBoardProps) {
   const encryption = useEncryption();
