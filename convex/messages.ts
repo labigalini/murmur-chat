@@ -47,6 +47,8 @@ export const list = query({
             image: user.image,
           },
           isViewer: user._id === viewer._id,
+          receivedTime: message.receivedTime,
+          readTime: message.readTime,
         };
       });
   },
@@ -77,6 +79,25 @@ export const create = mutation({
       MESSAGE_EXPIRATION_MILLISECONDS,
       internal.messages.destruct,
       { messageIds },
+    );
+  },
+});
+
+export const mark = mutation({
+  args: {
+    messageIds: v.array(v.id("messages")),
+    mark: v.union(v.literal("received"), v.literal("read")),
+  },
+  handler: async (ctx, { messageIds, mark }) => {
+    const patchFields =
+      mark === "received"
+        ? { receivedTime: Date.now() }
+        : { readTime: Date.now() };
+    await Promise.all(
+      messageIds.map(
+        async (messageId) =>
+          await ctx.table("messages").getX(messageId).patch(patchFields),
+      ),
     );
   },
 });

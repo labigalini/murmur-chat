@@ -41,6 +41,7 @@ function ChatContainerWrapper({
   const createInvite = useAction(api.invites.send);
   const revokeInvite = useMutation(api.invites.revoke);
   const sendMessage = useMutation(api.messages.create);
+  const markMessage = useMutation(api.messages.mark);
 
   const chats = useQuery(api.chats.list);
   const [selectedChat, setSelectedChat] = useState<"loading" | Chat | null>(
@@ -85,6 +86,12 @@ function ChatContainerWrapper({
       );
 
       setDecryptedMessages(decrypted);
+      markMessage({
+        messageIds: selectedChatMessages
+          .filter((m) => !m.receivedTime)
+          .map((m) => m._id),
+        mark: "received",
+      });
     };
 
     decryptMessages().catch(console.error);
