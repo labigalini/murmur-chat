@@ -6,6 +6,8 @@ import { type VariantProps, cva } from "class-variance-authority";
 
 import { Progress } from "@/components/ui/progress";
 
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+
 import { cn } from "@/lib/utils";
 
 import ChatMessageLoading from "./chat-message-loading";
@@ -35,8 +37,18 @@ interface ChatBubbleProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof chatBubbleVariant> {}
 
-const ChatBubble = React.forwardRef<HTMLDivElement, ChatBubbleProps>(
-  ({ className, variant, layout, children, ...props }, ref) => (
+const ChatBubble = React.forwardRef<
+  HTMLDivElement,
+  ChatBubbleProps & { onRead?: () => void }
+>(({ onRead, className, variant, layout, children, ...props }, initialRef) => {
+  const ref = useIntersectionObserver(
+    () => onRead?.(),
+    {
+      threshold: 0.5,
+    },
+    initialRef,
+  );
+  return (
     <div
       className={cn(chatBubbleVariant({ variant, layout, className }))}
       ref={ref}
@@ -44,8 +56,8 @@ const ChatBubble = React.forwardRef<HTMLDivElement, ChatBubbleProps>(
     >
       {children}
     </div>
-  ),
-);
+  );
+});
 ChatBubble.displayName = "ChatBubble";
 
 // ChatBubbleMessage

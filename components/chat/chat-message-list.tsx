@@ -1,4 +1,4 @@
-import { ComponentProps } from "react";
+import { ComponentProps, useCallback } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -12,6 +12,7 @@ import {
   ChatBubbleTimestamp,
 } from "./chat-bubble";
 import { useChatContext } from "./chat-context";
+import { Message } from "./chat-types";
 
 import { Skeleton } from "../ui/skeleton";
 import { Suspense } from "../ui/suspense";
@@ -19,7 +20,13 @@ import { Suspense } from "../ui/suspense";
 export function ChatMessageList() {
   const {
     state: { messages },
+    onMessageRead,
   } = useChatContext();
+
+  const handleMessageRead = useCallback(
+    (message: Message) => onMessageRead?.(message),
+    [onMessageRead],
+  );
 
   return (
     <div className="flex h-full w-full flex-col-reverse gap-4 overflow-y-auto overflow-x-hidden p-4">
@@ -37,7 +44,10 @@ export function ChatMessageList() {
                   index={index}
                   className="flex flex-col"
                 >
-                  <ChatBubble variant={variant}>
+                  <ChatBubble
+                    variant={variant}
+                    onRead={() => handleMessageRead(message)}
+                  >
                     <ChatAvatar
                       name={message.author.name}
                       avatar={message.author.image}

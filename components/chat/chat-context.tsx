@@ -26,6 +26,7 @@ export type ChatHandlers = {
   onCreateInvite: (chat: Chat, inviteEmail: string) => void;
   onRevokeInvite: (invite: Invite) => void;
   onSendMessage: (chat: Chat, newMessage: string) => void;
+  onMessageRead?: (messageId: Message) => void;
 };
 
 export type ChatContextType = { state: ChatState } & ChatHandlers;
@@ -85,4 +86,4 @@ export const ChatProvider = ({
   );
 };
 
-export const useChatContext = () => useContext(ChatContext);
+export const useChatContext = () => useContext(ChatContext) as ChatContextType;

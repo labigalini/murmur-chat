@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAction, useMutation } from "convex/react";
 
 import { ChatContainer } from "@/components/chat/chat-container";
-import { Chat, Invite } from "@/components/chat/chat-types";
+import { Chat, Invite, Message } from "@/components/chat/chat-types";
 
 import { api } from "@/convex/_generated/api";
 
@@ -162,6 +162,15 @@ function ChatContainerWrapper({
     [encryption, selectedChatMembers, sendMessage],
   );
 
+  const handleReadMessage = useCallback(
+    async (message: Message) => {
+      if (message.readTime == null) {
+        await markMessage({ messageIds: [message._id], mark: "read" });
+      }
+    },
+    [markMessage],
+  );
+
   // initialize active chat selection
   useEffect(() => {
     if (chats === "loading") return;
@@ -186,6 +195,7 @@ function ChatContainerWrapper({
         onCreateInvite: (chat, email) => void handleCreateInvite(chat, email),
         onRevokeInvite: (invite) => void handleRevokeInvite(invite),
         onSendMessage: (chat, message) => void handleSendMessage(chat, message),
+        onMessageRead: (message) => void handleReadMessage(message),
       }}
     />
   );
