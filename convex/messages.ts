@@ -69,6 +69,10 @@ export const create = mutation({
         recipientSessionId,
       })),
     );
+    await ctx
+      .table("chats")
+      .getX(chatId)
+      .patch({ lastActivityTime: Date.now() });
     await ctx.scheduler.runAfter(
       MESSAGE_EXPIRATION_MILLISECONDS,
       internal.messages.destruct,

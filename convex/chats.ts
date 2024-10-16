@@ -11,17 +11,17 @@ export const list = query({
     if (ctx.viewer === null) {
       return [];
     }
-    return await ctx.viewer
-      .edge("members")
-      .order("desc")
-      .map(async (member) => {
+    return (
+      await ctx.viewer.edge("members").map(async (member) => {
         const chat = await member.edge("chat");
         return {
           _id: chat._id,
           name: chat.name,
           image: chat.image,
+          lastActivity: chat.lastActivityTime ?? chat._creationTime,
         };
-      });
+      })
+    ).sort((c1, c2) => c2.lastActivity - c1.lastActivity);
   },
 });
 

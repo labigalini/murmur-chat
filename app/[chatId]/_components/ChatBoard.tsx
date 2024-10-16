@@ -19,7 +19,9 @@ type ChatBoardProps = {
   selectedChatId?: string;
 };
 
-export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
+export default function ChatBoard({
+  selectedChatId: initialSelectedChatId,
+}: ChatBoardProps) {
   const encryption = useEncryption();
   const { pushState } = useHistoryState();
 
@@ -145,10 +147,12 @@ export default function ChatBoard({ selectedChatId }: ChatBoardProps) {
   // initialize active chat selection
   useEffect(() => {
     if (chats === "loading") return;
-    handleSelectChat(
-      chats.find((c) => c._id === selectedChatId) ?? chats[0] ?? null,
-    );
-  }, [chats, handleSelectChat, selectedChatId]);
+    const chatId =
+      selectedChat && selectedChat !== "loading"
+        ? selectedChat?._id
+        : initialSelectedChatId;
+    handleSelectChat(chats.find((c) => c._id === chatId) ?? chats[0]);
+  }, [chats, selectedChat, initialSelectedChatId, handleSelectChat]);
 
   return (
     <ChatContainer
