@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useChatContext } from "./chat-context";
 import { ChatEmojiPicker } from "./chat-emoji-picker";
@@ -16,6 +16,19 @@ export default function ChatBottombar() {
 
   const [message, setMessage] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const handleWindowFocus = () => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    };
+    handleWindowFocus();
+    window.addEventListener("focus", handleWindowFocus);
+    return () => {
+      window.removeEventListener("focus", handleWindowFocus);
+    };
+  }, [chat]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(event.target.value);
