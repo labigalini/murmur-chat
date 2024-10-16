@@ -49,12 +49,12 @@ const ChatBubble = React.forwardRef<HTMLDivElement, ChatBubbleProps>(
 ChatBubble.displayName = "ChatBubble";
 
 // ChatBubbleMessage
-const chatBubbleMessageVariants = cva("p-4 relative overflow-hidden", {
+const chatBubbleMessageVariants = cva("px-4 py-2 relative overflow-hidden", {
   variants: {
     variant: {
       received:
-        "bg-secondary text-secondary-foreground rounded-r-lg rounded-tl-lg",
-      sent: "bg-primary text-primary-foreground rounded-l-lg rounded-tr-lg",
+        "bg-secondary text-secondary-foreground rounded-r-sm rounded-tl-sm",
+      sent: "bg-primary text-primary-foreground rounded-l-sm rounded-tr-sm",
     },
     layout: {
       default: "",
@@ -120,7 +120,13 @@ const ChatBubbleTimestamp: React.FC<ChatBubbleTimestampProps> = ({
   className,
   ...props
 }) => (
-  <div className={cn("mt-2 text-right text-xs", className)} {...props}>
+  <div
+    className={cn(
+      "ml-2 text-right text-xs leading-[inherit] text-gray-400",
+      className,
+    )}
+    {...props}
+  >
     {formatTime(timestamp)}
   </div>
 );
@@ -129,8 +135,8 @@ const ChatBubbleTimestamp: React.FC<ChatBubbleTimestampProps> = ({
 const chatBubbleCountdownVariant = cva("absolute bottom-0 left-0 w-full", {
   variants: {
     variant: {
-      received: "pr-[6px]",
-      sent: "pl-[6px]",
+      received: "pr-[4px]",
+      sent: "pl-[4px]",
     },
   },
   defaultVariants: {

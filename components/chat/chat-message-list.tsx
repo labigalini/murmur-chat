@@ -2,6 +2,8 @@ import { ComponentProps } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
 
+import { cn } from "@/lib/utils";
+
 import ChatAvatar from "./chat-avatar";
 import {
   ChatBubble,
@@ -20,18 +22,20 @@ export function ChatMessageList() {
   } = useChatContext();
 
   return (
-    <div className="flex h-full w-full flex-col-reverse gap-6 overflow-y-auto overflow-x-hidden p-4">
+    <div className="flex h-full w-full flex-col-reverse gap-4 overflow-y-auto overflow-x-hidden p-4">
       <AnimatePresence>
         <Suspense
           fallback={ChatBubbleSkeleton}
           component={({ messages }) =>
             messages.map((message, index) => {
               const variant = message.isViewer ? "sent" : "received";
+              const isShort =
+                message.text.length <= 15 && !message.text.includes("\n");
               return (
                 <MotionDiv
                   key={message._id}
                   index={index}
-                  className="flex flex-col gap-2 p-4"
+                  className="flex flex-col"
                 >
                   <ChatBubble variant={variant}>
                     <ChatAvatar
@@ -40,6 +44,7 @@ export function ChatMessageList() {
                     />
                     <ChatBubbleMessage
                       variant={variant}
+                      style={{ display: isShort ? "inline-flex" : "block" }}
                       // isLoading={message.isLoading} // TODO add support to typing...
                     >
                       {message.text}
@@ -102,19 +107,22 @@ function MotionDiv({
 }
 
 function ChatBubbleSkeleton(props: ComponentProps<typeof Skeleton>) {
-  return (["sent", "received"] satisfies ("sent" | "received")[]).map(
-    (variant) => (
-      <MotionDiv key={variant} className="flex flex-col gap-2 p-4">
-        <ChatBubble variant={variant}>
-          <Skeleton size="9" layout="icon" {...props} />
-          <Skeleton asChild {...props}>
-            <ChatBubbleMessage
-              variant={variant}
-              className="h-24 w-32 bg-primary/10"
-            />
-          </Skeleton>
-        </ChatBubble>
-      </MotionDiv>
-    ),
-  );
+  return (
+    ["sent", "received", "sent", "sent"] satisfies ("sent" | "received")[]
+  ).map((variant) => (
+    <MotionDiv key={variant} className="flex flex-col">
+      <ChatBubble variant={variant}>
+        <Skeleton size="9" layout="icon" {...props} />
+        <Skeleton asChild {...props}>
+          <ChatBubbleMessage
+            variant={variant}
+            className={cn(
+              `h-${variant === "sent" ? 12 : 24}`,
+              "w-32 bg-primary/10",
+            )}
+          />
+        </Skeleton>
+      </ChatBubble>
+    </MotionDiv>
+  ));
 }
