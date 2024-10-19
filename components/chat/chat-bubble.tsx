@@ -6,7 +6,7 @@ import { type VariantProps, cva } from "class-variance-authority";
 
 import { Progress } from "@/components/ui/progress";
 
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { useObserver } from "@/hooks/useObserver";
 
 import { cn } from "@/lib/utils";
 
@@ -41,17 +41,15 @@ const ChatBubble = React.forwardRef<
   HTMLDivElement,
   ChatBubbleProps & { onRead?: () => void }
 >(({ onRead, className, variant, layout, children, ...props }, initialRef) => {
-  const ref = useIntersectionObserver(
-    () => onRead?.(),
-    {
-      threshold: 0.5,
-    },
-    initialRef,
-  );
+  const observedRef = useObserver({
+    onVisible: () => onRead?.(),
+    options: { threshold: 0.5 },
+    ref: initialRef,
+  });
   return (
     <div
       className={cn(chatBubbleVariant({ variant, layout, className }))}
-      ref={ref}
+      ref={observedRef}
       {...props}
     >
       {children}
