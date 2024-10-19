@@ -186,7 +186,7 @@ function ChatListLink({
           >
             <ChatAvatar name={chat.name} avatar={chat.image} />
             <span className={isCollapsed ? "sr-only" : "min-w-0 truncate"}>
-              {chat.name}
+              ({chat.unreadCount}) {chat.name}
             </span>
           </Link>
         </TooltipTrigger>

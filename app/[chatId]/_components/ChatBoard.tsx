@@ -86,7 +86,7 @@ function ChatContainerWrapper({
       );
 
       setDecryptedMessages(decrypted);
-      markMessage({
+      await markMessage({
         messageIds: selectedChatMessages
           .filter((m) => !m.receivedTime)
           .map((m) => m._id),
@@ -95,7 +95,7 @@ function ChatContainerWrapper({
     };
 
     decryptMessages().catch(console.error);
-  }, [encryption, selectedChatMessages]);
+  }, [encryption, markMessage, selectedChatMessages]);
 
   const handleSelectChat = useCallback(
     (newSelection: Chat) => {

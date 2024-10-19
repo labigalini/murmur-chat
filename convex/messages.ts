@@ -13,6 +13,30 @@ export const MESSAGE_EXPIRATION_MINUTES = parseFloat(
 export const MESSAGE_EXPIRATION_MILLISECONDS =
   MESSAGE_EXPIRATION_MINUTES * 60 * 1000;
 
+export const unreadCount = query({
+  args: {
+    chatId: v.id("chats"),
+  },
+  handler: async (ctx, { chatId }) => {
+    const viewer = ctx.viewer;
+    const sessionId = await getAuthSessionId(ctx);
+    if (
+      viewer === null ||
+      sessionId === null ||
+      !(await viewerHasPermission(ctx, chatId, "Contribute"))
+    ) {
+      return 0;
+    }
+    return (
+      await ctx
+        .table("messages", "recipient", (q) =>
+          q.eq("chatId", chatId).eq("recipientSessionId", sessionId),
+        )
+        .filter((q) => q.eq(q.field("readTime"), undefined))
+    ).length;
+  },
+});
+
 export const list = query({
   args: {
     chatId: v.id("chats"),

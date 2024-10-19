@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 
+import { api } from "./_generated/api";
 import { mutation, query } from "./functions";
 import { createMember } from "./members";
 import { viewerHasPermissionX } from "./permissions";
@@ -14,10 +15,15 @@ export const list = query({
     return (
       await ctx.viewer.edge("members").map(async (member) => {
         const chat = await member.edge("chat");
+        const unreadCount: number = await ctx.runQuery(
+          api.messages.unreadCount,
+          { chatId: chat._id },
+        );
         return {
           _id: chat._id,
           name: chat.name,
           image: chat.image,
+          unreadCount,
           lastActivity: chat.lastActivityTime ?? chat._creationTime,
         };
       })

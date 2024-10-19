@@ -5,6 +5,7 @@ export type Chat = {
   _id: Id<"chats">;
   name: string;
   image?: string;
+  unreadCount: number;
 };
 
 export type Member = {
