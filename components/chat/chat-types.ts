@@ -34,6 +34,5 @@ export type Message = {
     image?: string;
   };
   isViewer: boolean;
-  receivedTime?: number;
   readTime?: number;
 };

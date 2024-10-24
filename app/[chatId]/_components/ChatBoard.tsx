@@ -41,7 +41,7 @@ function ChatContainerWrapper({
   const createInvite = useAction(api.invites.send);
   const revokeInvite = useMutation(api.invites.revoke);
   const sendMessage = useMutation(api.messages.create);
-  const markMessage = useMutation(api.messages.mark);
+  const markRead = useMutation(api.messages.markRead);
 
   const chats = useQuery(api.chats.list);
   const [selectedChat, setSelectedChat] = useState<"loading" | Chat | null>(
@@ -86,16 +86,10 @@ function ChatContainerWrapper({
       );
 
       setDecryptedMessages(decrypted);
-      await markMessage({
-        messageIds: selectedChatMessages
-          .filter((m) => !m.receivedTime)
-          .map((m) => m._id),
-        mark: "received",
-      });
     };
 
     decryptMessages().catch(console.error);
-  }, [encryption, markMessage, selectedChatMessages]);
+  }, [encryption, selectedChatMessages]);
 
   const handleSelectChat = useCallback(
     (newSelection: Chat) => {
@@ -165,10 +159,10 @@ function ChatContainerWrapper({
   const handleReadMessage = useCallback(
     async (message: Message) => {
       if (message.readTime == null) {
-        await markMessage({ messageIds: [message._id], mark: "read" });
+        await markRead({ messageIds: [message._id] });
       }
     },
-    [markMessage],
+    [markRead],
   );
 
   // initialize active chat selection

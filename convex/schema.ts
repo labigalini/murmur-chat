@@ -66,7 +66,6 @@ const schema = defineEntSchema(
 
     messages: defineEnt({
       text: v.string(),
-      receivedTime: v.optional(v.number()),
       readTime: v.optional(v.number()),
       recipientSessionId: v.id("authSessions"),
     })

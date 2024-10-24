@@ -71,7 +71,6 @@ export const list = query({
             image: user.image,
           },
           isViewer: user._id === viewer._id,
-          receivedTime: message.receivedTime,
           readTime: message.readTime,
         };
       });
@@ -107,23 +106,20 @@ export const create = mutation({
   },
 });
 
-export const mark = mutation({
+export const markRead = mutation({
   args: {
     messageIds: v.array(v.id("messages")),
-    mark: v.union(v.literal("received"), v.literal("read")),
   },
-  handler: async (ctx, { messageIds, mark }) => {
-    const patchFields =
-      mark === "received"
-        ? { receivedTime: Date.now() }
-        : { readTime: Date.now() };
-    await Promise.all(
+  handler: async (ctx, { messageIds }) =>
+    Promise.all(
       messageIds.map(
         async (messageId) =>
-          await ctx.table("messages").getX(messageId).patch(patchFields),
+          await ctx
+            .table("messages")
+            .getX(messageId)
+            .patch({ readTime: Date.now() }),
       ),
-    );
-  },
+    ),
 });
 
 export const destruct = internalMutation({
