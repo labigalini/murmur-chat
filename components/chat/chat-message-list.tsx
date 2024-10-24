@@ -4,12 +4,12 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 
-import ChatAvatar from "./chat-avatar";
 import {
   ChatBubble,
   ChatBubbleCountdown,
   ChatBubbleMessage,
   ChatBubbleTimestamp,
+  ChatBubbleTitle,
 } from "./chat-bubble";
 import { useChatContext } from "./chat-context";
 import { Message } from "./chat-types";
@@ -19,7 +19,7 @@ import { Suspense } from "../ui/suspense";
 
 export function ChatMessageList() {
   const {
-    state: { messages },
+    state: { members, messages },
     onMessageRead,
   } = useChatContext();
 
@@ -29,12 +29,17 @@ export function ChatMessageList() {
   );
 
   return (
-    <div className="flex h-full w-full flex-col-reverse gap-4 overflow-y-auto overflow-x-hidden p-4">
+    <div className="flex h-full w-full flex-col-reverse gap-1 overflow-y-auto overflow-x-hidden p-4">
       <AnimatePresence>
         <Suspense
           fallback={ChatBubbleSkeleton}
-          component={({ messages }) =>
+          component={({ messages, members }) =>
             messages.map((message, index) => {
+              const nextMessageAuthor = messages[index + 1]?.author._id;
+              const isSameAuthor = nextMessageAuthor === message.author._id;
+              const showTitle =
+                !message.isViewer && members.length > 2 && !isSameAuthor;
+
               const variant = message.isViewer ? "sent" : "received";
               const isShort =
                 message.text.length <= 15 && !message.text.includes("\n");
@@ -48,10 +53,9 @@ export function ChatMessageList() {
                     variant={variant}
                     onRead={() => handleMessageRead(message)}
                   >
-                    <ChatAvatar
-                      name={message.author.name}
-                      avatar={message.author.image}
-                    />
+                    {showTitle && (
+                      <ChatBubbleTitle>{message.author.name}</ChatBubbleTitle>
+                    )}
                     <ChatBubbleMessage
                       variant={variant}
                       style={{ display: isShort ? "inline-flex" : "block" }}
@@ -72,7 +76,7 @@ export function ChatMessageList() {
               );
             })
           }
-          componentProps={{ messages }}
+          componentProps={{ messages, members }}
         />
       </AnimatePresence>
     </div>

@@ -14,12 +14,12 @@ import ChatMessageLoading from "./chat-message-loading";
 
 // ChatBubble
 const chatBubbleVariant = cva(
-  "flex gap-2 items-end relative md:max-w-[80%] lg:max-w-[70%]",
+  "flex flex-col relative md:max-w-[80%] lg:max-w-[70%]",
   {
     variants: {
       variant: {
-        received: "self-start",
-        sent: "self-end flex-row-reverse",
+        received: "self-start items-start",
+        sent: "self-end items-end",
       },
       layout: {
         default: "",
@@ -57,6 +57,18 @@ const ChatBubble = React.forwardRef<
   );
 });
 ChatBubble.displayName = "ChatBubble";
+
+// ChatBubbleTitle
+type ChatBubbleTitleProps = React.HTMLAttributes<HTMLDivElement>;
+
+const ChatBubbleTitle = React.forwardRef<HTMLDivElement, ChatBubbleTitleProps>(
+  ({ children, className, ...props }, ref) => (
+    <div className={cn("mx-2 mb-1", className)} ref={ref} {...props}>
+      {children}
+    </div>
+  ),
+);
+ChatBubbleTitle.displayName = "ChatBubbleTitle";
 
 // ChatBubbleMessage
 const chatBubbleMessageVariants = cva("px-4 py-2 relative overflow-hidden", {
@@ -205,6 +217,7 @@ export {
   ChatBubbleCountdown,
   ChatBubbleMessage,
   ChatBubbleTimestamp,
+  ChatBubbleTitle,
   chatBubbleMessageVariants,
   chatBubbleVariant,
 };
