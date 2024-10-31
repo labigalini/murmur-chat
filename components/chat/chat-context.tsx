@@ -29,7 +29,9 @@ export type ChatHandlers = {
   onMessageRead?: (messageId: Message) => void;
 };
 
-export type ChatContextType = { state: ChatState } & ChatHandlers;
+export type ChatContextType = {
+  state: ChatState;
+} & ChatHandlers;
 
 export const ChatContext = createContext({
   state: {} as ChatState,
@@ -86,4 +88,5 @@ export const ChatProvider = ({
   );
 };
 
-export const useChatContext = () => useContext(ChatContext) as ChatContextType;
+export const useChatContext = () =>
+  useContext(ChatContext) as ChatContextType & { sidebar: ChatSidebarState };

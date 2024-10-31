@@ -13,6 +13,8 @@ export type Member = {
   name: string;
   image?: string;
   role: Role;
+  isViewer: boolean;
+  sessions: Session[];
 };
 
 export type Invite = {
@@ -35,4 +37,9 @@ export type Message = {
   };
   isViewer: boolean;
   readTime?: number;
+};
+
+export type Session = {
+  _id: Id<"authSessions">;
+  lastReadTime?: number;
 };

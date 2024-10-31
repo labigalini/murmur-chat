@@ -84,3 +84,35 @@ export function isAnyLoading(...params: unknown[]): boolean {
 export function isAnyEmpty(...params: unknown[]): boolean {
   return params.some((p) => p === null);
 }
+
+/**
+ * Splits an array into two arrays based on a filter function, with optional sorting.
+ *
+ * @template T - The type of elements in the array
+ * @param {T[]} array - The input array to split
+ * @param {(item: T) => boolean} filter - The filter function to determine which array each element goes into
+ * @returns {[T[], T[]]} - A tuple containing [filtered items, remaining items]
+ *
+ * @example
+ * const numbers = [1, 2, 3, 4, 5];
+ * const [evens, odds] = splitArray(
+ *   numbers,
+ *   (n) => n % 2 === 0,
+ * );
+ */
+export function splitArray<T>(
+  array: T[],
+  filter: (item: T) => boolean,
+): [T[], T[]] {
+  const filtered: T[] = [];
+  const remaining = [...array];
+
+  // Remove matching items from end to start to avoid index shifting
+  for (let i = remaining.length - 1; i >= 0; i--) {
+    if (filter(remaining[i])) {
+      filtered.unshift(...remaining.splice(i, 1));
+    }
+  }
+
+  return [filtered, remaining];
+}

@@ -2,7 +2,7 @@ import { ComponentProps, useCallback } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
 
-import { cn } from "@/lib/utils";
+import { cn, splitArray } from "@/lib/utils";
 
 import {
   ChatBubble,
@@ -12,7 +12,8 @@ import {
   ChatBubbleTitle,
 } from "./chat-bubble";
 import { useChatContext } from "./chat-context";
-import { Message } from "./chat-types";
+import { ChatReadStatus } from "./chat-read-status";
+import { Member, Message } from "./chat-types";
 
 import { Skeleton } from "../ui/skeleton";
 import { Suspense } from "../ui/suspense";
@@ -33,8 +34,24 @@ export function ChatMessageList() {
       <AnimatePresence>
         <Suspense
           fallback={ChatBubbleSkeleton}
-          component={({ messages, members }) =>
-            messages.map((message, index) => {
+          component={({ messages, members }) => {
+            let memberReadTimes = members
+              .filter((m) => !m.isViewer)
+              .reduce<(Member & { lastReadTime: number })[]>(
+                (times, member) => {
+                  // filter based on isViewer prop
+                  const lastReadTime = Math.max(
+                    ...member.sessions.map(
+                      (session) => session.lastReadTime ?? 0,
+                    ),
+                  );
+                  times.push({ ...member, lastReadTime });
+                  return times;
+                },
+                [],
+              );
+
+            return messages.map((message, index) => {
               const nextMessageAuthor = messages[index + 1]?.author._id;
               const isSameAuthor = nextMessageAuthor === message.author._id;
               const showTitle =
@@ -43,11 +60,18 @@ export function ChatMessageList() {
               const variant = message.isViewer ? "sent" : "received";
               const isShort =
                 message.text.length <= 15 && !message.text.includes("\n");
+
+              const [messageReadTimes, memberReadTimesRemaining] = splitArray(
+                memberReadTimes,
+                ({ lastReadTime }) => lastReadTime >= message._creationTime,
+              );
+              memberReadTimes = memberReadTimesRemaining;
+
               return (
                 <MotionDiv
                   key={message._id}
                   index={index}
-                  className="flex flex-col"
+                  className="flex flex-col gap-2"
                 >
                   <ChatBubble
                     variant={variant}
@@ -72,10 +96,13 @@ export function ChatMessageList() {
                       />
                     </ChatBubbleMessage>
                   </ChatBubble>
+                  {messageReadTimes.length > 0 && (
+                    <ChatReadStatus value={messageReadTimes} />
+                  )}
                 </MotionDiv>
               );
-            })
-          }
+            });
+          }}
           componentProps={{ messages, members }}
         />
       </AnimatePresence>

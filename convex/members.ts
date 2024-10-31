@@ -33,8 +33,9 @@ export const list = query({
     search: v.optional(v.string()),
   },
   async handler(ctx, { chatId, search }) {
+    const viewer = ctx.viewer;
     const viewMembers = await viewerHasPermission(ctx, chatId, "Read Members");
-    if (ctx.viewer === null || !viewMembers) {
+    if (viewer === null || !viewMembers) {
       return [];
     }
     const query = search
@@ -48,16 +49,31 @@ export const list = query({
       : ctx.table("chats").getX(chatId).edge("members");
     return await query.map(async (member) => {
       const user = await member.edge("user");
-      const sessions = await getUserSessions(ctx, user);
       const username = getUsername(user);
+      const role = await member.edge("role");
+      const sessions = await Promise.all(
+        (await getUserSessions(ctx, user)).map(async (session) => ({
+          ...session,
+          lastReadTime: (
+            await ctx
+              .table("messages", "recipient", (q) =>
+                q.eq("chatId", chatId).eq("recipientSessionId", session._id),
+              )
+              .filter((q) => q.neq(q.field("readTime"), undefined))
+              .order("desc")
+              .first()
+          )?.readTime,
+        })),
+      );
       return {
         _id: member._id,
         name: username,
         email: user.email,
         image: user.image,
-        role: (await member.edge("role")).name,
+        role: role.name,
         // permissions: (await member.edge("role")).edge("permissions"), This seems to break convex...
         sessions,
+        isViewer: user._id === viewer._id,
       };
     });
   },
