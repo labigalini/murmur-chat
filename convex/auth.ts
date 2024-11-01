@@ -2,7 +2,7 @@ import { convexAuth, getAuthSessionId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
 
 import { ResendOTP } from "./auth/ResendOTP";
-import { mutation, query } from "./functions";
+import { internalMutation, mutation, query } from "./functions";
 import { hasInvite } from "./invites";
 
 export const { auth, signIn, signOut, store } = convexAuth({
@@ -58,5 +58,28 @@ export const patchSession = mutation({
       return;
     }
     await ctx.table("authSessions").getX(sessionId).patch({ publicKey });
+  },
+});
+
+export const removeExpired = internalMutation({
+  handler: async (ctx) => {
+    const now = Date.now();
+
+    // remove expired refresh tokens
+    const expiredTokens = await ctx
+      .table("authRefreshTokens")
+      .filter((q) => q.lt(q.field("expirationTime"), now));
+    console.log({ now });
+    await Promise.all(
+      expiredTokens.map(async (expiredToken) => expiredToken.delete()),
+    );
+
+    // remove expired sessions
+    const expiredSessions = await ctx
+      .table("authSessions")
+      .filter((q) => q.lt(q.field("expirationTime"), now));
+    await Promise.all(
+      expiredSessions.map(async (expiredSession) => expiredSession.delete()),
+    );
   },
 });

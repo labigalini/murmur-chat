@@ -11,4 +11,11 @@ crons.cron(
   {},
 );
 
+// crons.cron(
+//   "remove expired sessions",
+//   "0 * * * *",
+//   internal.auth.removeExpired,
+//   {},
+// );
+
 export default crons;

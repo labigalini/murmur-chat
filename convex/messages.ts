@@ -135,6 +135,7 @@ export const remove = internalMutation({
   handler: async (ctx, { messageIds }) => {
     await Promise.all(
       messageIds.map(async (messageId) => {
+        // TODO make sure messages only get deleted if they actually expired, the threshold might change
         const message = await ctx.table("messages").get(messageId);
         if (message) await message.delete();
       }),
@@ -163,7 +164,6 @@ export const scheduleRemoval = internalMutation({
               q.lt(q.field("_creationTime"), chat.threshold),
             ),
           );
-        if (messages.length) console.log({ messages });
 
         // Group messages by seconds until expiration
         messages.forEach((message) => {
@@ -182,8 +182,6 @@ export const scheduleRemoval = internalMutation({
         });
       }),
     );
-
-    console.log({ messageDelayGroups });
 
     // Schedule deletion for each group of messages
     await Promise.all(
