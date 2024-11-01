@@ -30,7 +30,7 @@ export function ChatMessageList() {
   );
 
   return (
-    <div className="flex h-full w-full flex-col-reverse gap-1 overflow-y-auto overflow-x-hidden p-4">
+    <div className="flex h-full w-full flex-col-reverse gap-1 overflow-y-auto overflow-x-hidden px-4 py-0">
       <AnimatePresence>
         <Suspense
           fallback={ChatBubbleSkeleton}
@@ -39,7 +39,6 @@ export function ChatMessageList() {
               .filter((m) => !m.isViewer)
               .reduce<(Member & { lastReadTime: number })[]>(
                 (times, member) => {
-                  // filter based on isViewer prop
                   const lastReadTime = Math.max(
                     ...member.sessions.map(
                       (session) => session.lastReadTime ?? 0,

@@ -21,47 +21,42 @@ interface ChatReadStatusProps {
 
 const ChatReadStatus = React.forwardRef<HTMLDivElement, ChatReadStatusProps>(
   ({ className, value: initialValue, ...props }, ref) => {
-    const [mouseX, setMouseX] = React.useState(0);
-    const value = Array(100).fill(initialValue).flat() as (Member & {
-      lastReadTime: number;
-    })[];
+    const [mouseX, setMouseX] = React.useState(300);
+    const value = React.useMemo(
+      () =>
+        initialValue.map((member, index) => ({
+          ...member,
+          position: calculatePosition(index, initialValue.length, mouseX),
+        })),
+      [initialValue, mouseX],
+    );
 
     return (
-      <div className={cn("flex h-6", className)} {...props} ref={ref}>
-        <div className="flex-1">mouse: {mouseX}</div>
-        {/* add line to mark the separation and align items horizontally */}
-        <div
-          className="relative flex w-[300px]"
-          onMouseLeave={() => setMouseX(0)}
-          onMouseMove={(e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            setMouseX(e.clientX - rect.left);
-          }}
-        >
-          {value.map((member, index) => (
-            <TooltipProvider key={member._id}>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger
-                  className={cn(
-                    "absolute transition-all duration-300 ease-in-out",
-                  )}
-                  style={{
-                    left: calculatePosition(index, value.length, mouseX),
-                  }}
-                >
-                  <ChatAvatar
-                    name={index + member.name}
-                    avatar={member.image}
-                    size={6}
-                  />
-                </TooltipTrigger>
-                <TooltipContent side="top" align="end">
-                  {member.name}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ))}
-        </div>
+      <div
+        className={cn("relative h-6 w-[300px] self-end", className)}
+        onMouseLeave={() => setMouseX(300)}
+        onMouseMove={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          setMouseX(Math.ceil(e.clientX - rect.left));
+        }}
+        {...props}
+        ref={ref}
+      >
+        {value.map((member) => (
+          <TooltipProvider key={member._id}>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger
+                className="absolute cursor-default transition-all duration-300 ease-in-out"
+                style={{ left: member.position }}
+              >
+                <ChatAvatar name={member.name} avatar={member.image} size={6} />
+              </TooltipTrigger>
+              <TooltipContent side="top" align="end">
+                {member.name}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ))}
       </div>
     );
   },
@@ -69,15 +64,33 @@ const ChatReadStatus = React.forwardRef<HTMLDivElement, ChatReadStatusProps>(
 
 const calculatePosition = (index: number, length: number, mouseX: number) => {
   const TOTAL_WIDTH = 300;
-  const AVATAR_WIDTH = 24;
-  const VIZ_GAP = 4;
-  const VIZ_COUNT = 10;
-  const VIZ_WIDTH = VIZ_COUNT * (VIZ_GAP + AVATAR_WIDTH);
-  const STACK_END = TOTAL_WIDTH - VIZ_WIDTH;
+  const AVATAR_GAP = 1;
+  const AVATAR_WIDTH = 24 + AVATAR_GAP;
+  const WINDOW_COUNT = 10;
+  const WINDOW_WIDTH = WINDOW_COUNT * AVATAR_WIDTH;
+  const WINDOW_START = (TOTAL_WIDTH - WINDOW_WIDTH) / 2;
+  const WINDOW_END = WINDOW_START + WINDOW_WIDTH;
 
-  if (index >= length - VIZ_COUNT)
-    return `${TOTAL_WIDTH - (length - index) * (VIZ_WIDTH / VIZ_COUNT)}px`;
-  return `${index * (STACK_END / length)}px`;
+  if (length < 12) return `${TOTAL_WIDTH - (length - index) * AVATAR_WIDTH}px`;
+
+  // Calculate the center index based on mouseX
+  const mousePosition = Math.min(WINDOW_END, mouseX);
+  const centerIndex =
+    Math.ceil((mousePosition / WINDOW_END) * length) - WINDOW_COUNT / 2 - 1;
+  // Calculate start and end indices for the visible window
+  const indexStart = Math.max(1, centerIndex - WINDOW_COUNT / 2);
+  const indexEnd = Math.min(length - 2, indexStart + WINDOW_COUNT);
+
+  if (index < indexStart) {
+    return `${index * (WINDOW_START / length)}px`;
+  }
+
+  if (index > indexEnd) {
+    return `${WINDOW_END + (index - indexEnd) * ((TOTAL_WIDTH - WINDOW_END) / length)}px`;
+  }
+
+  // If index is within the visible window
+  return `${WINDOW_END - AVATAR_WIDTH - (indexEnd - index) * AVATAR_WIDTH}px`;
 };
 
 ChatReadStatus.displayName = "ChatReadStatus";
