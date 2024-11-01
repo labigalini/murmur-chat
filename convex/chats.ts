@@ -1,5 +1,7 @@
 import { v } from "convex/values";
 
+import { DEFAULT_MESSAGE_LIFESPAN } from "@/lib/constants";
+
 import { api } from "./_generated/api";
 import { mutation, query } from "./functions";
 import { createMember } from "./members";
@@ -23,6 +25,7 @@ export const list = query({
           _id: chat._id,
           name: chat.name,
           image: chat.image,
+          messageLifespan: chat.messageLifespan,
           unreadCount,
           lastActivity: chat.lastActivityTime ?? chat._creationTime,
         };
@@ -36,13 +39,25 @@ export const create = mutation({
     name: v.string(),
   },
   async handler(ctx, { name }) {
-    const chatId = await ctx.table("chats").insert({ name });
+    const chatId = await ctx
+      .table("chats")
+      .insert({ name, messageLifespan: DEFAULT_MESSAGE_LIFESPAN });
     await createMember(ctx, {
       chatId,
       user: ctx.viewerX(),
       roleId: (await getRole(ctx, "Admin"))._id,
     });
     return chatId;
+  },
+});
+
+export const patch = mutation({
+  args: {
+    chatId: v.id("chats"),
+    messageLifespan: v.number(),
+  },
+  async handler(ctx, { chatId, messageLifespan }) {
+    return await ctx.table("chats").getX(chatId).patch({ messageLifespan });
   },
 });
 

@@ -38,6 +38,7 @@ function ChatContainerWrapper({
 
   const createChat = useMutation(api.chats.create);
   const deleteChat = useMutation(api.chats.remove);
+  const patchChat = useMutation(api.chats.patch);
   const createInvite = useAction(api.invites.send);
   const revokeInvite = useMutation(api.invites.revoke);
   const sendMessage = useMutation(api.messages.create);
@@ -114,6 +115,16 @@ function ChatContainerWrapper({
     [deleteChat],
   );
 
+  const handleLifespanChange = useCallback(
+    async (chat: Chat, newLifespan: number) => {
+      await patchChat({
+        chatId: chat._id,
+        messageLifespan: newLifespan,
+      });
+    },
+    [patchChat],
+  );
+
   const handleCreateInvite = useCallback(
     async (chat: Chat, inviteEmail: string) => {
       await createInvite({
@@ -186,6 +197,7 @@ function ChatContainerWrapper({
         onSelectChat: handleSelectChat,
         onCreateChat: (newChatName) => void handleCreateChat(newChatName),
         onDeleteChat: (chat) => void handleDeleteChat(chat),
+        onLifespanChange: (chat, ls) => void handleLifespanChange(chat, ls),
         onCreateInvite: (chat, email) => void handleCreateInvite(chat, email),
         onRevokeInvite: (invite) => void handleRevokeInvite(invite),
         onSendMessage: (chat, message) => void handleSendMessage(chat, message),

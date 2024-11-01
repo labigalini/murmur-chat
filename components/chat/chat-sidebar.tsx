@@ -17,10 +17,10 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ className, ...props }) => {
 
   return (
     <div
-      className={cn("h-full w-full border-l bg-background p-4", className)}
+      className={cn("h-full w-full border-l bg-background", className)}
       {...props}
     >
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between p-4">
         {typeof title === "string" ? (
           <ChatTitle title={title} className="text-xl" />
         ) : (
@@ -30,7 +30,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ className, ...props }) => {
           <Cross2Icon size="5" />
         </Button>
       </div>
-      <div className="overflow-auto">
+      <div className="overflow-auto p-4">
         <>{content}</>
       </div>
     </div>

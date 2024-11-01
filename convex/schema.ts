@@ -26,6 +26,7 @@ const schema = defineEntSchema(
       name: v.string(),
       image: v.optional(v.string()),
       lastActivityTime: v.optional(v.number()),
+      messageLifespan: v.number(),
     })
       .edges("messages", { ref: true })
       .edges("members", { ref: true })

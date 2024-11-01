@@ -7,12 +7,6 @@ import { internal } from "./_generated/api";
 import { internalMutation, mutation, query } from "./functions";
 import { viewerHasPermission, viewerWithPermissionX } from "./permissions";
 
-export const MESSAGE_EXPIRATION_MINUTES = parseFloat(
-  process.env.MESSAGE_EXPIRATION_MINUTES ?? "5",
-);
-export const MESSAGE_EXPIRATION_MILLISECONDS =
-  MESSAGE_EXPIRATION_MINUTES * 60 * 1000;
-
 export const unreadCount = query({
   args: {
     chatId: v.id("chats"),
@@ -51,6 +45,7 @@ export const list = query({
     ) {
       return [];
     }
+    const chat = await ctx.table("chats").getX(chatId);
     return await ctx
       .table("messages", "recipient", (q) =>
         q.eq("chatId", chatId).eq("recipientSessionId", sessionId),
@@ -62,8 +57,7 @@ export const list = query({
         return {
           _id: message._id,
           _creationTime: message._creationTime,
-          _expirationTime:
-            message._creationTime + MESSAGE_EXPIRATION_MILLISECONDS,
+          _expirationTime: message._creationTime + chat.messageLifespan,
           text: message.text,
           author: {
             _id: user._id,
@@ -94,12 +88,13 @@ export const create = mutation({
         recipientSessionId,
       })),
     );
+    const chat = await ctx.table("chats").getX(chatId);
     await ctx
       .table("chats")
       .getX(chatId)
       .patch({ lastActivityTime: Date.now() });
     await ctx.scheduler.runAfter(
-      MESSAGE_EXPIRATION_MILLISECONDS,
+      chat.messageLifespan,
       internal.messages.destruct,
       { messageIds },
     );
@@ -138,7 +133,7 @@ export const destruct = internalMutation({
 
 export const destructAllExpired = internalMutation({
   handler: async (ctx) => {
-    const fiveMinutesAgo = subMinutes(new Date(), MESSAGE_EXPIRATION_MINUTES);
+    const fiveMinutesAgo = subMinutes(new Date(), 5); // TODO need to get the chat config
     const messages = await ctx
       .table("messages")
       .filter((q) => q.lt(q.field("_creationTime"), fiveMinutesAgo.getTime()));

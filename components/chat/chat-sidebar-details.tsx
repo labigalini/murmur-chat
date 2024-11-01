@@ -22,6 +22,13 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import { Button, buttonVariants } from "../ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { Skeleton } from "../ui/skeleton";
 import { Suspense } from "../ui/suspense";
 
@@ -30,6 +37,7 @@ const ChatSidebarDetails = () => {
     <div className="flex flex-col gap-4">
       <ChatSidebarMembers />
       <ChatSidebarInvites />
+      <ChatSidebarConfiguration />
       <ChatSidebarDangerZone />
     </div>
   );
@@ -186,6 +194,53 @@ function ChatSidebarInvitesSkeleton({
     </div>
   ));
 }
+
+const ChatSidebarConfiguration = () => {
+  const {
+    state: { chat },
+    onLifespanChange,
+  } = useChatContext();
+
+  const handleLifespanChange = useCallback(
+    (newLifespan: string) => {
+      if (chat === null || chat === "loading") return;
+      const newLifespanMillis = parseFloat(newLifespan) * 60 * 1000;
+      onLifespanChange(chat, newLifespanMillis);
+    },
+    [chat, onLifespanChange],
+  );
+
+  if (chat === null || chat === "loading") return;
+
+  return (
+    <>
+      <ChatTitle title="Configuration" className="text-lg" />
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-medium">Message Expiration Time</span>
+        <Select
+          value={`${chat.messageLifespan / 60 / 1000}`}
+          onValueChange={handleLifespanChange}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select an expiration time" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="1">1 minute</SelectItem>
+            <SelectItem value="5">5 minutes</SelectItem>
+            <SelectItem value="10">10 minutes</SelectItem>
+            <SelectItem value="30">30 minutes</SelectItem>
+            <SelectItem value="60">1 hour</SelectItem>
+            <SelectItem value="720">12 hours</SelectItem>
+            <SelectItem value="1440">24 hours</SelectItem>
+          </SelectContent>
+        </Select>
+        <span className="text-xs text-muted-foreground">
+          Messages will be automatically deleted after this time period.
+        </span>
+      </div>
+    </>
+  );
+};
 
 const ChatSidebarDangerZone = () => {
   const {

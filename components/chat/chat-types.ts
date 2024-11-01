@@ -6,6 +6,7 @@ export type Chat = {
   name: string;
   image?: string;
   unreadCount: number;
+  messageLifespan: number;
 };
 
 export type Member = {
