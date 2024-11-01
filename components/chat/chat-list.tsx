@@ -175,6 +175,7 @@ function ChatListLink({
               e.preventDefault();
             }}
             className={cn(
+              "relative",
               buttonVariants({
                 variant: isSelected ? "grey" : "ghost",
                 size: isCollapsed ? "icon" : "xl",
@@ -185,8 +186,13 @@ function ChatListLink({
             {...props}
           >
             <ChatAvatar name={chat.name} avatar={chat.image} />
+            {chat.unreadCount > 0 && (
+              <div className="absolute left-3 top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 p-1 text-xs font-medium text-white">
+                {chat.unreadCount}
+              </div>
+            )}
             <span className={isCollapsed ? "sr-only" : "min-w-0 truncate"}>
-              ({chat.unreadCount}) {chat.name}
+              {chat.name}
             </span>
           </Link>
         </TooltipTrigger>
