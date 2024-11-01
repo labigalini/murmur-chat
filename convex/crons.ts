@@ -5,9 +5,9 @@ import { internal } from "./_generated/api";
 const crons = cronJobs();
 
 crons.cron(
-  "destruct all expired messages",
-  "*/5 * * * *",
-  internal.messages.destructAllExpired,
+  "remove expired messages",
+  "* * * * *",
+  internal.messages.scheduleRemoval,
   {},
 );
 

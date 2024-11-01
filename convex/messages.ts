@@ -1,9 +1,8 @@
 import { getAuthSessionId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 
-import { subMinutes } from "date-fns";
-
 import { internal } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
 import { internalMutation, mutation, query } from "./functions";
 import { viewerHasPermission, viewerWithPermissionX } from "./permissions";
 
@@ -95,7 +94,7 @@ export const create = mutation({
       .patch({ lastActivityTime: Date.now() });
     await ctx.scheduler.runAfter(
       chat.messageLifespan,
-      internal.messages.destruct,
+      internal.messages.remove,
       { messageIds },
     );
   },
@@ -117,7 +116,7 @@ export const markRead = mutation({
     ),
 });
 
-export const destruct = internalMutation({
+export const remove = internalMutation({
   args: {
     messageIds: v.array(v.id("messages")),
   },
@@ -131,13 +130,56 @@ export const destruct = internalMutation({
   },
 });
 
-export const destructAllExpired = internalMutation({
+export const scheduleRemoval = internalMutation({
   handler: async (ctx) => {
-    const fiveMinutesAgo = subMinutes(new Date(), 5); // TODO need to get the chat config
-    const messages = await ctx
-      .table("messages")
-      .filter((q) => q.lt(q.field("_creationTime"), fiveMinutesAgo.getTime()));
-    await Promise.all(messages.map(async (message) => await message.delete()));
-    return messages.length;
+    const now = Date.now();
+    const chats = (await ctx.table("chats")).map((chat) => ({
+      ...chat,
+      threshold: now - chat.messageLifespan,
+    }));
+
+    const messageDelayGroups = new Map<number, Id<"messages">[]>();
+
+    await Promise.all(
+      chats.map(async (chat) => {
+        // Get messages for this chat that are within the expiration window
+        const messages = await ctx
+          .table("messages")
+          .filter((q) =>
+            q.and(
+              q.eq(q.field("chatId"), chat._id),
+              q.lt(q.field("_creationTime"), chat.threshold),
+            ),
+          );
+        if (messages.length) console.log({ messages });
+
+        // Group messages by seconds until expiration
+        messages.forEach((message) => {
+          const secondsUntilExpiration = Math.max(
+            1,
+            Math.ceil(
+              (message._creationTime + chat.messageLifespan - now) / 1000,
+            ),
+          );
+          const existingGroup =
+            messageDelayGroups.get(secondsUntilExpiration) ?? [];
+          messageDelayGroups.set(secondsUntilExpiration, [
+            ...existingGroup,
+            message._id,
+          ]);
+        });
+      }),
+    );
+
+    console.log({ messageDelayGroups });
+
+    // Schedule deletion for each group of messages
+    await Promise.all(
+      Array.from(messageDelayGroups.entries()).map(([delay, messageIds]) =>
+        ctx.scheduler.runAfter(delay * 1000, internal.messages.remove, {
+          messageIds,
+        }),
+      ),
+    );
   },
 });
