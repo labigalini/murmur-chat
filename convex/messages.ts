@@ -6,30 +6,6 @@ import { Id } from "./_generated/dataModel";
 import { internalMutation, mutation, query } from "./functions";
 import { viewerHasPermission, viewerWithPermissionX } from "./permissions";
 
-export const unreadCount = query({
-  args: {
-    chatId: v.id("chats"),
-  },
-  handler: async (ctx, { chatId }) => {
-    const viewer = ctx.viewer;
-    const sessionId = await getAuthSessionId(ctx);
-    if (
-      viewer === null ||
-      sessionId === null ||
-      !(await viewerHasPermission(ctx, chatId, "Contribute"))
-    ) {
-      return 0;
-    }
-    return (
-      await ctx
-        .table("messages", "recipient", (q) =>
-          q.eq("chatId", chatId).eq("recipientSessionId", sessionId),
-        )
-        .filter((q) => q.eq(q.field("readTime"), undefined))
-    ).length;
-  },
-});
-
 export const list = query({
   args: {
     chatId: v.id("chats"),
@@ -97,6 +73,42 @@ export const create = mutation({
       internal.messages.remove,
       { messageIds },
     );
+  },
+});
+
+export const unreadCount = query({
+  args: {
+    chatId: v.id("chats"),
+  },
+  handler: async (ctx, { chatId }) => {
+    const viewer = ctx.viewer;
+    const sessionId = await getAuthSessionId(ctx);
+    if (
+      viewer === null ||
+      sessionId === null ||
+      !(await viewerHasPermission(ctx, chatId, "Contribute"))
+    ) {
+      return 0;
+    }
+    const viewerMemberIds = (
+      await viewer
+        .edge("members")
+        .filter((q) => q.eq(q.field("chatId"), chatId))
+    ).map((m) => m._id);
+    return (
+      await ctx
+        .table("messages", "recipient", (q) =>
+          q.eq("chatId", chatId).eq("recipientSessionId", sessionId),
+        )
+        .filter((q) =>
+          q.and(
+            ...viewerMemberIds.map((viewerMemberId) =>
+              q.neq(q.field("memberId"), viewerMemberId),
+            ),
+            q.eq(q.field("readTime"), undefined),
+          ),
+        )
+    ).length;
   },
 });
 
