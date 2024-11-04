@@ -50,14 +50,18 @@ export const session = query({
 
 export const patchSession = mutation({
   args: {
-    publicKey: v.string(),
+    publicKey: v.optional(v.string()),
+    lastUsedTime: v.optional(v.number()),
   },
-  handler: async (ctx, { publicKey }) => {
+  handler: async (ctx, { publicKey, lastUsedTime }) => {
     const sessionId = await getAuthSessionId(ctx);
     if (!sessionId) {
       return;
     }
-    await ctx.table("authSessions").getX(sessionId).patch({ publicKey });
+    const patch: Record<string, unknown> = {};
+    if (publicKey !== undefined) patch.publicKey = publicKey;
+    if (lastUsedTime !== undefined) patch.lastUsedTime = lastUsedTime;
+    await ctx.table("authSessions").getX(sessionId).patch(patch);
   },
 });
 

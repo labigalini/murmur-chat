@@ -16,7 +16,8 @@ const schema = defineEntSchema(
     ...defineEntsFromTables(authTables),
 
     authSessions: defineEntFromTable(authTables.authSessions) // override to add field
-      .field("publicKey", v.optional(v.string())),
+      .field("publicKey", v.optional(v.string()))
+      .field("lastUsedTime", v.optional(v.number())),
 
     users: defineEntFromTable(authTables.users) // override to add edges
       .edges("members", { ref: true })

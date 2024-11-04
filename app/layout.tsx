@@ -7,8 +7,7 @@ import "@/styles/globals.css";
 import { CommandMenu } from "@/components/ui/command-menu";
 import { Toaster } from "@/components/ui/toaster";
 
-import { ConvexClientProvider } from "./_context/ConvexClientProvider";
-import { ConvexServerProvider } from "./_context/ConvexServerProvider";
+import { AuthProvider } from "./_context/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,18 +33,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ConvexServerProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className={inter.className}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <ConvexClientProvider>
-              <>{children}</>
-              <CommandMenu />
-              <Toaster />
-            </ConvexClientProvider>
-          </ThemeProvider>
-        </body>
-      </html>
-    </ConvexServerProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AuthProvider>
+            <>{children}</>
+            <CommandMenu />
+            <Toaster />
+          </AuthProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }

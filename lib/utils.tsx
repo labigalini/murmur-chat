@@ -3,6 +3,8 @@ import { ForwardRefRenderFunction, forwardRef } from "react";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+import { PROTECTED_ROUTES } from "./constants";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -27,6 +29,24 @@ export function se<
   ));
   component.displayName = Tag[0].toUpperCase() + Tag.slice(1);
   return component;
+}
+
+/**
+ * Checks if a given pathname matches any of the protected route patterns defined in PROTECTED_ROUTES.
+ * Uses regex pattern matching to test if the pathname matches any protected route pattern.
+ *
+ * @param {string} pathname - The pathname to check against protected routes
+ * @returns {boolean} - Returns true if pathname matches a protected route pattern, false otherwise
+ *
+ * @example
+ * isProtectedRoute("/dashboard"); // Returns true if /dashboard matches a protected pattern
+ * isProtectedRoute("/login"); // Returns false since /login is explicitly excluded
+ */
+export function isProtectedRoute(pathname: string): boolean {
+  return PROTECTED_ROUTES.some((pattern) => {
+    const regex = new RegExp(`^${pattern}$`);
+    return regex.test(pathname);
+  });
 }
 
 /**

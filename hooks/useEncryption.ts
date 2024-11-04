@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { useMutation } from "convex/react";
+import { useConvexAuth, useMutation } from "convex/react";
 
 import { api } from "@/convex/_generated/api";
 
@@ -13,8 +13,6 @@ import {
   loadKeyPair,
   saveKeyPair,
 } from "@/lib/encryption";
-
-import { useAuth } from "./useAuth";
 
 type EncryptFunction = (
   text: string,
@@ -30,7 +28,8 @@ export function useEncryption():
       // TODO add some sort of erase keys function here to use on sign out
     }
   | "loading" {
-  const auth = useAuth();
+  // TOO need a better way to decide when create the keys and patch the session
+  const { isAuthenticated } = useConvexAuth();
   const [isInitialized, setIsInitialized] = useState(false);
   const patchSession = useMutation(api.auth.patchSession);
 
@@ -47,7 +46,7 @@ export function useEncryption():
       setIsInitialized(true);
     };
     createIfNotExists().catch(console.error);
-  }, [auth, patchSession]);
+  }, [isAuthenticated, patchSession]);
 
   const encryption = useMemo(
     () => ({

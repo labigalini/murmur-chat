@@ -8,11 +8,10 @@ import { UserMenu } from "@/components/auth/UserMenu";
 import { buttonVariants } from "@/components/ui/button";
 import { Suspense } from "@/components/ui/suspense";
 
-import { useAuth } from "@/hooks";
+import { useAuthContext } from "@/app/_context/AuthClientProvider";
 
 export function ProfileButton() {
-  // const user = useQuery(api.users.viewer);
-  const { user } = useAuth();
+  const { user } = useAuthContext();
 
   return (
     <>
