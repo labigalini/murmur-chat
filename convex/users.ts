@@ -1,5 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 
+import { INACTIVE_TIMEOUT } from "@/lib/constants";
+
 import { query } from "./functions";
 import { Ent, QueryCtx } from "./types";
 
@@ -22,6 +24,7 @@ export function getUsername(user: Ent<"users">) {
 }
 
 export async function getUserSessions(ctx: QueryCtx, user: Ent<"users">) {
+  const now = Date.now();
   const sessions = await ctx
     .table("authSessions")
     .filter((q) => q.eq(q.field("userId"), user._id));
@@ -35,8 +38,14 @@ export async function getUserSessions(ctx: QueryCtx, user: Ent<"users">) {
         return !!session && !!session.publicKey;
       },
     )
-    .map((session) => ({
-      _id: session._id,
-      publicKey: session.publicKey,
-    }));
+    .map(({ _id, publicKey, lastUsedTime }) => {
+      const isInactive = lastUsedTime
+        ? now - lastUsedTime > INACTIVE_TIMEOUT
+        : true;
+      return {
+        _id,
+        publicKey,
+        isInactive,
+      };
+    });
 }
