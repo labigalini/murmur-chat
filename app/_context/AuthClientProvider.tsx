@@ -13,6 +13,9 @@ import { usePathname } from "next/navigation";
 import { useConvexAuth, useMutation } from "convex/react";
 import { FunctionReturnType } from "convex/server";
 
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+
 import { api } from "@/convex/_generated/api";
 
 import { isProtectedRoute } from "@/lib/utils";
@@ -90,17 +93,15 @@ export function AuthClientProvider({
 
 function InactiveSession({ onContinue }: { onContinue: () => void }) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-      <h1 className="text-xl font-semibold">Session Timed Out</h1>
-      <p className="text-gray-600">
-        Your session has been paused due to inactivity
-      </p>
-      <button
-        onClick={onContinue}
-        className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary/90"
-      >
-        Continue Session
-      </button>
+    <div className="bg-gradient flex min-h-screen items-center justify-center">
+      <div className="flex flex-col gap-4 rounded-3xl border bg-white p-8 text-center shadow-xl">
+        <h1 className="text-2xl font-bold">Session Timed Out</h1>
+        <p className="text-gray-600">
+          Your session has been paused due to inactivity
+        </p>
+        <Separator className="my-2" />
+        <Button onClick={onContinue}>Continue Session</Button>
+      </div>
     </div>
   );
 }
