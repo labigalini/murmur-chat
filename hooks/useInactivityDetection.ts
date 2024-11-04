@@ -27,7 +27,7 @@ export function useInactivityDetection(
       } else {
         onActive?.();
       }
-    }, 10 * 1000); // 60 * 1000); // Check every minute // TODO remove temp debug value
+    }, 60 * 1000); // Check every minute
 
     return () => {
       events.forEach((event) => {

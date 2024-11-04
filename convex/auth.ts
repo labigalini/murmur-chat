@@ -73,7 +73,6 @@ export const removeExpired = internalMutation({
     const expiredTokens = await ctx
       .table("authRefreshTokens")
       .filter((q) => q.lt(q.field("expirationTime"), now));
-    console.log({ now });
     await Promise.all(
       expiredTokens.map(async (expiredToken) => expiredToken.delete()),
     );
