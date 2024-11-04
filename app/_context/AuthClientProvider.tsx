@@ -61,9 +61,10 @@ export function AuthClientProvider({
     () => session && void patchSession({ lastUsedTime: Date.now() }),
   );
 
-  const handleContinueSession = useCallback(() => {
+  const handleContinue = useCallback(async () => {
+    await patchSession({ lastUsedTime: Date.now() });
     setIsInactive(false);
-  }, []);
+  }, [patchSession]);
 
   const context = useMemo(
     () =>
@@ -79,7 +80,7 @@ export function AuthClientProvider({
   return (
     <AuthContext.Provider value={context}>
       {isInactive ? (
-        <SessionTimeoutMessage onContinue={handleContinueSession} />
+        <InactiveSession onContinue={() => void handleContinue()} />
       ) : (
         <>{children}</>
       )}
@@ -87,7 +88,7 @@ export function AuthClientProvider({
   );
 }
 
-function SessionTimeoutMessage({ onContinue }: { onContinue: () => void }) {
+function InactiveSession({ onContinue }: { onContinue: () => void }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-4">
       <h1 className="text-xl font-semibold">Session Timed Out</h1>
