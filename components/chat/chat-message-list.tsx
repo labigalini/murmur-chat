@@ -146,23 +146,36 @@ function MotionDiv({
   );
 }
 
+const skeletonMessages: ("sent" | "received")[] = [
+  "sent",
+  "sent",
+  "received",
+  "sent",
+  "received",
+  "sent",
+  "sent",
+];
 function ChatBubbleSkeleton(props: ComponentProps<typeof Skeleton>) {
   return (
-    ["sent", "received", "sent", "sent"] satisfies ("sent" | "received")[]
-  ).map((variant, index) => (
-    <MotionDiv key={variant + index} className="flex flex-col">
-      <ChatBubble variant={variant}>
-        <Skeleton size="9" layout="icon" {...props} />
-        <Skeleton asChild {...props}>
-          <ChatBubbleMessage
-            variant={variant}
-            className={cn(
-              `h-${variant === "sent" ? 12 : 24}`,
-              "w-32 bg-primary/10",
-            )}
-          />
-        </Skeleton>
-      </ChatBubble>
-    </MotionDiv>
-  ));
+    <>
+      <MotionDiv className="flex flex-col">
+        <Skeleton size="6" layout="icon" className="self-end" {...props} />
+      </MotionDiv>
+      {skeletonMessages.map((variant, index) => (
+        <MotionDiv key={variant + index} className="flex flex-col">
+          <ChatBubble variant={variant}>
+            <Skeleton asChild {...props}>
+              <ChatBubbleMessage
+                variant={variant}
+                className={cn(
+                  `h-${index === 1 || index === 4 ? 24 : 9}`,
+                  "w-32 bg-primary/10",
+                )}
+              />
+            </Skeleton>
+          </ChatBubble>
+        </MotionDiv>
+      ))}
+    </>
+  );
 }
