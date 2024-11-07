@@ -8,11 +8,11 @@ export function useInactivityDetection(
   onInactive: () => void,
   onActive?: () => void,
 ) {
-  const [lastActivity, setLastActivity] = useState<number>(Date.now());
+  const lastActivityRef = useRef<number>(Date.now());
 
   useEffect(() => {
     const updateLastActivity = () => {
-      setLastActivity(Date.now());
+      lastActivityRef.current = Date.now();
     };
 
     // Track user interactions
@@ -21,9 +21,17 @@ export function useInactivityDetection(
       window.addEventListener(event, updateLastActivity);
     });
 
+    return () => {
+      events.forEach((event) => {
+        window.removeEventListener(event, updateLastActivity);
+      });
+    };
+  }, []);
+
+  useEffect(() => {
     // Check for inactivity
     const interval = setInterval(() => {
-      const timeSinceLastActivity = Date.now() - lastActivity;
+      const timeSinceLastActivity = Date.now() - lastActivityRef.current;
       if (timeSinceLastActivity > INACTIVE_TIMEOUT) {
         onInactive();
       } else {
@@ -31,11 +39,10 @@ export function useInactivityDetection(
       }
     }, 60 * 1000); // Check every minute
 
+    onActive?.();
+
     return () => {
-      events.forEach((event) => {
-        window.removeEventListener(event, updateLastActivity);
-      });
       clearInterval(interval);
     };
-  }, [lastActivity, onInactive, onActive]);
+  }, [onInactive, onActive]);
 }
