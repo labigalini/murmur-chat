@@ -94,7 +94,7 @@ export function AuthClientProvider({
 function InactiveSession({ onContinue }: { onContinue: () => void }) {
   return (
     <div className="bg-gradient flex min-h-screen items-center justify-center">
-      <div className="flex flex-col gap-4 rounded-3xl border bg-white p-8 text-center shadow-xl">
+      <div className="flex flex-col gap-4 rounded-3xl border bg-background p-8 text-center shadow-xl">
         <h1 className="text-2xl font-bold">Session Timed Out</h1>
         <p className="text-gray-600">
           Your session has been paused due to inactivity
