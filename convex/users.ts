@@ -27,18 +27,18 @@ export async function getUserSessions(ctx: QueryCtx, user: Ent<"users">) {
   const now = Date.now();
   const sessions = await ctx
     .table("authSessions")
-    .filter((q) => q.eq(q.field("userId"), user._id));
-  return sessions
-    .filter(
-      (
-        session,
-      ): session is NonNullable<typeof session> & {
-        publicKey: string;
-      } => {
-        return !!session && !!session.publicKey;
-      },
-    )
-    .map(({ _id, publicKey, lastUsedTime }) => {
+    .getMany("userId", [user._id]);
+  const sessionDetails = await Promise.all(
+    sessions
+      .filter((session) => !!session)
+      .map(
+        async ({ _id }) =>
+          await ctx.table("authSessionDetails").get("sessionId", _id),
+      ),
+  );
+  return sessionDetails
+    .filter((session) => !!session)
+    .map(({ sessionId: _id, publicKey, lastUsedTime }) => {
       const isInactive = lastUsedTime
         ? now - lastUsedTime > INACTIVE_TIMEOUT
         : true;

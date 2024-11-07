@@ -44,7 +44,20 @@ export const session = query({
     if (sessionId === null) {
       return null;
     }
-    return await ctx.table("authSessions").get(sessionId);
+    const session = await ctx.table("authSessions").get(sessionId);
+    const sessionDetailsFull = await ctx
+      .table("authSessionDetails")
+      .get("sessionId", sessionId);
+    const {
+      _id: _0,
+      _creationTime: _1,
+      sessionId: _2,
+      ...sessionDetails
+    } = sessionDetailsFull ?? {};
+    return {
+      ...session,
+      ...sessionDetails,
+    };
   },
 });
 
@@ -53,15 +66,20 @@ export const patchSession = mutation({
     publicKey: v.optional(v.string()),
     lastUsedTime: v.optional(v.number()),
   },
-  handler: async (ctx, { publicKey, lastUsedTime }) => {
+  handler: async (ctx, details) => {
     const sessionId = await getAuthSessionId(ctx);
     if (!sessionId) {
       return;
     }
-    const patch: Record<string, unknown> = {};
-    if (publicKey !== undefined) patch.publicKey = publicKey;
-    if (lastUsedTime !== undefined) patch.lastUsedTime = lastUsedTime;
-    await ctx.table("authSessions").getX(sessionId).patch(patch);
+
+    const table = ctx.table("authSessionDetails");
+
+    const sessionDetails = await table.get("sessionId", sessionId);
+    if (sessionDetails) {
+      return await sessionDetails.patch(details);
+    }
+
+    return await table.insert({ ...details, sessionId });
   },
 });
 
@@ -70,19 +88,27 @@ export const removeExpired = internalMutation({
     const now = Date.now();
 
     // remove expired refresh tokens
-    const expiredTokens = await ctx
-      .table("authRefreshTokens")
-      .filter((q) => q.lt(q.field("expirationTime"), now));
     await Promise.all(
-      expiredTokens.map(async (expiredToken) => expiredToken.delete()),
+      await ctx
+        .table("authRefreshTokens")
+        .filter((q) => q.lt(q.field("expirationTime"), now))
+        .map(async (expiredToken) => expiredToken.delete()),
     );
 
     // remove expired sessions
-    const expiredSessions = await ctx
-      .table("authSessions")
-      .filter((q) => q.lt(q.field("expirationTime"), now));
     await Promise.all(
-      expiredSessions.map(async (expiredSession) => expiredSession.delete()),
+      await ctx
+        .table("authSessions")
+        .filter((q) => q.lt(q.field("expirationTime"), now))
+        .map(async (expiredSession) => expiredSession.delete()),
+    );
+
+    // remove orphaned session details
+    await Promise.all(
+      await ctx.table("authSessionDetails").map(async (s) => {
+        const session = await s.edge("authSession").catch(() => null);
+        if (session == null) await s.delete();
+      }),
     );
   },
 });

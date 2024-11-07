@@ -15,9 +15,13 @@ const schema = defineEntSchema(
   {
     ...defineEntsFromTables(authTables),
 
-    authSessions: defineEntFromTable(authTables.authSessions) // override to add field
-      .field("publicKey", v.optional(v.string()))
-      .field("lastUsedTime", v.optional(v.number())),
+    authSessions: defineEntFromTable(authTables.authSessions) // override to add edges
+      .edge("authSessionDetail"),
+
+    authSessionDetails: defineEnt({
+      publicKey: v.optional(v.string()),
+      lastUsedTime: v.optional(v.number()),
+    }).edge("authSession", { field: "sessionId" }),
 
     users: defineEntFromTable(authTables.users) // override to add edges
       .edges("members", { ref: true })

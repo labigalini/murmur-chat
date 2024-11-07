@@ -1,3 +1,5 @@
+"use client";
+
 import { ForwardedRef, useEffect, useRef, useState } from "react";
 
 export function useObserver({

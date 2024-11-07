@@ -1,3 +1,5 @@
+"use client";
+
 import {
   OptionalRestArgsOrSkip,
   useQuery as convex_useQuery,

@@ -59,10 +59,17 @@ export function AuthClientProvider({
   );
   const patchSession = useMutation(api.auth.patchSession);
 
-  useInactivityDetection(
+  const handleInactiveSession = useCallback(
     () => isProtectedRoute(pathname) && setIsInactive(true),
-    () => session && void patchSession({ lastUsedTime: Date.now() }),
+    [pathname],
   );
+
+  const handleActiveSession = useCallback(
+    () => isAuthenticated && void patchSession({ lastUsedTime: Date.now() }),
+    [patchSession, isAuthenticated],
+  );
+
+  useInactivityDetection(handleInactiveSession, handleActiveSession);
 
   const handleContinue = useCallback(async () => {
     await patchSession({ lastUsedTime: Date.now() });

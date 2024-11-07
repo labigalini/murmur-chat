@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+"use client";
+
+import { useEffect, useRef } from "react";
 
 import { INACTIVE_TIMEOUT } from "@/lib/constants";
 

@@ -153,9 +153,9 @@ function ChatContainerWrapper({
       const encryptedMessages = await Promise.all(
         selectedChatMembers
           .flatMap((m) => m.sessions)
-          .filter((s) => !s.isInactive)
+          .filter((s) => !s.isInactive && !!s.publicKey)
           .map(async (recipient) => ({
-            text: await encrypt(message, recipient.publicKey),
+            text: await encrypt(message, recipient.publicKey!),
             recipientSessionId: recipient._id,
           })),
       );
