@@ -1,5 +1,7 @@
 import { ComponentProps, useCallback, useMemo, useState } from "react";
 
+import { Role } from "@/convex/roles";
+
 import { isAnyLoading } from "@/lib/utils";
 
 import { AccessControl } from "./chat-access-control";
@@ -9,7 +11,13 @@ import { ChatInviteDialog } from "./chat-invite-dialog";
 import { ChatTitle } from "./chat-title";
 import { Invite, Member } from "./chat-types";
 
-import { AlertIcon, TrashIcon, UserPlusIcon, UserRoundXIcon } from "../icons";
+import {
+  AlertIcon,
+  TrashIcon,
+  UserPlusIcon,
+  UserRoundCogIcon,
+  UserRoundXIcon,
+} from "../icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -69,12 +77,7 @@ const ChatSidebarDetails = () => {
 const ChatSidebarMembers = () => {
   const {
     state: { members, viewer },
-    onRemoveMember,
   } = useChatContext();
-
-  const handleRemove = (member: Member) => {
-    onRemoveMember(member);
-  };
 
   const ownerCount = useMemo(
     () =>
@@ -112,45 +115,16 @@ const ChatSidebarMembers = () => {
                   viewer={viewer}
                   permission="Manage Members"
                   component={
-                    <AlertDialog>
-                      <AlertDialogTrigger
-                        disabled={member.role === "Owner" && ownerCount < 2}
-                        asChild
-                      >
-                        <Button variant="ghost" size="icon">
-                          <UserRoundXIcon size="5" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Are you absolutely sure?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription asChild>
-                            <div>
-                              <span>
-                                This action cannot be undone. This will
-                                permanently remove this member from the chat.
-                                <div className="m-4 flex flex-col">
-                                  <span>Member: {member.name}</span>
-                                </div>
-                              </span>
-                            </div>
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            className={buttonVariants({
-                              variant: "destructive",
-                            })}
-                            onClick={() => handleRemove(member)}
-                          >
-                            Remove Member
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                    <div>
+                      <ConfigureMemberDialog
+                        member={member}
+                        ownerCount={ownerCount}
+                      />
+                      <RemoveMemberDialog
+                        member={member}
+                        ownerCount={ownerCount}
+                      />
+                    </div>
                   }
                 />
               </div>
@@ -392,6 +366,125 @@ const ChatSidebarDangerZone = () => {
         </AlertDialog>
       </div>
     </>
+  );
+};
+
+const ConfigureMemberDialog = ({
+  member,
+  ownerCount,
+}: {
+  member: Member;
+  ownerCount: number;
+}) => {
+  const { onChangeMemberRole } = useChatContext();
+
+  const [role, setRole] = useState(member.role);
+
+  const handleChangeRole = useCallback(() => {
+    onChangeMemberRole(member, role);
+  }, [onChangeMemberRole, member, role]);
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger
+        disabled={member.role === "Owner" && ownerCount < 2}
+        asChild
+      >
+        <Button variant="ghost" size="icon">
+          <UserRoundCogIcon size="5" />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Configure member role</AlertDialogTitle>
+          <AlertDialogDescription asChild>
+            <div>
+              <span>Choose a new role to assign to the following member.</span>
+              <div className="m-4 flex flex-col">
+                <span>Member: {member.name}</span>
+              </div>
+              <Select
+                value={role}
+                onValueChange={(newRole: Role) => setRole(newRole)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Owner">Owner</SelectItem>
+                  <SelectItem value="Admin">Admin</SelectItem>
+                  <SelectItem value="Member">Member</SelectItem>
+                  {/* TODO should use a constant to create these items */}
+                </SelectContent>
+              </Select>
+            </div>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            className={buttonVariants()}
+            onClick={() => handleChangeRole()}
+          >
+            Change Role
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
+
+const RemoveMemberDialog = ({
+  member,
+  ownerCount,
+}: {
+  member: Member;
+  ownerCount: number;
+}) => {
+  const { onRemoveMember } = useChatContext();
+
+  const handleRemove = useCallback(() => {
+    onRemoveMember(member);
+  }, [onRemoveMember, member]);
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger
+        disabled={member.role === "Owner" && ownerCount < 2}
+        asChild
+      >
+        <Button variant="ghost" size="icon">
+          <UserRoundXIcon size="5" />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription asChild>
+            <div>
+              <span>
+                This action cannot be undone. This will permanently remove this
+                member from the chat.
+                <div className="m-4 flex flex-col">
+                  <span>Member: {member.name}</span>
+                </div>
+              </span>
+            </div>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            className={buttonVariants({
+              variant: "destructive",
+            })}
+            onClick={() => handleRemove()}
+          >
+            Remove Member
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 

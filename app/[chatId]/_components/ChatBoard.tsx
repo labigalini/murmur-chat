@@ -8,6 +8,7 @@ import { ChatContainer } from "@/components/chat/chat-container";
 import { Chat, Invite, Member, Message } from "@/components/chat/chat-types";
 
 import { api } from "@/convex/_generated/api";
+import { Role } from "@/convex/roles";
 
 import { skipIfUnset } from "@/lib/utils";
 
@@ -41,6 +42,7 @@ function ChatContainerWrapper({
   const patchChat = useMutation(api.chats.patch);
   const createInvite = useAction(api.invites.send);
   const revokeInvite = useMutation(api.invites.revoke);
+  const updateMember = useMutation(api.members.update);
   const removeMember = useMutation(api.members.remove);
   const sendMessage = useMutation(api.messages.create);
   const markRead = useMutation(api.messages.markRead);
@@ -143,11 +145,18 @@ function ChatContainerWrapper({
     [revokeInvite],
   );
 
+  const handleUpdateMember = useCallback(
+    async (member: Member, newRole: Role) => {
+      await updateMember({ memberId: member._id, role: newRole });
+    },
+    [updateMember],
+  );
+
   const handleRemoveMember = useCallback(
     async (member: Member) => {
       await removeMember({ memberId: member._id });
     },
-    [revokeInvite],
+    [removeMember],
   );
 
   const handleSendMessage = useCallback(
@@ -209,6 +218,7 @@ function ChatContainerWrapper({
         onLifespanChange: (chat, ls) => void handleLifespanChange(chat, ls),
         onCreateInvite: (chat, email) => void handleCreateInvite(chat, email),
         onRevokeInvite: (invite) => void handleRevokeInvite(invite),
+        onChangeMemberRole: (m, role) => void handleUpdateMember(m, role),
         onRemoveMember: (member) => void handleRemoveMember(member),
         onSendMessage: (chat, message) => void handleSendMessage(chat, message),
         onMessageRead: (message) => void handleReadMessage(message),

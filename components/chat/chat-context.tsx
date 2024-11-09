@@ -1,5 +1,7 @@
 import { ReactNode, createContext, useContext, useMemo, useState } from "react";
 
+import { Role } from "@/convex/roles";
+
 import { Chat, Invite, Member, Message } from "./chat-types";
 
 export type ChatState = {
@@ -27,6 +29,7 @@ export type ChatHandlers = {
   onLifespanChange: (chat: Chat, newLifespan: number) => void;
   onCreateInvite: (chat: Chat, inviteEmail: string) => void;
   onRevokeInvite: (invite: Invite) => void;
+  onChangeMemberRole: (member: Member, newRole: Role) => void;
   onRemoveMember: (invite: Member) => void;
   onSendMessage: (chat: Chat, newMessage: string) => void;
   onMessageRead?: (messageId: Message) => void;
@@ -45,6 +48,7 @@ export const ChatContext = createContext({
   onLifespanChange: (_chat, _newLifespan) => {},
   onCreateInvite: (_chat, _inviteEmail) => {},
   onRevokeInvite: (_invite) => {},
+  onChangeMemberRole: (_member: Member, _newRole: Role) => {},
   onRemoveMember: (_member) => {},
   onSendMessage: (_chat, _newMessage) => {},
 } satisfies ChatContextType & {

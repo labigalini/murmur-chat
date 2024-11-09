@@ -16,7 +16,7 @@ export const init = internalMutation({
       name: "Owner",
       isDefault: false,
       permissions: await Promise.all(
-        vPermission.members.map(async (p) => getPermission(ctx, p.value)),
+        vPermission.members.map(async ({ value: p }) => getPermission(ctx, p)),
       ),
     });
 

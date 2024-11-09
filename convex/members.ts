@@ -3,7 +3,7 @@ import { ConvexError, v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 import { mutation, query } from "./functions";
 import { viewerHasPermission, viewerHasPermissionX } from "./permissions";
-import { getRole } from "./roles";
+import { getRole, vRole } from "./roles";
 import { Ent, MutationCtx, QueryCtx } from "./types";
 import { getUserSessions, getUsername } from "./users";
 import { normalizeStringForSearch } from "./utils";
@@ -82,9 +82,10 @@ export const list = query({
 export const update = mutation({
   args: {
     memberId: v.id("members"),
-    roleId: v.id("roles"),
+    role: vRole,
   },
-  async handler(ctx, { memberId, roleId }) {
+  async handler(ctx, { memberId, role: roleName }) {
+    const { _id: roleId } = await getRole(ctx, roleName);
     const member = await ctx.table("members").getX(memberId);
     await viewerHasPermissionX(ctx, member.chatId, "Manage Members");
     await checkAnotherOwnerExists(ctx, member);

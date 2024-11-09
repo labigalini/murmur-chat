@@ -8,6 +8,7 @@ export const vRole = v.union(
   v.literal("Admin"),
   v.literal("Member"),
 );
+
 export type Role = Infer<typeof vRole>;
 
 export async function getRole(ctx: QueryCtx, name: Role) {

@@ -30,6 +30,7 @@ import {
   LucideProps as LucideIconProps,
   SearchIcon as SearchIconPrimitive,
   Trash2Icon as TrashIconPrimitive,
+  UserRoundCogIcon as UserRoundCogIconPrimitive,
   UserRoundPlusIcon as UserRoundPlusIconPrimitive,
   UserRoundXIcon as UserRoundXIconPrimitive,
 } from "lucide-react";
@@ -82,5 +83,6 @@ export const SunIcon = createIcon(SunIconPrimitive);
 export const AlertIcon = createIcon(AlertTriangleIconPrimitive);
 export const SearchIcon = createIcon(SearchIconPrimitive);
 export const TrashIcon = createIcon(TrashIconPrimitive);
+export const UserRoundCogIcon = createIcon(UserRoundCogIconPrimitive);
 export const UserPlusIcon = createIcon(UserRoundPlusIconPrimitive);
 export const UserRoundXIcon = createIcon(UserRoundXIconPrimitive);
