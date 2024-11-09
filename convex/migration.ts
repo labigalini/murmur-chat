@@ -25,7 +25,7 @@ export const init = internalMutation({
       isDefault: true,
       permissions: [
         await getPermission(ctx, "Read Members"),
-        await getPermission(ctx, "Contribute"),
+        await getPermission(ctx, "Participate"),
       ],
     });
   },

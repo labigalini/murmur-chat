@@ -16,7 +16,7 @@ export const list = query({
     if (
       viewer === null ||
       sessionId === null ||
-      !(await viewerHasPermission(ctx, chatId, "Contribute"))
+      !(await viewerHasPermission(ctx, chatId, "Participate"))
     ) {
       return [];
     }
@@ -54,7 +54,7 @@ export const create = mutation({
     ),
   },
   handler: async (ctx, { chatId, messages }) => {
-    const member = await viewerWithPermissionX(ctx, chatId, "Contribute");
+    const member = await viewerWithPermissionX(ctx, chatId, "Participate");
     const messageIds = await ctx.table("messages").insertMany(
       messages.map(({ text, recipientSessionId }) => ({
         text,
@@ -86,7 +86,7 @@ export const unreadCount = query({
     if (
       viewer === null ||
       sessionId === null ||
-      !(await viewerHasPermission(ctx, chatId, "Contribute"))
+      !(await viewerHasPermission(ctx, chatId, "Participate"))
     ) {
       return 0;
     }

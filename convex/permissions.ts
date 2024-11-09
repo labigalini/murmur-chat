@@ -8,7 +8,7 @@ export const vPermission = v.union(
   v.literal("Delete Chat"),
   v.literal("Read Members"),
   v.literal("Manage Members"),
-  v.literal("Contribute"),
+  v.literal("Participate"),
 );
 export type Permission = Infer<typeof vPermission>;
 
