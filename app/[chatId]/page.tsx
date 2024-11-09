@@ -1,17 +1,17 @@
+"use client";
+
+import { useParams, useSearchParams } from "next/navigation";
+
 import { INVITE_PARAM } from "@/lib/constants";
 
 import ChatBoard from "./_components/ChatBoard";
 
-export default function Page({
-  params,
-  searchParams,
-}: {
-  params: { chatId?: string };
-  searchParams: { [INVITE_PARAM]?: string };
-}) {
-  const { chatId } = params;
-  const invite = searchParams[INVITE_PARAM];
-  console.log({ invite });
-  // TODO open dialog to accept
+export default function Page() {
+  const { chatId } = useParams<{ chatId?: string }>();
+  const searchParams = useSearchParams();
+
+  const _invite = searchParams.get(INVITE_PARAM);
+  // TODO open dialog to accept invite
+
   return <ChatBoard selectedChatId={chatId} />;
 }
