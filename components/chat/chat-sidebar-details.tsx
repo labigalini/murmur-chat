@@ -2,6 +2,7 @@ import { ComponentProps, useCallback, useState } from "react";
 
 import { isAnyLoading } from "@/lib/utils";
 
+import { AccessControl } from "./chat-access-control";
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
 import { ChatInviteDialog } from "./chat-invite-dialog";
@@ -33,12 +34,30 @@ import { Skeleton } from "../ui/skeleton";
 import { Suspense } from "../ui/suspense";
 
 const ChatSidebarDetails = () => {
+  const {
+    state: { viewer },
+  } = useChatContext();
+
+  if (viewer === "loading") return;
+
   return (
     <div className="flex flex-col gap-4">
       <ChatSidebarMembers />
-      <ChatSidebarInvites />
-      <ChatSidebarConfiguration />
-      <ChatSidebarDangerZone />
+      <AccessControl
+        viewer={viewer}
+        permission="Manage Members" // TODO change to Invite Members
+        component={<ChatSidebarInvites />}
+      />
+      <AccessControl
+        viewer={viewer}
+        permission="Manage Chat"
+        component={<ChatSidebarConfiguration />}
+      />
+      <AccessControl
+        viewer={viewer}
+        permission="Delete Chat"
+        component={<ChatSidebarDangerZone />}
+      />
     </div>
   );
 };

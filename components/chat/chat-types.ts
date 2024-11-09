@@ -1,4 +1,5 @@
 import { Id } from "@/convex/_generated/dataModel";
+import { Permission } from "@/convex/permissions";
 import { Role } from "@/convex/roles";
 
 export type Chat = {
@@ -14,6 +15,7 @@ export type Member = {
   name: string;
   image?: string;
   role: Role;
+  permissions: Permission[];
   isViewer: boolean;
   sessions: Session[];
 };

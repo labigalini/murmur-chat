@@ -7,6 +7,7 @@ export type ChatState = {
   chat: "loading" | Chat | null;
   messages: "loading" | Message[];
   members: "loading" | Member[];
+  viewer: "loading" | Member;
   invites: "loading" | Invite[];
   urlPrefix: string;
 };

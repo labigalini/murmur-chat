@@ -51,6 +51,7 @@ export const list = query({
       const user = await member.edge("user");
       const username = getUsername(user);
       const role = await member.edge("role");
+      const permissions = (await role.edge("permissions")).map((p) => p.name);
       const sessions = await Promise.all(
         (await getUserSessions(ctx, user)).map(async (session) => ({
           ...session,
@@ -71,7 +72,7 @@ export const list = query({
         email: user.email,
         image: user.image,
         role: role.name,
-        // permissions: (await member.edge("role")).edge("permissions"), This seems to break convex...
+        permissions,
         sessions,
         isViewer: user._id === viewer._id,
       };

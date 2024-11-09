@@ -26,7 +26,7 @@ import { useCookies } from "@/hooks";
 
 import { Suspense } from "../ui/suspense";
 
-type ChatLayoutProps = Omit<ChatState, "urlPrefix"> &
+type ChatLayoutProps = Omit<ChatState, "urlPrefix" | "viewer"> &
   Optional<Pick<ChatState, "urlPrefix">> & {
     handlers: ChatHandlers;
   };
@@ -68,13 +68,23 @@ export function ChatContainer({
     };
   }, []);
 
+  const viewer = useMemo(() => {
+    if (initialState.members === "loading") return "loading";
+    const viewers = initialState.members.filter((m) => m.isViewer);
+    if (viewers == null)
+      throw new Error("There are no viewers in the member list");
+    if (viewers.length > 1)
+      throw new Error("There are more than one viewer in the member list");
+    return viewers[0];
+  }, [initialState.members]);
+
   const chatContext = useMemo(
     () =>
       ({
-        state: { ...initialState, urlPrefix },
+        state: { ...initialState, viewer, urlPrefix },
         ...handlers,
       }) satisfies ChatContextType,
-    [initialState, urlPrefix, handlers],
+    [initialState, viewer, urlPrefix, handlers],
   );
   const handleLayoutChange = useCallback(
     (newLayout: number[]) => {
