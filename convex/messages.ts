@@ -11,10 +11,9 @@ export const list = query({
     chatId: v.id("chats"),
   },
   handler: async (ctx, { chatId }) => {
-    const viewer = ctx.viewer;
+    const viewer = ctx.viewerX();
     const sessionId = await getAuthSessionId(ctx);
     if (
-      viewer === null ||
       sessionId === null ||
       !(await viewerHasPermission(ctx, chatId, "Participate"))
     ) {
@@ -81,10 +80,9 @@ export const unreadCount = query({
     chatId: v.id("chats"),
   },
   handler: async (ctx, { chatId }) => {
-    const viewer = ctx.viewer;
+    const viewer = ctx.viewerX();
     const sessionId = await getAuthSessionId(ctx);
     if (
-      viewer === null ||
       sessionId === null ||
       !(await viewerHasPermission(ctx, chatId, "Participate"))
     ) {
@@ -116,16 +114,17 @@ export const markRead = mutation({
   args: {
     messageIds: v.array(v.id("messages")),
   },
-  handler: async (ctx, { messageIds }) =>
-    Promise.all(
-      messageIds.map(
-        async (messageId) =>
-          await ctx
-            .table("messages")
-            .getX(messageId)
-            .patch({ readTime: Date.now() }),
-      ),
-    ),
+  handler: async (ctx, { messageIds }) => {
+    const sessionId = await getAuthSessionId(ctx);
+    if (sessionId == null) return;
+    await Promise.all(
+      messageIds.map(async (messageId) => {
+        const message = await ctx.table("messages").getX(messageId);
+        if (message.recipientSessionId != sessionId) return;
+        await message.patch({ readTime: Date.now() });
+      }),
+    );
+  },
 });
 
 export const remove = internalMutation({

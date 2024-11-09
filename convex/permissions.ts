@@ -22,18 +22,23 @@ export async function viewerWithPermission(
   chatId: Id<"chats">,
   name: Permission,
 ) {
+  const viewer = ctx.viewer;
+  if (viewer == null) {
+    return null;
+  }
   const member = await ctx
     .table("members", "chatUser", (q) =>
-      q.eq("chatId", chatId).eq("userId", ctx.viewerX()._id),
+      q.eq("chatId", chatId).eq("userId", viewer._id),
     )
     .unique();
-  if (
-    member === null ||
-    !(await member
-      .edge("role")
-      .edge("permissions")
-      .has(await getPermission(ctx, name)))
-  ) {
+  if (member == null) {
+    return null;
+  }
+  const hasPermission = await member
+    .edge("role")
+    .edge("permissions")
+    .has(await getPermission(ctx, name));
+  if (!hasPermission) {
     return null;
   }
   return member;

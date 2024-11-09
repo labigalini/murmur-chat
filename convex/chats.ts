@@ -57,6 +57,7 @@ export const patch = mutation({
     messageLifespan: v.number(),
   },
   async handler(ctx, { chatId, messageLifespan }) {
+    await viewerHasPermissionX(ctx, chatId, "Manage Chat");
     return await ctx.table("chats").getX(chatId).patch({ messageLifespan });
   },
 });

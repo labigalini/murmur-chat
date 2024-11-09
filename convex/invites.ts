@@ -28,10 +28,6 @@ export const hasInvite = internalQuery({
 
 export const list = query({
   async handler(ctx) {
-    if (ctx.viewer === null) {
-      return [];
-    }
-
     const email = ctx.viewerX().email;
     if (email == null) {
       return [];
@@ -54,11 +50,7 @@ export const listByChat = query({
     chatId: v.id("chats"),
   },
   async handler(ctx, { chatId }) {
-    if (ctx.viewer === null) {
-      return [];
-    }
-    const viewMembers = await viewerHasPermission(ctx, chatId, "Read Members");
-    if (!viewMembers) {
+    if (!(await viewerHasPermission(ctx, chatId, "Invite Members"))) {
       return [];
     }
     return await ctx
@@ -79,9 +71,6 @@ export const get = query({
     inviteId: v.id("invites"),
   },
   async handler(ctx, { inviteId }) {
-    if (ctx.viewer === null) {
-      return null;
-    }
     const invite = await ctx.table("invites").getX(inviteId);
     checkViewerWasInvitedX(ctx, invite);
     const user = await invite.edge("user");
@@ -128,7 +117,9 @@ export const revoke = mutation({
     inviteId: v.id("invites"),
   },
   async handler(ctx, { inviteId }) {
-    await ctx.table("invites").getX(inviteId).patch({ revoked: true });
+    const invite = await ctx.table("invites").getX(inviteId);
+    await viewerHasPermissionX(ctx, invite.chatId, "Manage Members");
+    await invite.patch({ revoked: true });
   },
 });
 
@@ -137,29 +128,16 @@ export const remove = internalMutation({
     inviteId: v.id("invites"),
   },
   async handler(ctx, { inviteId }) {
-    const invite = await ctx.table("invites").getX(inviteId);
-    checkViewerWasInvitedX(ctx, invite);
-    await invite.delete();
+    await ctx.table("invites").getX(inviteId).delete();
   },
 });
 
-// NOTE: If you want your users to accept invites after signing up
-// with a different email, add a cryptographically secure token to
-// the invite ent, and use it in place of the ID as INVITE_PARAM.
-// Don't use the invite ID, as it shown to all team members.
 function checkViewerWasInvitedX(ctx: QueryCtx, invite: Ent<"invites">) {
   if (invite.email !== ctx.viewerX().email) {
     throw new Error("Invite email does not match viewer email");
   }
 }
 
-// To enable sending emails, set
-// - `RESEND_API_KEY`
-// - `SITE_URL` to the URL where your site is hosted
-// on your Convex dashboard:
-// https://dashboard.convex.dev/deployment/settings/environment-variables
-// To test emails, override the email address by setting
-// `OVERRIDE_INVITE_EMAIL`.
 export const send = action({
   args: {
     chatId: v.id("chats"),
@@ -182,9 +160,7 @@ export const send = action({
     try {
       await sendInviteEmail({ email, inviteId, inviterEmail, chatName });
     } catch (error) {
-      await ctx.runMutation(internal.invites.remove, {
-        inviteId,
-      });
+      await ctx.runMutation(internal.invites.remove, { inviteId });
       throw error;
     }
   },
@@ -195,7 +171,7 @@ export const prepare = internalMutation({
     chatId: v.id("chats"),
   },
   async handler(ctx, { chatId }) {
-    await viewerHasPermissionX(ctx, chatId, "Manage Members");
+    await viewerHasPermissionX(ctx, chatId, "Invite Members");
     const inviter = ctx.viewerX();
     return {
       inviterUserId: inviter._id,
@@ -213,6 +189,7 @@ export const create = internalMutation({
     inviterUserId: v.id("users"),
   },
   async handler(ctx, { chatId, email, roleId, inviterUserId }) {
+    await viewerHasPermissionX(ctx, chatId, "Invite Members");
     return await ctx.table("invites").insert({
       chatId,
       email,

@@ -33,9 +33,8 @@ export const list = query({
     search: v.optional(v.string()),
   },
   async handler(ctx, { chatId, search }) {
-    const viewer = ctx.viewer;
-    const viewMembers = await viewerHasPermission(ctx, chatId, "Read Members");
-    if (viewer === null || !viewMembers) {
+    const viewer = ctx.viewerX();
+    if (!(await viewerHasPermission(ctx, chatId, "Read Members"))) {
       return [];
     }
     const query = search
@@ -93,7 +92,7 @@ export const update = mutation({
   },
 });
 
-export const deleteMember = mutation({
+export const remove = mutation({
   args: {
     memberId: v.id("members"),
   },
