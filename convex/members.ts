@@ -87,7 +87,7 @@ export const update = mutation({
   async handler(ctx, { memberId, roleId }) {
     const member = await ctx.table("members").getX(memberId);
     await viewerHasPermissionX(ctx, member.chatId, "Manage Members");
-    await checkAnotherAdminExists(ctx, member);
+    await checkAnotherOwnerExists(ctx, member);
     await member.patch({ roleId });
   },
 });
@@ -99,13 +99,13 @@ export const remove = mutation({
   async handler(ctx, { memberId }) {
     const member = await ctx.table("members").getX(memberId);
     await viewerHasPermissionX(ctx, member.chatId, "Manage Members");
-    await checkAnotherAdminExists(ctx, member);
+    await checkAnotherOwnerExists(ctx, member);
     await ctx.table("members").getX(memberId).delete();
   },
 });
 
-async function checkAnotherAdminExists(ctx: QueryCtx, member: Ent<"members">) {
-  const adminRole = await getRole(ctx, "Admin");
+async function checkAnotherOwnerExists(ctx: QueryCtx, member: Ent<"members">) {
+  const adminRole = await getRole(ctx, "Owner");
   const otherAdmin = await ctx
     .table("chats")
     .getX(member.chatId)

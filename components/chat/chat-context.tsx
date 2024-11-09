@@ -27,6 +27,7 @@ export type ChatHandlers = {
   onLifespanChange: (chat: Chat, newLifespan: number) => void;
   onCreateInvite: (chat: Chat, inviteEmail: string) => void;
   onRevokeInvite: (invite: Invite) => void;
+  onRemoveMember: (invite: Member) => void;
   onSendMessage: (chat: Chat, newMessage: string) => void;
   onMessageRead?: (messageId: Message) => void;
 };
@@ -44,6 +45,7 @@ export const ChatContext = createContext({
   onLifespanChange: (_chat, _newLifespan) => {},
   onCreateInvite: (_chat, _inviteEmail) => {},
   onRevokeInvite: (_invite) => {},
+  onRemoveMember: (_member) => {},
   onSendMessage: (_chat, _newMessage) => {},
 } satisfies ChatContextType & {
   sidebar: ChatSidebarState;

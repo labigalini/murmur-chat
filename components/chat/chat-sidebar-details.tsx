@@ -1,4 +1,4 @@
-import { ComponentProps, useCallback, useState } from "react";
+import { ComponentProps, useCallback, useMemo, useState } from "react";
 
 import { isAnyLoading } from "@/lib/utils";
 
@@ -7,9 +7,9 @@ import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
 import { ChatInviteDialog } from "./chat-invite-dialog";
 import { ChatTitle } from "./chat-title";
-import { Invite } from "./chat-types";
+import { Invite, Member } from "./chat-types";
 
-import { AlertIcon, TrashIcon, UserPlusIcon } from "../icons";
+import { AlertIcon, TrashIcon, UserPlusIcon, UserRoundXIcon } from "../icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,7 +42,11 @@ const ChatSidebarDetails = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <ChatSidebarMembers />
+      <AccessControl
+        viewer={viewer}
+        permission="Read Members"
+        component={<ChatSidebarMembers />}
+      />
       <AccessControl
         viewer={viewer}
         permission="Invite Members"
@@ -64,8 +68,21 @@ const ChatSidebarDetails = () => {
 
 const ChatSidebarMembers = () => {
   const {
-    state: { members },
+    state: { members, viewer },
+    onRemoveMember,
   } = useChatContext();
+
+  const handleRemove = (member: Member) => {
+    onRemoveMember(member);
+  };
+
+  const ownerCount = useMemo(
+    () =>
+      members == "loading"
+        ? 0
+        : members.filter((m) => m.role === "Owner").length,
+    [members],
+  );
 
   return (
     <>
@@ -77,19 +94,69 @@ const ChatSidebarMembers = () => {
       <div className="flex flex-col gap-2">
         <Suspense
           fallback={ChatSidebarMembersSkeleton}
-          component={({ members }) =>
+          component={({ viewer, members }) =>
             members.map((member) => (
-              <div
-                key={member._id}
-                className="inline-flex w-full items-center justify-start gap-2"
-              >
-                <ChatAvatar name={member.name} avatar={member.image} size={6} />
-                <span>{member.name}</span>
-                {member.role !== "Member" && <span>({member.role})</span>}
+              <div key={member._id} className="flex justify-between">
+                <div className="flex items-center justify-start gap-2">
+                  <ChatAvatar
+                    name={member.name}
+                    avatar={member.image}
+                    size={6}
+                  />
+                  <span>{member.name}</span>
+                  {member.role !== "Member" && (
+                    <span className="font-semibold">({member.role})</span>
+                  )}
+                </div>
+                <AccessControl
+                  viewer={viewer}
+                  permission="Manage Members"
+                  component={
+                    <AlertDialog>
+                      <AlertDialogTrigger
+                        disabled={member.role === "Owner" && ownerCount < 2}
+                        asChild
+                      >
+                        <Button variant="ghost" size="icon">
+                          <UserRoundXIcon size="5" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription asChild>
+                            <div>
+                              <span>
+                                This action cannot be undone. This will
+                                permanently remove this member from the chat.
+                                <div className="m-4 flex flex-col">
+                                  <span>Member: {member.name}</span>
+                                </div>
+                              </span>
+                            </div>
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            className={buttonVariants({
+                              variant: "destructive",
+                            })}
+                            onClick={() => handleRemove(member)}
+                          >
+                            Remove Member
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  }
+                />
               </div>
             ))
           }
-          componentProps={{ members }}
+          componentProps={{ viewer, members }}
         />
       </div>
     </>
@@ -163,12 +230,16 @@ const ChatSidebarInvites = () => {
                           <AlertDialogTitle>
                             Are you absolutely sure?
                           </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            revoke this invite.
-                            <div className="m-4 flex flex-col">
-                              <span>Email: {invite.email}</span>
-                              <span>Inviter: {invite.inviter}</span>
+                          <AlertDialogDescription asChild>
+                            <div>
+                              <span>
+                                This action cannot be undone. This will
+                                permanently revoke this invite.
+                              </span>
+                              <div className="m-4 flex flex-col">
+                                <span>Email: {invite.email}</span>
+                                <span>Inviter: {invite.inviter}</span>
+                              </div>
                             </div>
                           </AlertDialogDescription>
                         </AlertDialogHeader>

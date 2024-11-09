@@ -31,6 +31,7 @@ import {
   SearchIcon as SearchIconPrimitive,
   Trash2Icon as TrashIconPrimitive,
   UserRoundPlusIcon as UserRoundPlusIconPrimitive,
+  UserRoundXIcon as UserRoundXIconPrimitive,
 } from "lucide-react";
 
 import { cn, fr } from "@/lib/utils";
@@ -78,7 +79,8 @@ export const MoonIcon = createIcon(MoonIconPrimitive);
 export const PaperPlaneIcon = createIcon(PaperPlaneIconPrimitive);
 export const Pencil2Icon = createIcon(Pencil2IconPrimitive);
 export const SunIcon = createIcon(SunIconPrimitive);
-export const UserPlusIcon = createIcon(UserRoundPlusIconPrimitive);
-export const TrashIcon = createIcon(TrashIconPrimitive);
 export const AlertIcon = createIcon(AlertTriangleIconPrimitive);
 export const SearchIcon = createIcon(SearchIconPrimitive);
+export const TrashIcon = createIcon(TrashIconPrimitive);
+export const UserPlusIcon = createIcon(UserRoundPlusIconPrimitive);
+export const UserRoundXIcon = createIcon(UserRoundXIconPrimitive);
