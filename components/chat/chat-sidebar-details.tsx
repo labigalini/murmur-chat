@@ -112,7 +112,7 @@ function ChatSidebarMembersSkeleton({
 
 const ChatSidebarInvites = () => {
   const {
-    state: { members, invites },
+    state: { viewer, invites },
     onRevokeInvite,
   } = useChatContext();
 
@@ -122,7 +122,7 @@ const ChatSidebarInvites = () => {
     onRevokeInvite(invite);
   };
 
-  const isLoading = isAnyLoading(members, invites);
+  const isLoading = isAnyLoading(viewer, invites);
 
   return (
     <>
@@ -138,7 +138,7 @@ const ChatSidebarInvites = () => {
       <div className="flex flex-col gap-2">
         <Suspense
           fallback={ChatSidebarInvitesSkeleton}
-          component={({ invites }) =>
+          component={({ viewer, invites }) =>
             invites.map((invite) => (
               <div
                 key={invite._id}
@@ -148,41 +148,49 @@ const ChatSidebarInvites = () => {
                   <span>Email: {invite.email}</span>
                   <span>Inviter: {invite.inviter}</span>
                 </div>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <TrashIcon size="5" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Are you absolutely sure?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        revoke this invite.
-                        <div className="m-4 flex flex-col">
-                          <span>Email: {invite.email}</span>
-                          <span>Inviter: {invite.inviter}</span>
-                        </div>
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        className={buttonVariants({ variant: "destructive" })}
-                        onClick={() => handleRevoke(invite)}
-                      >
-                        Revoke Invite
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <AccessControl
+                  viewer={viewer}
+                  permission="Manage Members"
+                  component={
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <TrashIcon size="5" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            revoke this invite.
+                            <div className="m-4 flex flex-col">
+                              <span>Email: {invite.email}</span>
+                              <span>Inviter: {invite.inviter}</span>
+                            </div>
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            className={buttonVariants({
+                              variant: "destructive",
+                            })}
+                            onClick={() => handleRevoke(invite)}
+                          >
+                            Revoke Invite
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  }
+                />
               </div>
             ))
           }
-          componentProps={{ invites }}
+          componentProps={{ viewer, invites }}
         />
       </div>
       <div className="mt-2 w-10/12 self-center">
