@@ -13,11 +13,22 @@ export const init = internalMutation({
       .insertMany(vPermission.members.map((p) => ({ name: p.value })));
 
     await ctx.table("roles").insert({
-      name: "Admin",
+      name: "Owner",
       isDefault: false,
       permissions: await Promise.all(
         vPermission.members.map(async (p) => getPermission(ctx, p.value)),
       ),
+    });
+
+    await ctx.table("roles").insert({
+      name: "Admin",
+      isDefault: false,
+      permissions: [
+        await getPermission(ctx, "Manage Chat"),
+        await getPermission(ctx, "Read Members"),
+        await getPermission(ctx, "Manage Members"),
+        await getPermission(ctx, "Participate"),
+      ],
     });
 
     await ctx.table("roles").insert({

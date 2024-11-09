@@ -3,7 +3,11 @@ import { Infer, v } from "convex/values";
 import { internalQuery } from "./functions";
 import { QueryCtx } from "./types";
 
-export const vRole = v.union(v.literal("Admin"), v.literal("Member"));
+export const vRole = v.union(
+  v.literal("Owner"),
+  v.literal("Admin"),
+  v.literal("Member"),
+);
 export type Role = Infer<typeof vRole>;
 
 export async function getRole(ctx: QueryCtx, name: Role) {
