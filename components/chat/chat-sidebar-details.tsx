@@ -45,7 +45,7 @@ const ChatSidebarDetails = () => {
       <ChatSidebarMembers />
       <AccessControl
         viewer={viewer}
-        permission="Manage Members" // TODO change to Invite Members
+        permission="Invite Members"
         component={<ChatSidebarInvites />}
       />
       <AccessControl

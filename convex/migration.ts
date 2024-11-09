@@ -27,6 +27,7 @@ export const init = internalMutation({
         await getPermission(ctx, "Manage Chat"),
         await getPermission(ctx, "Read Members"),
         await getPermission(ctx, "Manage Members"),
+        await getPermission(ctx, "Invite Members"),
         await getPermission(ctx, "Participate"),
       ],
     });
@@ -35,6 +36,7 @@ export const init = internalMutation({
       name: "Member",
       isDefault: true,
       permissions: [
+        await getPermission(ctx, "Invite Members"),
         await getPermission(ctx, "Read Members"),
         await getPermission(ctx, "Participate"),
       ],
