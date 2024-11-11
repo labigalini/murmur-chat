@@ -6,9 +6,14 @@ import { INACTIVE_TIMEOUT } from "@/lib/constants";
 
 export function useInactivityDetection(
   onInactive: () => void,
-  onActive?: () => void,
+  onActive?: (time: number) => void,
+  lastUsedTime?: number,
 ) {
   const lastActivityRef = useRef<number>(Date.now());
+
+  useEffect(() => {
+    lastActivityRef.current = lastUsedTime ?? Date.now();
+  }, [lastUsedTime]);
 
   useEffect(() => {
     const updateLastActivity = () => {
@@ -35,11 +40,11 @@ export function useInactivityDetection(
       if (timeSinceLastActivity > INACTIVE_TIMEOUT) {
         onInactive();
       } else {
-        onActive?.();
+        onActive?.(lastActivityRef.current);
       }
     }, 60 * 1000); // Check every minute
 
-    onActive?.();
+    onActive?.(lastActivityRef.current);
 
     return () => {
       clearInterval(interval);
