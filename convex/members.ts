@@ -5,7 +5,7 @@ import { mutation, query } from "./functions";
 import { viewerHasPermission, viewerHasPermissionX } from "./permissions";
 import { getRole, vRole } from "./roles";
 import { Ent, MutationCtx, QueryCtx } from "./types";
-import { getUserSessions, getUsername } from "./users";
+import { getUserSessions } from "./users";
 import { normalizeStringForSearch } from "./utils";
 
 export const viewerPermissions = query({
@@ -48,7 +48,7 @@ export const list = query({
       : ctx.table("chats").getX(chatId).edge("members");
     return await query.map(async (member) => {
       const user = await member.edge("user");
-      const username = getUsername(user);
+      const username = member.name ?? user.name;
       const role = await member.edge("role");
       const permissions = (await role.edge("permissions")).map((p) => p.name);
       const sessions = await Promise.all(

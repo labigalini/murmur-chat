@@ -12,8 +12,9 @@ export const { auth, signIn, signOut, store } = convexAuth({
       ctx,
       { existingUserId, profile: { emailVerified, ...profile } },
     ) {
+      const now = Date.now();
       const userData = {
-        ...(emailVerified ? { emailVerificationTime: Date.now() } : null),
+        ...(emailVerified ? { emailVerificationTime: now } : null),
         ...profile,
       };
 
@@ -23,11 +24,13 @@ export const { auth, signIn, signOut, store } = convexAuth({
       }
 
       if (profile.email) {
-        const emailHasInvite = await hasInvite(ctx, {
-          email: profile.email,
-        });
+        const { email } = profile;
+        const emailHasInvite = await hasInvite(ctx, { email });
         if (emailHasInvite) {
-          return await ctx.db.insert("users", userData);
+          return await ctx.db.insert("users", {
+            ...userData,
+            name: `noname #${generateUserHash(email, now)}`,
+          });
         }
       }
 
@@ -36,6 +39,17 @@ export const { auth, signIn, signOut, store } = convexAuth({
     },
   },
 });
+
+const generateUserHash = (email: string, timestamp: number): string => {
+  const combined = `${email}${timestamp}`;
+  // Create a simple hash using string manipulation
+  const hash = Array.from(combined)
+    .map((char) => char.charCodeAt(0))
+    .reduce((acc, curr) => ((acc << 5) - acc + curr) | 0, 0);
+  // Convert to alphanumeric and ensure 6 characters
+  const alphanumeric = Math.abs(hash).toString(36);
+  return alphanumeric.slice(-6).padStart(6, "0");
+};
 
 export const session = query({
   args: {},

@@ -9,19 +9,9 @@ export const viewer = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    const user = userId !== null ? await ctx.table("users").get(userId) : null;
-    return user
-      ? {
-          ...user,
-          name: getUsername(user),
-        }
-      : null;
+    return userId !== null ? await ctx.table("users").get(userId) : null;
   },
 });
-
-export function getUsername(user: Ent<"users">) {
-  return user.name ?? user.email ?? "noname";
-}
 
 export async function getUserSessions(ctx: QueryCtx, user: Ent<"users">) {
   const now = Date.now();

@@ -10,7 +10,6 @@ import { internalMutation, internalQuery, mutation, query } from "./functions";
 import { createMember } from "./members";
 import { viewerHasPermission, viewerHasPermissionX } from "./permissions";
 import { Ent, QueryCtx } from "./types";
-import { getUsername } from "./users";
 import { getX } from "./utils";
 
 // Temporary internal function to only allow invited users to signup
@@ -26,6 +25,21 @@ export const hasInvite = internalQuery({
   },
 });
 
+const mapInviteResponse = async (invite: Ent<"invites">) => {
+  const inviterUser = await invite.edge("user");
+  const inviterMember = await inviterUser
+    .edge("members")
+    .filter((q) => q.eq(q.field("chatId"), invite.chatId))
+    .first();
+  return {
+    _id: invite._id,
+    email: invite.email,
+    inviter: inviterMember?.name ?? inviterUser.name,
+    chat: (await invite.edge("chat")).name,
+    role: (await invite.edge("role")).name,
+  };
+};
+
 export const list = query({
   async handler(ctx) {
     const email = ctx.viewer?.email;
@@ -35,13 +49,7 @@ export const list = query({
     return await ctx
       .table("invites", "email", (q) => q.eq("email", email))
       .filter((q) => q.neq(q.field("revoked"), true))
-      .map(async (invite) => ({
-        _id: invite._id,
-        email: invite.email,
-        inviter: getUsername(await invite.edge("user")),
-        chat: (await invite.edge("chat")).name,
-        role: (await invite.edge("role")).name,
-      }));
+      .map(mapInviteResponse);
   },
 });
 
@@ -56,13 +64,7 @@ export const listByChat = query({
     return await ctx
       .table("invites", "chatId", (q) => q.eq("chatId", chatId))
       .filter((q) => q.neq(q.field("revoked"), true))
-      .map(async (invite) => ({
-        _id: invite._id,
-        email: invite.email,
-        inviter: getUsername(await invite.edge("user")),
-        chat: (await invite.edge("chat")).name,
-        role: (await invite.edge("role")).name,
-      }));
+      .map(mapInviteResponse);
   },
 });
 
@@ -73,14 +75,7 @@ export const get = query({
   async handler(ctx, { inviteId }) {
     const invite = await ctx.table("invites").getX(inviteId);
     checkViewerWasInvitedX(ctx, invite);
-    const user = await invite.edge("user");
-    return {
-      _id: invite._id,
-      email: invite.email,
-      inviter: getUsername(user),
-      chat: (await invite.edge("chat")).name,
-      role: (await invite.edge("role")).name,
-    };
+    return mapInviteResponse(invite);
   },
 });
 

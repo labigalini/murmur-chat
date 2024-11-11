@@ -38,6 +38,7 @@ const schema = defineEntSchema(
       .edges("invites", { ref: true }),
 
     members: defineEnt({
+      name: v.optional(v.string()),
       searchable: v.string(),
     })
       .edge("chat")
