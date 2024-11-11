@@ -5,7 +5,7 @@ import { Permission } from "@/convex/permissions";
 import { Member } from "./chat-types";
 
 type AccessControlProps = {
-  viewer: Member;
+  viewer?: Member;
   permission: Permission;
   fallback?: ReactNode;
   component: ReactNode;
@@ -18,7 +18,7 @@ export function AccessControl({
   component: Component,
 }: AccessControlProps) {
   const isAllowed = useMemo(
-    () => viewer.permissions.includes(permission),
+    () => viewer?.permissions.includes(permission) ?? false,
     [viewer, permission],
   );
 

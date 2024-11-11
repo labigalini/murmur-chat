@@ -28,7 +28,7 @@ export const hasInvite = internalQuery({
 
 export const list = query({
   async handler(ctx) {
-    const email = ctx.viewerX().email;
+    const email = ctx.viewer?.email;
     if (email == null) {
       return [];
     }
