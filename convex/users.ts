@@ -17,7 +17,7 @@ export async function getUserSessions(ctx: QueryCtx, user: Ent<"users">) {
   const now = Date.now();
   const sessions = await ctx
     .table("authSessions")
-    .getMany("userId", [user._id]);
+    .filter((q) => q.eq(q.field("userId"), user._id));
   const sessionDetails = await Promise.all(
     sessions
       .filter((session) => !!session)
