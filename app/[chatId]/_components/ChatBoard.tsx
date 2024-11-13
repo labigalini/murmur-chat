@@ -118,6 +118,16 @@ function ChatContainerWrapper({
     [deleteChat],
   );
 
+  const handleChatNameChange = useCallback(
+    async (chat: Chat, newName: string) => {
+      await patchChat({
+        chatId: chat._id,
+        name: newName,
+      });
+    },
+    [patchChat],
+  );
+
   const handleLifespanChange = useCallback(
     async (chat: Chat, newLifespan: number) => {
       await patchChat({
@@ -215,6 +225,7 @@ function ChatContainerWrapper({
         onSelectChat: handleSelectChat,
         onCreateChat: (newChatName) => void handleCreateChat(newChatName),
         onDeleteChat: (chat) => void handleDeleteChat(chat),
+        onChatNameChange: (chat, n) => void handleChatNameChange(chat, n),
         onLifespanChange: (chat, ls) => void handleLifespanChange(chat, ls),
         onCreateInvite: (chat, email) => void handleCreateInvite(chat, email),
         onRevokeInvite: (invite) => void handleRevokeInvite(invite),

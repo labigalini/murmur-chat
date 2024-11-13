@@ -54,11 +54,12 @@ export const create = mutation({
 export const patch = mutation({
   args: {
     chatId: v.id("chats"),
-    messageLifespan: v.number(),
+    messageLifespan: v.optional(v.number()),
+    name: v.optional(v.string()),
   },
-  async handler(ctx, { chatId, messageLifespan }) {
+  async handler(ctx, { chatId, ...changes }) {
     await viewerHasPermissionX(ctx, chatId, "Manage Chat");
-    return await ctx.table("chats").getX(chatId).patch({ messageLifespan });
+    return await ctx.table("chats").getX(chatId).patch(changes);
   },
 });
 

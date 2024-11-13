@@ -29,7 +29,8 @@ import { handleFailure } from "@/lib/handleFailure";
 import { useChatContext } from "./chat-context";
 
 const FormSchema = z.object({
-  email: z.string().min(4, "Team name must be at least 4 characters long."),
+  email: z.string().min(4, "Email must be at least 4 characters long."),
+  // TODO add email validation
 });
 
 type ChatInviteDialogProps = Required<Pick<DialogProps, "open">> & {
@@ -65,7 +66,7 @@ const ChatInviteDialog = ({ open, onClose }: ChatInviteDialogProps) => {
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <DialogHeader>
               <DialogTitle>Create invite</DialogTitle>
-              <DialogDescription>Create a new incite.</DialogDescription>
+              <DialogDescription>Create a new invite.</DialogDescription>
             </DialogHeader>
             <div className="flex flex-col gap-4 py-2">
               <FormField
