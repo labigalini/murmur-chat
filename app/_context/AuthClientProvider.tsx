@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useMemo } from "react";
 
 import { usePathname } from "next/navigation";
 
@@ -47,7 +41,6 @@ export function AuthClientProvider({
   const pathname = usePathname();
 
   const { isLoading, isAuthenticated } = useConvexAuth();
-  const [isInactive, setIsInactive] = useState(false);
 
   const user = useQuery(
     api.users.viewer, //
@@ -64,39 +57,32 @@ export function AuthClientProvider({
     [session],
   );
 
-  const handleInactiveSession = useCallback(() => {
-    if (isProtectedRoute(pathname)) setIsInactive(true);
-  }, [pathname]);
-
   const handleActiveSession = useCallback(
     (lastUsedTime: number) => {
       if (isAuthenticated && sessionLastUsedTime != lastUsedTime)
         void patchSession({ lastUsedTime });
-      setIsInactive(false);
     },
     [isAuthenticated, sessionLastUsedTime, patchSession],
   );
 
-  useInactivityDetection(
-    handleInactiveSession,
-    handleActiveSession,
+  const { isInactive } = useInactivityDetection(
     sessionLastUsedTime,
+    handleActiveSession,
   );
 
   const handleContinue = useCallback(async () => {
     await patchSession({ lastUsedTime: Date.now() });
-    setIsInactive(false);
   }, [patchSession]);
 
   const context = useMemo(
     () =>
       ({
         isAuthenticated: isLoading ? "loading" : isAuthenticated,
-        isInactive,
+        isInactive: isProtectedRoute(pathname) && isInactive,
         user,
         session,
       }) satisfies AuthContextType,
-    [isLoading, isAuthenticated, isInactive, user, session],
+    [isLoading, isAuthenticated, pathname, isInactive, user, session],
   );
 
   return (

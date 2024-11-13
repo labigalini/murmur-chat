@@ -1,21 +1,25 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { INACTIVE_TIMEOUT } from "@/lib/constants";
 
 export function useInactivityDetection(
-  onInactive: () => void,
-  onActive?: (time: number) => void,
   lastUsedTime?: number,
+  onActive?: (timestamp: number) => void,
 ) {
+  const [isInactive, setIsInactive] = useState(false);
   const lastActivityRef = useRef<number>(Date.now());
 
   useEffect(() => {
     lastActivityRef.current = lastUsedTime ?? Date.now();
+    setIsInactive(checkIsInactive(lastActivityRef.current));
   }, [lastUsedTime]);
 
   useEffect(() => {
+    // Do not update last activity if inactive
+    if (isInactive) return;
+
     const updateLastActivity = () => {
       lastActivityRef.current = Date.now();
     };
@@ -31,17 +35,13 @@ export function useInactivityDetection(
         window.removeEventListener(event, updateLastActivity);
       });
     };
-  }, []);
+  }, [isInactive]);
 
   useEffect(() => {
     // Check for inactivity
     const interval = setInterval(() => {
-      const timeSinceLastActivity = Date.now() - lastActivityRef.current;
-      if (timeSinceLastActivity > INACTIVE_TIMEOUT) {
-        onInactive();
-      } else {
-        onActive?.(lastActivityRef.current);
-      }
+      setIsInactive(checkIsInactive(lastActivityRef.current));
+      if (!isInactive) onActive?.(lastActivityRef.current);
     }, 60 * 1000); // Check every minute
 
     onActive?.(lastActivityRef.current);
@@ -49,5 +49,12 @@ export function useInactivityDetection(
     return () => {
       clearInterval(interval);
     };
-  }, [onInactive, onActive]);
+  }, [onActive]);
+
+  return { isInactive };
 }
+
+const checkIsInactive = (lastActivityTime: number) => {
+  const timeSinceLastActivity = Date.now() - lastActivityTime;
+  return timeSinceLastActivity > INACTIVE_TIMEOUT;
+};
