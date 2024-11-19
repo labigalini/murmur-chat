@@ -9,7 +9,16 @@ export const viewer = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    return userId !== null ? await ctx.table("users").get(userId) : null;
+    if (!userId) {
+      return null;
+    }
+    const user = await ctx.table("users").get(userId);
+    return user
+      ? {
+          ...user,
+          name: user.name ?? "noname",
+        }
+      : null;
   },
 });
 

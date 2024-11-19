@@ -34,7 +34,7 @@ const mapInviteResponse = async (invite: Ent<"invites">) => {
   return {
     _id: invite._id,
     email: invite.email,
-    inviter: inviterMember?.name ?? inviterUser.name,
+    inviter: inviterMember?.name ?? inviterUser.name ?? "noname",
     chat: (await invite.edge("chat")).name,
     role: (await invite.edge("role")).name,
   };

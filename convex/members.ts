@@ -48,7 +48,7 @@ export const list = query({
       : ctx.table("chats").getX(chatId).edge("members");
     return await query.map(async (member) => {
       const user = await member.edge("user");
-      const username = member.name ?? user.name;
+      const username = member.name ?? user.name ?? "noname";
       const role = await member.edge("role");
       const permissions = (await role.edge("permissions")).map((p) => p.name);
       const sessions = await Promise.all(
