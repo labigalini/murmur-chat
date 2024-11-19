@@ -4,6 +4,7 @@ import { v } from "convex/values";
 import { INACTIVE_TIMEOUT } from "@/lib/constants";
 
 import { mutation, query } from "./functions";
+import { getUrl } from "./storage";
 import { Ent, QueryCtx } from "./types";
 
 export const viewer = query({
@@ -14,18 +15,21 @@ export const viewer = query({
       return null;
     }
     const user = await ctx.table("users").get(userId);
-    return user
-      ? {
-          ...user,
-          name: user.name ?? "noname",
-        }
-      : null;
+    if (!user) {
+      return null;
+    }
+    return {
+      ...user,
+      name: user.name ?? "noname",
+      image: user.image && (await getUrl(ctx, user.image)),
+    };
   },
 });
 
 export const patch = mutation({
   args: {
     name: v.optional(v.string()),
+    image: v.optional(v.string()),
   },
   async handler(ctx, changes) {
     return await ctx.table("users").getX(ctx.viewerX()._id).patch(changes);

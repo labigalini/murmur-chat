@@ -31,12 +31,26 @@ export function UserSettingsDialog({
   const [newName, setNewName] = useState(
     name.substring(0, name.lastIndexOf("#")).trim() || name.trim(),
   );
-  const [newAvatar, _setNewAvatar] = useState(avatar);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
+  const generateUploadUrl = useMutation(api.storage.generateUploadUrl);
   const patchUser = useMutation(api.users.patch);
 
   const handleSave = async () => {
-    await patchUser({ name: newName });
-    onOpenChange(false); // Close dialog after successful update
+    if (selectedImage) {
+      const postUrl = await generateUploadUrl();
+      const result = await fetch(postUrl, {
+        method: "POST",
+        headers: { "Content-Type": selectedImage!.type },
+        body: selectedImage,
+      });
+      const { storageId } = await result.json();
+      setSelectedImage(null);
+      await patchUser({ name: newName, image: storageId });
+    } else {
+      await patchUser({ name: newName });
+    }
+    onOpenChange(false);
   };
 
   return (
@@ -47,12 +61,18 @@ export function UserSettingsDialog({
         </DialogHeader>
         <div className="flex flex-col items-center gap-4">
           <Avatar className="h-24 w-24">
-            <AvatarImage src={newAvatar} alt={name} />
+            <AvatarImage src={avatar} alt={name} />
             <AvatarFallback>{name}</AvatarFallback>
           </Avatar>
           <Button variant="outline" type="button" className="w-full">
             Change avatar
           </Button>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(event) => setSelectedImage(event.target.files![0])}
+            disabled={selectedImage !== null}
+          />
         </div>
 
         <div className="space-y-2">
