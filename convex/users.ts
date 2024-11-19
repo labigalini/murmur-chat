@@ -1,8 +1,9 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { v } from "convex/values";
 
 import { INACTIVE_TIMEOUT } from "@/lib/constants";
 
-import { query } from "./functions";
+import { mutation, query } from "./functions";
 import { Ent, QueryCtx } from "./types";
 
 export const viewer = query({
@@ -19,6 +20,15 @@ export const viewer = query({
           name: user.name ?? "noname",
         }
       : null;
+  },
+});
+
+export const patch = mutation({
+  args: {
+    name: v.optional(v.string()),
+  },
+  async handler(ctx, changes) {
+    return await ctx.table("users").getX(ctx.viewerX()._id).patch(changes);
   },
 });
 
