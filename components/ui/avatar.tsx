@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import AvatarEditorPrimitive from "react-avatar-editor";
 
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
@@ -77,4 +78,26 @@ const AvatarFallback = React.forwardRef<
 });
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
-export { Avatar, AvatarFallback, AvatarImage };
+const AvatarEditor = React.forwardRef<
+  React.ElementRef<typeof AvatarEditorPrimitive>,
+  React.ComponentPropsWithoutRef<typeof AvatarEditorPrimitive>
+>(({ className, image, ...props }, ref) => {
+  return (
+    <AvatarEditorPrimitive
+      ref={ref}
+      image={image}
+      width={100}
+      height={100}
+      border={10}
+      color={[255, 255, 255, 0.6]} // RGBA
+      scale={1.6}
+      rotate={0}
+      borderRadius={120}
+      className={cn("", className)}
+      {...props}
+    />
+  );
+});
+AvatarEditor.displayName = "Avatar Editor";
+
+export { Avatar, AvatarEditor, AvatarFallback, AvatarImage };

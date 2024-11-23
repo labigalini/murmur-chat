@@ -1,8 +1,13 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { useMutation } from "convex/react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarEditor,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,6 +19,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { api } from "@/convex/_generated/api";
+
+import { FileInput } from "../ui/file-input";
 
 interface UserSettingsDialogProps {
   name: string;
@@ -36,13 +43,19 @@ export function UserSettingsDialog({
   const generateUploadUrl = useMutation(api.storage.generateUploadUrl);
   const patchUser = useMutation(api.users.patch);
 
+  const editorRef = useRef<React.ElementRef<typeof AvatarEditor>>(null);
+
   const handleSave = async () => {
     if (selectedImage) {
+      const canvas = editorRef.current?.getImage();
+      const blob = await new Promise<Blob>((resolve) =>
+        canvas!.toBlob((blob) => resolve(blob!), "image/jpeg", 0.95),
+      );
       const postUrl = await generateUploadUrl();
       const result = await fetch(postUrl, {
         method: "POST",
-        headers: { "Content-Type": selectedImage!.type },
-        body: selectedImage,
+        headers: { "Content-Type": blob!.type },
+        body: blob,
       });
       const { storageId } = await result.json();
       setSelectedImage(null);
@@ -60,19 +73,22 @@ export function UserSettingsDialog({
           <DialogTitle>Edit profile</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col items-center gap-4">
-          <Avatar className="h-24 w-24">
-            <AvatarImage src={avatar} alt={name} />
-            <AvatarFallback>{name}</AvatarFallback>
-          </Avatar>
-          <Button variant="outline" type="button" className="w-full">
-            Change avatar
-          </Button>
-          <input
-            type="file"
+          {selectedImage ? (
+            <AvatarEditor ref={editorRef} image={selectedImage} />
+          ) : (
+            <Avatar className="m-3 h-24 w-24">
+              <AvatarImage src={avatar} alt={name} />
+              <AvatarFallback>{name}</AvatarFallback>
+            </Avatar>
+          )}
+          <FileInput
+            className="w-48"
             accept="image/*"
-            onChange={(event) => setSelectedImage(event.target.files![0])}
-            disabled={selectedImage !== null}
-          />
+            maxSize={5 * 1024 * 1024} // 5MB
+            onFileSelected={setSelectedImage}
+          >
+            Change Avatar
+          </FileInput>
         </div>
 
         <div className="space-y-2">
