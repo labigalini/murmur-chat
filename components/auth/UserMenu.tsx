@@ -31,7 +31,7 @@ export function UserMenu({ name, avatar }: UserMenuProps) {
         name={name}
         avatar={avatar}
         open={isSettingsOpen}
-        onOpenChange={setIsSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

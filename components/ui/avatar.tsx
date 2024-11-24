@@ -78,18 +78,36 @@ const AvatarFallback = React.forwardRef<
 });
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
+interface AvatarEditorRef {
+  getImage: (quality?: number) => Promise<Blob | undefined>;
+}
+
 const AvatarEditor = React.forwardRef<
-  React.ElementRef<typeof AvatarEditorPrimitive>,
+  AvatarEditorRef,
   React.ComponentPropsWithoutRef<typeof AvatarEditorPrimitive>
 >(({ className, image, ...props }, ref) => {
+  const editorRef =
+    React.useRef<React.ElementRef<typeof AvatarEditorPrimitive>>(null);
+
+  React.useImperativeHandle(ref, () => ({
+    getImage: (quality = 0.95) => {
+      const canvas = editorRef.current?.getImage();
+      return new Promise(
+        (resolve) =>
+          canvas &&
+          canvas.toBlob((blob) => resolve(blob!), "image/jpeg", quality),
+      );
+    },
+  }));
+
   return (
     <AvatarEditorPrimitive
-      ref={ref}
+      ref={editorRef}
       image={image}
       width={100}
       height={100}
       border={10}
-      color={[255, 255, 255, 0.6]} // RGBA
+      color={[255, 255, 255, 0.8]}
       scale={1.6}
       rotate={0}
       borderRadius={120}
