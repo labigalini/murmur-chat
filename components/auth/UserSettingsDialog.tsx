@@ -21,6 +21,8 @@ import { Label } from "@/components/ui/label";
 
 import { api } from "@/convex/_generated/api";
 
+import { useStorage } from "@/hooks/useStorage";
+
 import { FileInput } from "../ui/file-input";
 
 interface UserSettingsDialogProps {
@@ -43,27 +45,21 @@ export function UserSettingsDialog({
   const [newName, setNewName] = useState<string | undefined>();
   const [selectedImage, setSelectedImage] = useState<File | undefined>();
 
-  const generateUploadUrl = useMutation(api.storage.generateUploadUrl);
+  const { upload } = useStorage();
   const patchUser = useMutation(api.users.patch);
 
   const editorRef = useRef<React.ElementRef<typeof AvatarEditor>>(null);
 
   const handleSave = async () => {
-    const patch: FunctionArgs<typeof api.users.patch> = { name: newName };
-    if (selectedImage) {
-      const image = await editorRef.current?.getImage();
-      if (image) {
-        const postUrl = await generateUploadUrl();
-        const result = await fetch(postUrl, {
-          method: "POST",
-          headers: { "Content-Type": image.type },
-          body: image,
-        });
-        const { storageId } = await result.json();
-        patch.image = storageId;
-      }
+    const patch: FunctionArgs<typeof api.users.patch> = {};
+
+    const image = await editorRef.current?.getImage();
+    if (image) patch.image = await upload(image);
+    if (newName) patch.name = newName;
+
+    if (!Object.is(patch, {})) {
+      await patchUser(patch);
     }
-    await patchUser(patch);
     handleClose();
   };
 
