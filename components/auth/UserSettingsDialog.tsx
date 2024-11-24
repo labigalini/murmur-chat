@@ -87,7 +87,6 @@ export function UserSettingsDialog({
           <FileInput
             className="w-48"
             accept="image/*"
-            maxSize={5 * 1024 * 1024} // 5MB
             onFileSelected={setSelectedImage}
           >
             Change Avatar

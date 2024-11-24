@@ -91,7 +91,7 @@ const AvatarEditor = React.forwardRef<
 
   React.useImperativeHandle(ref, () => ({
     getImage: (quality = 0.95) => {
-      const canvas = editorRef.current?.getImage();
+      const canvas = editorRef.current?.getImageScaledToCanvas();
       return new Promise(
         (resolve) =>
           canvas &&
