@@ -81,7 +81,6 @@ AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 interface AvatarEditorRef {
   getImage: (quality?: number) => Promise<Blob | undefined>;
 }
-
 const AvatarEditor = React.forwardRef<
   AvatarEditorRef,
   React.ComponentPropsWithoutRef<typeof AvatarEditorPrimitive>

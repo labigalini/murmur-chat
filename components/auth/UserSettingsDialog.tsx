@@ -67,10 +67,10 @@ export function UserSettingsDialog({
     onClose();
     setNewName(undefined);
     setSelectedImage(undefined);
-  }, []);
+  }, [onClose]);
 
   return (
-    <Dialog open={open} onOpenChange={(open) => open && handleClose()}>
+    <Dialog open={open} onOpenChange={(open) => open && void handleClose()}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
@@ -103,10 +103,10 @@ export function UserSettingsDialog({
         </div>
 
         <div className="flex justify-end gap-3">
-          <Button variant="outline" onClick={handleClose}>
+          <Button variant="outline" onClick={() => void handleClose}>
             Cancel
           </Button>
-          <Button onClick={handleSave}>Save changes</Button>
+          <Button onClick={() => void handleSave()}>Save changes</Button>
         </div>
       </DialogContent>
     </Dialog>
