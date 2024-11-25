@@ -7,6 +7,10 @@ import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
 import { cn } from "@/lib/utils";
 
+import { Slider } from "./slider";
+
+import { RotateCcwIcon, RotateCwIcon, ZoomInIcon, ZoomOutIcon } from "../icons";
+
 export function djb2(str: string) {
   let hash = 5381;
   for (let i = 0; i < str.length; i++) {
@@ -88,6 +92,9 @@ const AvatarEditor = React.forwardRef<
   const editorRef =
     React.useRef<React.ElementRef<typeof AvatarEditorPrimitive>>(null);
 
+  const [scale, setScale] = React.useState(1.6);
+  const [rotate, setRotate] = React.useState(0);
+
   React.useImperativeHandle(ref, () => ({
     getImage: (quality = 0.95) => {
       const canvas = editorRef.current?.getImageScaledToCanvas();
@@ -100,19 +107,48 @@ const AvatarEditor = React.forwardRef<
   }));
 
   return (
-    <AvatarEditorPrimitive
-      ref={editorRef}
-      image={image}
-      width={100}
-      height={100}
-      border={10}
-      color={[255, 255, 255, 0.8]}
-      scale={1.6}
-      rotate={0}
-      borderRadius={120}
-      className={cn("", className)}
-      {...props}
-    />
+    <div className="flex items-center gap-4">
+      <div className="flex flex-col items-center gap-2">
+        <RotateCwIcon size="5" />
+        <Slider
+          className="h-[160px]"
+          orientation="vertical"
+          defaultValue={[0]}
+          max={360}
+          step={1}
+          onValueChange={([value]) => setRotate(value)}
+        />
+        <RotateCcwIcon size="5" />
+      </div>
+
+      <AvatarEditorPrimitive
+        ref={editorRef}
+        image={image}
+        width={192}
+        height={192}
+        border={12}
+        color={[255, 255, 255, 0.7]}
+        scale={scale}
+        rotate={rotate}
+        borderRadius={120}
+        className={cn("", className)}
+        {...props}
+      />
+
+      <div className="flex flex-col items-center gap-2">
+        <ZoomInIcon size="5" />
+        <Slider
+          className="h-[160px]"
+          orientation="vertical"
+          defaultValue={[1.6]}
+          min={1}
+          max={10}
+          step={0.1}
+          onValueChange={([value]) => setScale(value)}
+        />
+        <ZoomOutIcon size="5" />
+      </div>
+    </div>
   );
 });
 AvatarEditor.displayName = "Avatar Editor";

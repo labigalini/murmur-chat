@@ -79,7 +79,7 @@ export function UserSettingsDialog({
           {selectedImage ? (
             <AvatarEditor ref={editorRef} image={selectedImage} />
           ) : (
-            <Avatar className="m-3 h-24 w-24">
+            <Avatar className="m-3 h-48 w-48">
               <AvatarImage src={avatar} alt={name} />
               <AvatarFallback>{name}</AvatarFallback>
             </Avatar>

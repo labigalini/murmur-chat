@@ -28,11 +28,15 @@ import { IconProps as RadixIconProps } from "@radix-ui/react-icons/dist/types";
 import {
   AlertTriangleIcon as AlertTriangleIconPrimitive,
   LucideProps as LucideIconProps,
+  RotateCcwIcon as RotateCcwIconPrimitive,
+  RotateCwIcon as RotateCwIconPrimitive,
   SearchIcon as SearchIconPrimitive,
   Trash2Icon as TrashIconPrimitive,
   UserRoundCogIcon as UserRoundCogIconPrimitive,
   UserRoundPlusIcon as UserRoundPlusIconPrimitive,
   UserRoundXIcon as UserRoundXIconPrimitive,
+  ZoomInIcon as ZoomInIconPrimitive,
+  ZoomOutIcon as ZoomOutIconPrimitive,
 } from "lucide-react";
 
 import { cn, fr } from "@/lib/utils";
@@ -86,3 +90,7 @@ export const TrashIcon = createIcon(TrashIconPrimitive);
 export const UserRoundCogIcon = createIcon(UserRoundCogIconPrimitive);
 export const UserPlusIcon = createIcon(UserRoundPlusIconPrimitive);
 export const UserRoundXIcon = createIcon(UserRoundXIconPrimitive);
+export const ZoomInIcon = createIcon(ZoomInIconPrimitive);
+export const ZoomOutIcon = createIcon(ZoomOutIconPrimitive);
+export const RotateCcwIcon = createIcon(RotateCcwIconPrimitive);
+export const RotateCwIcon = createIcon(RotateCwIconPrimitive);
