@@ -70,7 +70,7 @@ export function UserSettingsDialog({
   }, [onClose]);
 
   return (
-    <Dialog open={open} onOpenChange={(open) => open && void handleClose()}>
+    <Dialog open={open} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
@@ -103,7 +103,7 @@ export function UserSettingsDialog({
         </div>
 
         <div className="flex justify-end gap-3">
-          <Button variant="outline" onClick={() => void handleClose}>
+          <Button variant="outline" onClick={handleClose}>
             Cancel
           </Button>
           <Button onClick={() => void handleSave()}>Save changes</Button>
