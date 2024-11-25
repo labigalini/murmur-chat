@@ -29,7 +29,7 @@ const schema = defineEntSchema(
 
     chats: defineEnt({
       name: v.string(),
-      image: v.optional(v.string()),
+      image: v.optional(v.id("_storage")),
       lastActivityTime: v.optional(v.number()),
       messageLifespan: v.number(),
     })

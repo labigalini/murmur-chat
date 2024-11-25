@@ -10,6 +10,8 @@ import { Chat, Invite, Member, Message } from "@/components/chat/chat-types";
 import { api } from "@/convex/_generated/api";
 import { Role } from "@/convex/roles";
 
+import { useStorage } from "@/hooks/useStorage";
+
 import { skipIfUnset } from "@/lib/utils";
 
 import {
@@ -34,6 +36,7 @@ export default function ChatBoard(props: ChatBoardProps) {
 function ChatContainerWrapper({
   selectedChatId: initialSelectedChatId,
 }: ChatBoardProps) {
+  const { upload } = useStorage();
   const encryption = useEncryption();
   const { pushState } = useHistoryState();
 
@@ -123,6 +126,17 @@ function ChatContainerWrapper({
       await patchChat({
         chatId: chat._id,
         name: newName,
+      });
+    },
+    [patchChat],
+  );
+
+  const handleChatAvatarChange = useCallback(
+    async (chat: Chat, newAvatar: Blob) => {
+      const newImage = await upload(newAvatar);
+      await patchChat({
+        chatId: chat._id,
+        image: newImage,
       });
     },
     [patchChat],
@@ -226,6 +240,7 @@ function ChatContainerWrapper({
         onCreateChat: (newChatName) => void handleCreateChat(newChatName),
         onDeleteChat: (chat) => void handleDeleteChat(chat),
         onChatNameChange: (chat, n) => void handleChatNameChange(chat, n),
+        onChatAvatarChange: (chat, a) => void handleChatAvatarChange(chat, a),
         onLifespanChange: (chat, ls) => void handleLifespanChange(chat, ls),
         onCreateInvite: (chat, email) => void handleCreateInvite(chat, email),
         onRevokeInvite: (invite) => void handleRevokeInvite(invite),

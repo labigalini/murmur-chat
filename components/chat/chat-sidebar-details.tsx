@@ -7,6 +7,7 @@ import { isAnyLoading } from "@/lib/utils";
 import { AccessControl } from "./chat-access-control";
 import ChatAvatar from "./chat-avatar";
 import { useChatContext } from "./chat-context";
+import { ChatDialogChangeAvatar } from "./chat-dialog-change-avatar";
 import { ChatDialogChangeName } from "./chat-dialog-change-name";
 import { ChatInviteDialog } from "./chat-invite-dialog";
 import { ChatTitle } from "./chat-title";
@@ -289,9 +290,11 @@ const ChatSidebarConfiguration = () => {
     <>
       <ChatTitle title="Configuration" className="text-lg" />
       <div className="flex flex-col gap-2">
-        <span className="text-sm font-medium">Chat Name: {chat.name}</span>
         <div className="mt-2 w-10/12 self-center">
           <ChatDialogChangeName />
+        </div>
+        <div className="mt-2 w-10/12 self-center">
+          <ChatDialogChangeAvatar />
         </div>
       </div>
       <div className="flex flex-col gap-2">

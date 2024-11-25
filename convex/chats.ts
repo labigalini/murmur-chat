@@ -7,6 +7,7 @@ import { mutation, query } from "./functions";
 import { createMember } from "./members";
 import { viewerHasPermissionX } from "./permissions";
 import { getRole } from "./roles";
+import { getUrl } from "./storage";
 
 export const list = query({
   args: {},
@@ -24,7 +25,7 @@ export const list = query({
         return {
           _id: chat._id,
           name: chat.name,
-          image: chat.image,
+          image: chat.image && (await getUrl(ctx, chat.image)),
           messageLifespan: chat.messageLifespan,
           unreadCount,
           lastActivity: chat.lastActivityTime ?? chat._creationTime,
@@ -56,10 +57,15 @@ export const patch = mutation({
     chatId: v.id("chats"),
     messageLifespan: v.optional(v.number()),
     name: v.optional(v.string()),
+    image: v.optional(v.id("_storage")),
   },
   async handler(ctx, { chatId, ...changes }) {
     await viewerHasPermissionX(ctx, chatId, "Manage Chat");
-    return await ctx.table("chats").getX(chatId).patch(changes);
+    const chat = await ctx.table("chats").getX(chatId);
+    if (changes.image && chat.image) {
+      await ctx.storage.delete(chat.image);
+    }
+    return chat.patch(changes);
   },
 });
 
