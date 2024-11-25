@@ -3,6 +3,7 @@ import { v } from "convex/values";
 
 import { INACTIVE_TIMEOUT } from "@/lib/constants";
 
+import { Id } from "./_generated/dataModel";
 import { mutation, query } from "./functions";
 import { getUrl } from "./storage";
 import { Ent, QueryCtx } from "./types";
@@ -29,10 +30,14 @@ export const viewer = query({
 export const patch = mutation({
   args: {
     name: v.optional(v.string()),
-    image: v.optional(v.string()),
+    image: v.optional(v.id("_storage")),
   },
   async handler(ctx, changes) {
-    return await ctx.table("users").getX(ctx.viewerX()._id).patch(changes);
+    const user = await ctx.table("users").getX(ctx.viewerX()._id);
+    if (changes.image && user.image) {
+      await ctx.storage.delete(user.image as Id<"_storage">);
+    }
+    return await user.patch(changes);
   },
 });
 
